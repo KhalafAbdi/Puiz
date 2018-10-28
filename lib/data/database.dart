@@ -1,0 +1,73 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../model/user.dart';
+
+class Database {
+  
+  CollectionReference collectionReference;
+  SharedPreferences prefs;
+
+  Database(){
+    init();
+  }
+
+  init() async {
+    Firestore firestore = Firestore.instance;
+    firestore.settings();
+    collectionReference = firestore.collection('Users');
+    prefs = await SharedPreferences.getInstance();
+  }
+
+  Future createUserAndLogin(FirebaseUser user, String displayName, String email) async {
+    User userData = User(displayName, email);
+
+    collectionReference.document(user.uid).setData(userData.toMap()).whenComplete((){
+      print("User: - $displayName - Added");
+      addLoggedInUserToPrefs(user, displayName, email);
+    }).catchError((e) => print(e));
+  }
+
+  Future getUserDisplay(FirebaseUser user, String displayName, String email) async{
+    DocumentSnapshot snapshot = await collectionReference.document(user.uid).get();
+
+    if(snapshot.exists){
+      await collectionReference.document(user.uid).get()
+        .then((value) => addLoggedInUserToPrefs(user, value.data['displayName'], value.data['email']));
+    }else{
+      createUserAndLogin(user, displayName, email);
+    }
+  }
+
+  signOut(){
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    _auth.signOut();
+
+    removeLoggedInUserToPrefs();
+  }
+
+  Future<User> currentUser() async{
+    String dn = await prefs.get('displayName');
+    String email = await prefs.get('email');
+    String id = await prefs.get('id');
+
+    User user = new User(dn, email);
+    user.setId(id);
+
+    return user;
+  }
+
+  Future addLoggedInUserToPrefs(FirebaseUser user, String displayName, String email) async{
+    await prefs.setString("displayName", displayName);
+    await prefs.setString("email", email);
+    await prefs.setString("id", user.uid);
+  }
+
+  Future removeLoggedInUserToPrefs() async{
+    await prefs.remove("displayName");
+    await prefs.remove("email");
+    await prefs.remove("id");
+  }
+
+
+}
