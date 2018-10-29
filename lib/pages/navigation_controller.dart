@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pro/pages/settings.dart';
 import 'package:pro/pages/home.dart';
+import 'package:pro/pages/categories.dart';
 
 class NavigationController extends StatefulWidget {
   @override
@@ -12,8 +13,11 @@ class _NavigationControllerState extends State<NavigationController> {
 
   SettingsPage settingsPage;
   HomePage homePage;
+  CategoriesPage categoriesPage;
+
   List<Widget> pages;
   List<String> pageTitles;
+
   Widget currentPage;
   String currentTitle;
 
@@ -21,11 +25,10 @@ class _NavigationControllerState extends State<NavigationController> {
   initState(){
     homePage = HomePage();
     settingsPage = SettingsPage();
+    categoriesPage = CategoriesPage();
     
-
-
-    pageTitles = ["Home", "Settings"];
-    pages = [homePage, settingsPage];
+    pageTitles = ["Home", "Categories", "Settings"];
+    pages = [homePage, categoriesPage, settingsPage];
     currentPage = homePage;
     currentTitle = "Home";
     super.initState();   
@@ -50,6 +53,7 @@ class _NavigationControllerState extends State<NavigationController> {
         },
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), title: Text("Home")),
+          BottomNavigationBarItem(icon: Icon(Icons.category), title: Text("Categories")),
           BottomNavigationBarItem(icon: Icon(Icons.settings), title: Text("Settings"))
         ],
       ),
