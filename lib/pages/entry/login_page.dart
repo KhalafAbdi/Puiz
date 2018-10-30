@@ -15,7 +15,6 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
 
   LoginPagePresenter _loginPagePresenter;
 
-  String _title = "Login Page";
   String _email;
   String _password;
 
@@ -128,18 +127,14 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
       TextFormField(
         decoration: InputDecoration(
             labelText: "Email",
-            icon: const Padding(
-                padding: const EdgeInsets.only(top: 15.0),
-                child: const Icon(Icons.mail))),
+            ),
         validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
         onSaved: (value) => _email = value,
       ),
       TextFormField(
         decoration: InputDecoration(
             labelText: 'Password',
-            icon: const Padding(
-                padding: const EdgeInsets.only(top: 15.0),
-                child: const Icon(Icons.lock))),
+            ),
         obscureText: true,
         validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
         onSaved: (value) => _password = value,
