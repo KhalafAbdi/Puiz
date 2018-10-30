@@ -145,23 +145,3 @@ class _LandingPageState extends State<LandingPage> {
 
   }
 }
-
-/*
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(widget.title),
-      ),
-      body: Column(
-        children: <Widget>[
-          RaisedButton(
-            child: Text("Login"),
-            onPressed: () => Navigator.pushNamed(context, '/login'),
-          ),
-          RaisedButton(
-            child: Text("Register"),
-            onPressed: () => Navigator.pushNamed(context, '/register'),
-          )
-        ],
-      )
-    );
-*/
