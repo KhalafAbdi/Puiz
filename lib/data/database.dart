@@ -75,11 +75,11 @@ class Database {
 
   Future<List<DocumentSnapshot>> getQuizCategories() async {
     QuerySnapshot querySnapshot = await Firestore.instance.collection("Categories").getDocuments();
+    return querySnapshot.documents;
+  }
 
-
-
-    
-
+  Future<List<DocumentSnapshot>> getQuizCategory(String category) async {
+    QuerySnapshot querySnapshot = await Firestore.instance.collection(category).getDocuments();
     return querySnapshot.documents;
   }
 

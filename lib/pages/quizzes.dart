@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'LoadingPage.dart';
 import '../data/database.dart';
+import 'package:pro/pages/navigation_controller.dart';
 
 class QuizzesPage extends StatefulWidget {
   @override
@@ -11,46 +9,103 @@ class QuizzesPage extends StatefulWidget {
 }
 
 class _QuizzesPageState extends State<QuizzesPage> {
-
-
-@override
-  Widget build(BuildContext context) {
-    return new FutureBuilder<List<DocumentSnapshot>>(
-            future: Database().getQuizCategories(),
-            builder: (BuildContext context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return ListView.builder(
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (context, index) => EachList(index, snapshot.data[index].documentID, snapshot.data[index]['desc'])
-                  );
-
-                } else {
-                   return new Text('Loading...');
-                }
-              }
-          );
-  }
-}
-
-class EachList extends StatelessWidget {
-  int index;
+  Widget _currentPage;
   String title;
-  String subtitle;
+  bool goback = false;
 
-  EachList(this.index, this.title, this.subtitle);
+  @override
+  initState() {
+    _currentPage = listCategories();
+    title = "Category List";
+  }
+
+  updatePage(Widget widget){
+    setState(() {
+          _currentPage = widget;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: CircleAvatar(child:Text(title[0]) ),
-      title: Text(title),
-      subtitle: Text(subtitle),
-      enabled: true,
-      onTap: () { /* react to the tile being tapped */ }
+    return Scaffold(
+      appBar: new AppBar(
+        title: new Text(title),
+        automaticallyImplyLeading: false,
+        leading: goback ? IconButton(
+            tooltip: 'Previous choice',
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => updatePage(listCategories()),) : null
+      ),
+      body: _currentPage,
     );
   }
-}
 
+  Widget listCategories(){
+    return new FutureBuilder<List<DocumentSnapshot>>(
+        future: Database().getQuizCategories(),
+        builder: (BuildContext context,
+            AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) => _eachList(
+                    index,
+                    snapshot.data[index].documentID,
+                    snapshot.data[index]['desc']));
+          } else {
+            return new Text('Loading...');
+          }
+        });
+  }
+
+  _eachList(int index, String title, subtitle){
+    return ListTile(
+        leading: CircleAvatar(child: Text(title[0])),
+        title: Text(title),
+        subtitle: Text(subtitle),
+        enabled: true,
+        onTap: () => updatePage(listSubCategories(title)));
+  }
+
+  Widget listSubCategories(String title){
+    this.title = title;
+    goback = true;
+
+    return WillPopScope(
+          onWillPop: _onWillPop,
+          child: FutureBuilder<List<DocumentSnapshot>>(
+          future: Database().getQuizCategory(title),
+          builder: (BuildContext context,
+              AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (context, index) => _subItems(
+                      index,
+                      snapshot.data[index].documentID,
+                      snapshot.data[index]['desc']));
+            } else {
+              return new Text('Loading...');
+            }
+          }),
+    );
+  }
+
+  Future<bool> _onWillPop(){
+    updatePage(listCategories());
+  }
+
+  _subItems(int index, String title, subtitle){
+
+    return ListTile(
+        leading: CircleAvatar(child: Text(title[0])),
+        title: Text(title),
+        subtitle: Text(subtitle),
+        enabled: true,
+        onTap: () => {});
+  }
+
+}
 
 
 /*
@@ -135,6 +190,33 @@ Rankings
 Following
 
 
+Categories
+  > Enteraintment
+    - desc: String
+    - subCategories: String ("Music, Games, TV, Movies")
+    > Music
+      - desc: String
+      - subCategories: String
+    > Games
+      - desc: String
+      - subCategories: String
+    > TV
+      - desc: String
+      - subCategories: String
+    > Movies 
+      - desc: String
+      - subCategories: String
+
+  > Geography
+  .
+  .
+  .
+
+Category
+  > Music
+  > Games
+  > TV
+  > Movies
 
 
 */

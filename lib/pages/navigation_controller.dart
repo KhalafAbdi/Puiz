@@ -34,13 +34,15 @@ class _NavigationControllerState extends State<NavigationController> {
     super.initState();   
   }
 
+  setCurrentTitle(String test){
+    setState(() {
+       currentTitle = test;   
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: new AppBar(
-        title: new Text(currentTitle),
-        automaticallyImplyLeading: false,
-      ),
       body: currentPage,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentTab,
