@@ -41,6 +41,9 @@ class _QuizzesPageState extends State<QuizzesPage> {
   }
 
   Widget listCategories(){
+    title = "Category List";
+    goback = false;
+
     return new FutureBuilder<List<DocumentSnapshot>>(
         future: Database().getQuizCategories(),
         builder: (BuildContext context,
