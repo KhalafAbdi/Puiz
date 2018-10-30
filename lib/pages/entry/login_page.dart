@@ -96,11 +96,8 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
 
   List<Widget> buildSubmitBottons() {
     return [
-      RaisedButton(
-        color: Colors.greenAccent,
-        child: Text("Login", style: TextStyle(fontSize: 20.0)),
-        onPressed: _submit,
-      ),
+      testButton("Login", 20.0),
+      
       FlatButton(
           child: Text("Create an account", style: TextStyle(fontSize: 20.0)),
           onPressed: () =>
@@ -133,5 +130,31 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
       ),
     ];
   }
+
+
+  
+Widget testButton(title, size) {
+  return Container(
+    margin: EdgeInsets.only(top:5.0),
+    decoration: BoxDecoration(
+        gradient: LinearGradient(
+      colors: [const Color(0xFFfe7f3b), const Color(0xFFfe2851)],
+      begin: FractionalOffset(0.0, 1.0),
+      end: FractionalOffset(1.0, 0.0),
+      stops: [0.0, 1.0],
+      tileMode: TileMode.clamp,
+    )),
+    child: MaterialButton(
+        child: Text(
+          title,
+          style: TextStyle(
+              color: Colors.white, fontFamily: 'Roboto', fontSize: size),
+        ),
+        onPressed: () {
+          _submit();
+        }),
+  );
+}
+
 }
 
