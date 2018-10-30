@@ -3,6 +3,7 @@ import 'package:pro/pages/entry/login_page.dart';
 import 'package:pro/pages/entry/register_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pro/pages/navigation_controller.dart';
+import 'package:pro/pages/LoadingPage.dart';
 
 void main() => runApp(new MyApp());
 

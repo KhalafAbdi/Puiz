@@ -10,10 +10,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> implements LoginPageContract {
+  LoginPagePresenter _loginPagePresenter;
+
   final formKey = new GlobalKey<FormState>();
   final scaffoldKey = new GlobalKey<ScaffoldState>();
-
-  LoginPagePresenter _loginPagePresenter;
 
   String _email;
   String _password;
@@ -31,7 +31,6 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
   }
 
   void _googleSignIn() {
-    print("WHY wont you work!!!");
     _loginPagePresenter.doLoginGoogle();
   }
 
@@ -42,9 +41,6 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
 
   @override
   void onLoginSuccess(FirebaseUser user) {
-    print(
-        "Logged into user ${user.email} - now Looking for displayName @@@@@@@@@@@@@@@@@@@@@@@@@@@");
-
     var db = new Database();
 
     db.getUserDisplay(user, user.displayName, user.email);
