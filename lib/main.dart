@@ -33,23 +33,9 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
-  
-
-  void test() async{
-    FirebaseUser _auth = await FirebaseAuth.instance.currentUser();
-
-    if(_auth != null){
-      print("user is logged in ${_auth.email}");
-      Navigator.of(context).pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
-    }else{
-      print("user is not logged in");
-    }
-
-  }
-
   @override
   Widget build(BuildContext context) {
-    test();
+    checkIfUserIsLoggedIn();
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(widget.title),
@@ -67,6 +53,18 @@ class _LandingPageState extends State<LandingPage> {
         ],
       )
     );
+  }
+
+  void checkIfUserIsLoggedIn() async{
+    FirebaseUser _auth = await FirebaseAuth.instance.currentUser();
+
+    if(_auth != null){
+      print("user is logged in ${_auth.email}");
+      Navigator.of(context).pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
+    }else{
+      print("user is not logged in");
+    }
+
   }
 }
 

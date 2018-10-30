@@ -5,7 +5,9 @@ import '../model/user.dart';
 
 class Database {
   
-  CollectionReference collectionReference;
+  CollectionReference userCollectionRef;
+  CollectionReference categoriesCollectionRef;
+
   SharedPreferences prefs;
 
   Database(){
@@ -15,24 +17,27 @@ class Database {
   init() async {
     Firestore firestore = Firestore.instance;
     firestore.settings();
-    collectionReference = firestore.collection('Users');
+
+    userCollectionRef = firestore.collection('Users');
+    categoriesCollectionRef = firestore.collection('Categories');
+
     prefs = await SharedPreferences.getInstance();
   }
 
   Future createUserAndLogin(FirebaseUser user, String displayName, String email) async {
     User userData = User(displayName, email);
 
-    collectionReference.document(user.uid).setData(userData.toMap()).whenComplete((){
+    userCollectionRef.document(user.uid).setData(userData.toMap()).whenComplete((){
       print("User: - $displayName - Added");
       addLoggedInUserToPrefs(user, displayName, email);
     }).catchError((e) => print(e));
   }
 
   Future getUserDisplay(FirebaseUser user, String displayName, String email) async{
-    DocumentSnapshot snapshot = await collectionReference.document(user.uid).get();
+    DocumentSnapshot snapshot = await userCollectionRef.document(user.uid).get();
 
     if(snapshot.exists){
-      await collectionReference.document(user.uid).get()
+      await userCollectionRef.document(user.uid).get()
         .then((value) => addLoggedInUserToPrefs(user, value.data['displayName'], value.data['email']));
     }else{
       createUserAndLogin(user, displayName, email);
@@ -64,9 +69,18 @@ class Database {
   }
 
   Future removeLoggedInUserToPrefs() async{
-    await prefs.remove("displayName");
-    await prefs.remove("email");
-    await prefs.remove("id");
+    prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+  }
+
+  Future<List<DocumentSnapshot>> getQuizCategories() async {
+    QuerySnapshot querySnapshot = await Firestore.instance.collection("Categories").getDocuments();
+
+
+
+    
+
+    return querySnapshot.documents;
   }
 
 
