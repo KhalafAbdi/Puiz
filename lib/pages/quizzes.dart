@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../data/database.dart';
-import 'package:pro/pages/navigation_controller.dart';
+import 'package:pro/pages/LoadingPage.dart';
 
 class QuizzesPage extends StatefulWidget {
   @override
@@ -56,7 +56,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
                     snapshot.data[index].documentID,
                     snapshot.data[index]['desc']));
           } else {
-            return new Text('Loading...');
+            return Center(child: LoadingPage());
           }
         });
   }
@@ -88,7 +88,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
                       snapshot.data[index].documentID,
                       snapshot.data[index]['desc']));
             } else {
-              return new Text('Loading...');
+              return Center(child: LoadingPage());
             }
           }),
     );

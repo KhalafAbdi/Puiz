@@ -112,6 +112,9 @@ class _LandingPageState extends State<LandingPage> {
 
   @override
   Widget build(BuildContext context) {
+
+
+
     checkIfUserIsLoggedIn();
     return Material(
       child: Container(
