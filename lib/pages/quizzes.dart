@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../data/database.dart';
 import 'package:pro/pages/LoadingPage.dart';
+import 'package:pro/pages/trueFalseQuizPage.dart';
 
 class QuizzesPage extends StatefulWidget {
   @override
@@ -101,11 +102,17 @@ class _QuizzesPageState extends State<QuizzesPage> {
   _subItems(int index, String title, subtitle){
 
     return ListTile(
-        leading: CircleAvatar(child: Text(title[0])),
-        title: Text(title),
-        subtitle: Text(subtitle),
-        enabled: true,
-        onTap: () => {});
+      leading: CircleAvatar(child: Text(title[0])),
+      title: Text(title),
+      subtitle: Text(subtitle),
+      enabled: true,
+      onTap: () {
+        Navigator.push(
+          context,
+            MaterialPageRoute(builder: (context) => TrueFalseQuizPage()),
+          );
+        },
+    );
   }
 
 }
