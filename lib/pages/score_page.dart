@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'trueFalseQuizPage.dart';
+import 'quizzes.dart';
 
 class ScorePage extends StatelessWidget {
 
@@ -25,7 +24,7 @@ class ScorePage extends StatelessWidget {
             onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => TrueFalseQuizPage()),
+              MaterialPageRoute(builder: (context) => QuizzesPage()),
             );
           },
           )
