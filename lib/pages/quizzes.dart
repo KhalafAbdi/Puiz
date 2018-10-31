@@ -57,7 +57,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
                     snapshot.data[index].documentID,
                     snapshot.data[index]['desc']));
           } else {
-            return Center(child: LoadingPage());
+            return LoadingPage();
           }
         });
   }
@@ -89,7 +89,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
                       snapshot.data[index].documentID,
                       snapshot.data[index]['desc']));
             } else {
-              return Center(child: LoadingPage());
+              return LoadingPage();
             }
           }),
     );

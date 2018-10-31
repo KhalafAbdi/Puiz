@@ -3,7 +3,6 @@ import 'package:pro/pages/entry/login_page.dart';
 import 'package:pro/pages/entry/register_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pro/pages/navigation_controller.dart';
-import 'package:pro/pages/LoadingPage.dart';
 
 void main() => runApp(new MyApp());
 
@@ -17,7 +16,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => LoadingPage(),
+        '/': (context) => LandingPage(),
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
         '/home': (context) => NavigationController()
@@ -146,6 +145,7 @@ class _LandingPageState extends State<LandingPage> {
     }else{
       print("user is not logged in");
     }
-
   }
+
+  notLoggedIn(){}
 }
