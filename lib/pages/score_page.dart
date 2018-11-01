@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'quizzes.dart';
+import 'navigation_controller.dart';
 
 class ScorePage extends StatelessWidget {
 
@@ -24,7 +24,7 @@ class ScorePage extends StatelessWidget {
             onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => QuizzesPage()),
+              MaterialPageRoute(builder: (context) => NavigationController()),
             );
           },
           )

@@ -22,6 +22,7 @@ class _LoadingPageState extends State<LoadingPage>
   double dotRadius;
   String loadingText = "L o a d i n g";
   bool addDotFlip = false;
+  Color color = const Color(0xFFca4451);
 
   @override
   void initState() {
@@ -93,19 +94,12 @@ class _LoadingPageState extends State<LoadingPage>
   Widget build(BuildContext context) {
     return Material(
       child: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [const Color(0xFFfe7f3b), const Color(0xFFfe2851)],
-              begin: FractionalOffset(0.0, 1.0),
-              end: FractionalOffset(1.0, 0.0),
-              stops: [0.0, 1.0],
-              tileMode: TileMode.clamp,
-            ),
-          ),
+        
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Container(
+                color: const Color(0x00000000),
             width: 200.0,
             height: 200.0,
             child: new Center(
@@ -119,13 +113,13 @@ class _LoadingPageState extends State<LoadingPage>
                           offset: Offset(0.0, 0.0),
                           child: Dot(
                             radius: radius,
-                            color: Colors.white,
+                            color: color,
                           ),
                         ),
                         new Transform.translate(
                           child: Dot(
                             radius: dotRadius,
-                            color: Colors.white,
+                            color: color,
                           ),
                           offset: Offset(
                             (radius + 50) * cos(0.0),
@@ -135,7 +129,7 @@ class _LoadingPageState extends State<LoadingPage>
                         new Transform.translate(
                           child: Dot(
                             radius: dotRadius,
-                            color: Colors.white,
+                            color: color,
                           ),
                           offset: Offset(
                             (radius + 50) * cos(0.0 + 1 * pi / 4),
@@ -145,7 +139,7 @@ class _LoadingPageState extends State<LoadingPage>
                         new Transform.translate(
                           child: Dot(
                             radius: dotRadius,
-                            color: Colors.white,
+                            color: color,
                           ),
                           offset: Offset(
                             (radius + 50) * cos(0.0 + 2 * pi / 4),
@@ -155,7 +149,7 @@ class _LoadingPageState extends State<LoadingPage>
                         new Transform.translate(
                           child: Dot(
                             radius: dotRadius,
-                            color: Colors.white,
+                            color: color,
                           ),
                           offset: Offset(
                             (radius + 50) * cos(0.0 + 3 * pi / 4),
@@ -165,7 +159,7 @@ class _LoadingPageState extends State<LoadingPage>
                         new Transform.translate(
                           child: Dot(
                             radius: dotRadius,
-                            color: Colors.white,
+                            color: color,
                           ),
                           offset: Offset(
                             (radius + 50) * cos(0.0 + 4 * pi / 4),
@@ -175,7 +169,7 @@ class _LoadingPageState extends State<LoadingPage>
                         new Transform.translate(
                           child: Dot(
                             radius: dotRadius,
-                            color: Colors.white,
+                            color: color,
                           ),
                           offset: Offset(
                             (radius + 50) * cos(0.0 + 5 * pi / 4),
@@ -185,7 +179,7 @@ class _LoadingPageState extends State<LoadingPage>
                         new Transform.translate(
                           child: Dot(
                             radius: dotRadius,
-                            color: Colors.white,
+                            color: color,
                           ),
                           offset: Offset(
                             (radius + 50) * cos(0.0 + 6 * pi / 4),
@@ -195,7 +189,7 @@ class _LoadingPageState extends State<LoadingPage>
                         new Transform.translate(
                           child: Dot(
                             radius: dotRadius,
-                            color: Colors.white,
+                            color: color,
                           ),
                           offset: Offset(
                             (radius + 50) * cos(0.0 + 7 * pi / 4),
@@ -209,7 +203,7 @@ class _LoadingPageState extends State<LoadingPage>
               ),
             ),
         ),
-        Text(loadingText, style: TextStyle(color: Colors.white, fontSize: 20.0))
+        Text(loadingText, style: TextStyle(color: color, fontSize: 20.0))
             ]
           ),
       ),
