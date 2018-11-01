@@ -302,8 +302,7 @@ class HomePage extends StatelessWidget {
   }
 
   Widget challengeCard() {
-        return Container(
-
+    return Container(
       child: Column(
         children: <Widget>[
           Center(
@@ -320,56 +319,55 @@ class HomePage extends StatelessWidget {
                         fontSize: 17.0),
                   ),
                 ),
-                
               ],
             ),
           ),
           Container(
-        decoration: BoxDecoration(
-            border: BorderDirectional(
-          bottom: BorderSide(width: 5.0, color: const Color(0xFFca4451)),
-        )),
-        margin: EdgeInsets.only(left:15.0, right: 15.0, bottom: 15.0),
-        child: Container(
-          margin: EdgeInsets.only(top: 7.0),
-          child: Row(
-            children: <Widget>[
-              Container(
-                  color: const Color(0xFFca4451),
-                  padding: EdgeInsets.only(
-                      top: 15.0, right: 15.0, left: 15.0, bottom: 10.0),
-                  child: Container(
-                    child: Icon(
-                      Icons.whatshot,
-                      color: Colors.white,
-                      size: 40.0,
+              decoration: BoxDecoration(
+                  border: BorderDirectional(
+                bottom: BorderSide(width: 5.0, color: const Color(0xFFca4451)),
+              )),
+              margin: EdgeInsets.only(left: 15.0, right: 15.0, bottom: 15.0),
+              child: Container(
+                margin: EdgeInsets.only(top: 7.0),
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                        color: const Color(0xFFca4451),
+                        padding: EdgeInsets.only(
+                            top: 15.0, right: 15.0, left: 15.0, bottom: 10.0),
+                        child: Container(
+                          child: Icon(
+                            Icons.whatshot,
+                            color: Colors.white,
+                            size: 40.0,
+                          ),
+                        )),
+                    Container(
+                      child: Container(
+                        padding: EdgeInsets.only(left: 15.0),
+                        child: Text(
+                          "DeathMatch",
+                          style: TextStyle(
+                            fontSize: 25.0,
+                            fontWeight: FontWeight.w300,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
                     ),
-                  )),
-              Container(
-                child: Container(
-                  padding: EdgeInsets.only(left: 15.0),
-                  child: Text(
-                    "DeathMatch",
-                    style: TextStyle(
-                      fontSize: 25.0,
-                      fontWeight: FontWeight.w300,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                  child: Container(
-                padding: EdgeInsets.only(right: 10.0),
-                alignment: Alignment(1.0, 0.0),
-                child: Icon(
-                  Icons.keyboard_arrow_right,
-                  color: const Color(0xFFca4451),
+                    Expanded(
+                        child: Container(
+                      padding: EdgeInsets.only(right: 10.0),
+                      alignment: Alignment(1.0, 0.0),
+                      child: Icon(
+                        Icons.keyboard_arrow_right,
+                        color: const Color(0xFFca4451),
+                      ),
+                    ))
+                  ],
                 ),
               ))
-            ],
-          ),
-        ))
         ],
       ),
     );
@@ -380,7 +378,6 @@ class MyClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     var path = Path();
-
     path.lineTo(size.width, 0.0);
     path.lineTo(size.width, ((size.height / 4) * 3));
     path.lineTo((size.width / 2), size.height);
@@ -393,55 +390,3 @@ class MyClipper extends CustomClipper<Path> {
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
-
-
-/*
-
-return Container(
-        decoration: BoxDecoration(
-            border: BorderDirectional(
-          bottom: BorderSide(width: 5.0, color: const Color(0xFFca4451)),
-        )),
-        margin: EdgeInsets.all(15.0),
-        child: Container(
-          margin: EdgeInsets.only(top: 7.0),
-          child: Row(
-            children: <Widget>[
-              Container(
-                  color: const Color(0xFFca4451),
-                  padding: EdgeInsets.only(
-                      top: 15.0, right: 15.0, left: 15.0, bottom: 10.0),
-                  child: Container(
-                    child: Icon(
-                      Icons.whatshot,
-                      color: Colors.white,
-                      size: 40.0,
-                    ),
-                  )),
-              Container(
-                child: Container(
-                  padding: EdgeInsets.only(left: 15.0),
-                  child: Text(
-                    "DeathMatch",
-                    style: TextStyle(
-                      fontSize: 25.0,
-                      fontWeight: FontWeight.w300,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                  child: Container(
-                padding: EdgeInsets.only(right: 10.0),
-                alignment: Alignment(1.0, 0.0),
-                child: Icon(
-                  Icons.keyboard_arrow_right,
-                  color: const Color(0xFFca4451),
-                ),
-              ))
-            ],
-          ),
-        ));
-
-*/
