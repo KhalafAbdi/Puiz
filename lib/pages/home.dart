@@ -86,9 +86,15 @@ class HomePage extends StatelessWidget {
                       fontWeight: FontWeight.w300),
                   textAlign: TextAlign.center)),
           Container(
-              margin: EdgeInsets.only(
-                  top: 25.0, bottom: 25.0, left: 10.0, right: 10.0),
-              child: FlutterLogo(size: 100.0)),
+            margin: EdgeInsets.only(
+              top: 5.0, bottom: 5.0, left: 10.0, right: 10.0),
+            child: new IconButton(
+              iconSize: 125.0,
+              icon: new Image.asset('assets/avataaars.png'),
+              tooltip: 'Edit Avatar',
+              onPressed: () => {},
+            )
+          ),
           themeButton("Start new Quiz", 20.0)
         ],
       ),
