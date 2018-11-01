@@ -91,30 +91,41 @@ class _LandingPageState extends State<LandingPage> {
     return Container(
       padding: EdgeInsets.all(15.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          button("Login", 25.0, const Color(0xFF2c304d),"/login"),
-          button("Register", 25.0, const Color(0xFFca4451), "/register")
+          Container(
+            
+            alignment:Alignment.centerLeft,
+            color: const Color(0xFF2c304d),
+            child: MaterialButton(
+                child: Text(
+                  "Login",
+                  style: TextStyle(
+                      color: Colors.white, fontFamily: 'Roboto', fontSize: 25.0, fontWeight: FontWeight.w300),
+                ),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/login');
+                }),
+          ),
+          Container(
+            
+            alignment:Alignment.centerRight,
+            margin: EdgeInsets.only(bottom: 10.0),
+            color: const Color(0xFFca4451),
+            child: MaterialButton(
+                child: Text(
+                  "Register",
+                  style: TextStyle(
+                      color: Colors.white, fontFamily: 'Roboto', fontSize: 25.0, fontWeight: FontWeight.w300),
+                ),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/register');
+                }),
+          )
         ],
       ),
     );
   }
 
-  Widget button(title, size, color, goto) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 10.0),
-      color: color,
-      child: MaterialButton(
-          child: Text(
-            title,
-            style: TextStyle(
-                color: Colors.white, fontFamily: 'Roboto', fontSize: size, fontWeight: FontWeight.w300),
-          ),
-          onPressed: () {
-            Navigator.pushNamed(context, goto);
-          }),
-    );
-  }
 
   void checkIfUserIsLoggedIn() async{
     FirebaseUser _auth = await FirebaseAuth.instance.currentUser();

@@ -140,7 +140,7 @@ class _RegisterPageState extends State<RegisterPage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        themButton("Sign Up", 20.0,const Color(0xFF2c304d)),
+        themButton("Register", 20.0,const Color(0xFF2c304d)),
       Container(
         margin: EdgeInsets.only(top: 15.0, bottom: 15.0),
         child: Row(
