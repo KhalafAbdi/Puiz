@@ -242,10 +242,10 @@ class HomePage extends StatelessWidget {
                 ),
                 ClipPath(
                   clipper: MyClipper(),
-                  child: Container(
-                    height: 30.0,
-                    width: 20.0,
-                    color: const Color(0xFF5592e1),
+                    child: Container(
+                      height: 30.0,
+                      width: 20.0,
+                      color: const Color(0xFF5592e1),
                   ),
                 )
               ],
@@ -317,13 +317,35 @@ class HomePage extends StatelessWidget {
               children: <Widget>[
                 Container(
                   padding: EdgeInsets.only(left: 20.0, top: 5.0, right: 20.0),
-                  child: Text(
-                    "Win A DeathMatch For Next Reward",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: 'Roboto',
-                        fontSize: 17.0),
-                  ),
+                  child: Row(
+                    children: <Widget>[
+
+                      Text(
+                      "Win A ",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Roboto',
+                          fontSize: 17.0),
+                      ),
+
+                      Text(
+                      "DeathMatch",
+                        style: TextStyle(
+                          color: const Color(0xFFca4451),
+                          fontFamily: 'Roboto',
+                          fontSize: 17.0),
+                      ),
+
+                      Text(
+                      " For Next Reward",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Roboto',
+                          fontSize: 17.0),
+                      ),
+
+                    ],
+                  )
                 ),
               ],
             ),

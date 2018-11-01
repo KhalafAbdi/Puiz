@@ -56,21 +56,15 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
           Container(
               decoration: new BoxDecoration(
                   gradient: new LinearGradient(
-                begin: FractionalOffset(0.0, 1.0),
-                end: FractionalOffset(1.0, 0.0),
-                colors: [
-                  const Color(0xFFfe7f3b),
-                  const Color(0xFFfe2851),
-                ],
-                stops: [0.0, 1.0],
+                begin: Alignment.topRight,
+                end: Alignment(0.1, 0.0),
+                colors: [const Color(0xFFca4451), const Color(0xFF2c304d)],
+                stops: [1.0, 1.0],
                 tileMode: TileMode.clamp,
               )),
-              child: Container(
+              child: Card(
                 margin: EdgeInsets.only(
-                    top: 80.0, right: 8.0, left: 8.0, bottom: 8.0),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: new BorderRadius.circular(5.0)),
+                    top: 80.0, right: 15.0, left: 15.0, bottom: 15.0),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: new Container(
@@ -78,59 +72,58 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
                           key: formKey,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: buildTop() +
-                                buildInputs() +
-                                buildSubmitBottons(),
+                            children: <Widget>[
+                              greeting(),
+                              inputs(),
+                              buildSubmitBottons()
+                            ],
                           ))),
                 ),
               )),
-            SizedBox(
-              height:80.0,
-              child: AppBar(
+          SizedBox(
+            height: 80.0,
+            child: AppBar(
               backgroundColor: const Color(0x00000000),
               elevation: 0.0,
+              centerTitle: true,
+              title: Text("L O G I N",
+                  style: TextStyle(
+                      fontSize: 18.0,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w300)),
             ),
-            )
+          )
         ],
       ),
     );
   }
 
-  List<Widget> buildTop() {
-    return [
-      Center(child: FlutterLogo(textColor: Colors.white, size: 50.0)),
-      Container(
-        margin: EdgeInsets.only(top: 15.0, left: 15.0, right: 15.0),
-        child: Center(
-            child: Text("Welcome Back",
-                style: TextStyle(
-                    fontSize: 25.0,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontStyle: FontStyle.italic))),
+  Widget greeting() {
+    return Container(
+      child: Center(
+        child: Icon(
+          Icons.whatshot,
+          color: const Color(0xFFca4451),
+          size: 50.0,
+        ),
       ),
-      Container(
-          margin: EdgeInsets.only(bottom: 25.0),
-          child: Center(
-              child: Text("Login with your email to start",
-                  style:
-                      TextStyle(fontSize: 10.0, fontStyle: FontStyle.italic)))),
-    ];
+    );
   }
 
-  List<Widget> buildInputs() {
-    return [
-      TextFormField(
+  Widget inputs() {
+    return Column(
+      children: <Widget>[
+         TextFormField(
         decoration: InputDecoration(
-            labelText: "Email",
-            ),
+          labelText: "Email",
+        ),
         validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
         onSaved: (value) => _email = value,
       ),
       TextFormField(
         decoration: InputDecoration(
-            labelText: 'Password',
-            ),
+          labelText: 'Password',
+        ),
         obscureText: true,
         validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
         onSaved: (value) => _password = value,
@@ -140,14 +133,17 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
           alignment: Alignment(1.0, 0.0),
           child: Text("Forgot password?",
               style: TextStyle(
-                  color: Color(0xFFfe2851),
+                  color: const Color(0xFFca4451),
                   decoration: TextDecoration.underline)))
-    ];
+      ],
+    );
   }
 
-  List<Widget> buildSubmitBottons() {
-    return [
-      themeButton("Login", 20.0),
+  Widget buildSubmitBottons() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        themButton("Login", 20.0, const Color(0xFFca4451)),
       Container(
         margin: EdgeInsets.symmetric(vertical: 15.0),
         child: Row(
@@ -194,36 +190,32 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
             GestureDetector(
                 child: Text("Sign up",
                     style: TextStyle(
-                        color: Color(0xFFfe2851),
+                        color: Color(0xFFca4451),
                         decoration: TextDecoration.underline)),
                 onTap: () =>
                     Navigator.pushReplacementNamed(context, '/register')),
           ],
         ),
       )
-    ];
+      ],
+    );
   }
 
-  Widget themeButton(title, size) {
+  Widget themButton(title, size, color) {
     return Container(
-      margin: EdgeInsets.only(top: 5.0),
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-        colors: [const Color(0xFFfe7f3b), const Color(0xFFfe2851)],
-        begin: FractionalOffset(0.0, 1.0),
-        end: FractionalOffset(1.0, 0.0),
-        stops: [0.0, 1.0],
-        tileMode: TileMode.clamp,
-      )),
+      margin: EdgeInsets.only(bottom: 10.0),
+      color: color,
       child: MaterialButton(
           child: Text(
             title,
             style: TextStyle(
-                color: Colors.white, fontFamily: 'Roboto', fontSize: size),
+                color: Colors.white, fontFamily: 'Roboto', fontSize: size, fontWeight: FontWeight.w300),
           ),
           onPressed: () {
             _submit();
           }),
     );
   }
+
 }
+
