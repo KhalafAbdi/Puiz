@@ -3,6 +3,8 @@ import 'package:pro/pages/entry/login_page.dart';
 import 'package:pro/pages/entry/register_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pro/pages/navigation_controller.dart';
+import 'package:pro/pages/onBoarding/onBoardingController.dart';
+
 
 void main() => runApp(new MyApp());
 
@@ -16,7 +18,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => LandingPage(),
+        '/': (context) => OnBoadingControllerPage(),
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
         '/home': (context) => NavigationController()
