@@ -18,10 +18,11 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => OnBoadingControllerPage(),
+        '/': (context) => LandingPage(),
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
-        '/home': (context) => NavigationController()
+        '/home': (context) => NavigationController(),
+        '/onBoarding': (context) => OnBoadingControllerPage()
       },
     );
   }

@@ -81,6 +81,10 @@ class Page extends StatelessWidget {
                         fontSize: 18.0,
                       ),
                     ),
+                    MaterialButton(
+                      child: Text("Get Started"),
+                      onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false),
+                    )
                   ],
                 )
             ),

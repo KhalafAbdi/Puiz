@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
 
     db.getUserDisplay(user, user.displayName, user.email);
     Navigator.of(context)
-        .pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
+        .pushNamedAndRemoveUntil('/onBoarding', (Route<dynamic> route) => false);
   }
 
   @override

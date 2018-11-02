@@ -37,7 +37,7 @@ class _RegisterPageState extends State<RegisterPage>
 
     db.createUserAndLogin(user, _displayName, _email);
     Navigator.of(context)
-        .pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
+        .pushNamedAndRemoveUntil('/onBoarding', (Route<dynamic> route) => false);
   }
 
   @override

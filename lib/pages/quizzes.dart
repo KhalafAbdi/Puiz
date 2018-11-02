@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../data/database.dart';
-import 'package:pro/pages/LoadingPage.dart';
-import 'package:pro/pages/trueFalseQuizPage.dart';
 
 class QuizzesPage extends StatefulWidget {
   @override
