@@ -112,7 +112,7 @@ class _OnBoadingControllerPageState extends State<OnBoadingControllerPage> with 
             canDragLeftToRight: activeIndex > 0 ,
             canDragRightToLeft: activeIndex < pages.length - 1 ,
             slideUpdateStream: this.slideUpdateStream,
-          )
+          ),
         ],
       ),
     );

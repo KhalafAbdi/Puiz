@@ -4,10 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../model/user.dart';
 
 class Database {
-  
   CollectionReference userCollectionRef;
-  CollectionReference categoriesCollectionRef;
-
   SharedPreferences prefs;
 
   Database(){
@@ -19,7 +16,6 @@ class Database {
     firestore.settings();
 
     userCollectionRef = firestore.collection('Users');
-    categoriesCollectionRef = firestore.collection('Categories');
 
     prefs = await SharedPreferences.getInstance();
   }
