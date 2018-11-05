@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class MultiplayerPage extends StatefulWidget {
+  int index;
+
+  MultiplayerPage(this.index);
+
   @override
   _MultiplayerPageState createState() => _MultiplayerPageState();
 }

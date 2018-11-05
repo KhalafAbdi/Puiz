@@ -110,8 +110,7 @@ class Page extends StatelessWidget {
                         (viewModel.finalPage) ? Container(
                           child: Row(
                             children: <Widget>[
-                              themeButton(context, "/register", "I'm new", 20.0, const Color(0xFFca4451)),
-                              themeButton(context, "/login", "Login", 20.0,  const Color(0xFF2c304d))
+                              themeButton(context, "Get Started!", 20.0, const Color(0xFFca4451)),
                             ],
                           ) 
                         ) : Container()
@@ -123,7 +122,7 @@ class Page extends StatelessWidget {
         ));
   }
 
-  Widget themeButton(context, path, title, size, color,) {
+  Widget themeButton(context, title, size, color,) {
     return Expanded(
           child: Container(
         margin: EdgeInsets.all(15.0),
@@ -135,7 +134,7 @@ class Page extends StatelessWidget {
                   color: Colors.white, fontFamily: 'Roboto', fontSize: size),
             ),
             onPressed: () {
-              Navigator.pushNamed(context, path);
+              Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
             }),
       ),
     );

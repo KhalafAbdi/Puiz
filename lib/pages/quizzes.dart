@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import '../data/database.dart';
 
 class QuizzesPage extends StatefulWidget {
+  int index;
+
+  QuizzesPage(this.index);
+
   @override
   _QuizzesPageState createState() => _QuizzesPageState();
 }
@@ -17,7 +21,6 @@ class _QuizzesPageState extends State<QuizzesPage> {
     Colors.red,
     Colors.green,
     Colors.orange,
-    Colors.pink
   ];
 
   @override
@@ -95,7 +98,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
             return ListView.builder(
                 shrinkWrap: true,
                 itemCount: snapshot.data.length,
-                itemBuilder: (context, index) => categoryButton(
+                itemBuilder: (context, index) => (snapshot.data[index].documentID.contains("Newest")) ? Container() : categoryButton(
                     index,
                     Icons.assistant,
                     snapshot.data[index].documentID,
@@ -107,11 +110,14 @@ class _QuizzesPageState extends State<QuizzesPage> {
   }
 
   Widget categoryButton(index, icon, title, subText) {
+    int i = index%5;
+
+
     return InkWell(
       onTap: () => updatePage(listSubCategories(title)),
       child: Container(
         margin: EdgeInsets.only(bottom: 10.0),
-        color: colors[index],
+        color: colors[i],
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class DeathMatchPage extends StatefulWidget {
+  int index;
+
+  DeathMatchPage(this.index);
+
   @override
   _DeathMatchPageState createState() => _DeathMatchPageState();
 }

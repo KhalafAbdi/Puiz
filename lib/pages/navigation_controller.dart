@@ -6,8 +6,13 @@ import 'package:pro/pages/deathmatch.dart';
 import 'package:pro/pages/multiplayer.dart';
 
 class NavigationController extends StatefulWidget {
+  
   @override
   _NavigationControllerState createState() => _NavigationControllerState();
+
+  updateCurrentTab(int index){
+    _NavigationControllerState().updateCurrentTab(index);
+  }
 }
 
 class _NavigationControllerState extends State<NavigationController> {
@@ -27,11 +32,11 @@ class _NavigationControllerState extends State<NavigationController> {
 
   @override
   initState(){
-    homePage = HomePage();
-    settingsPage = SettingsPage();
-    quizzesPage = QuizzesPage();
-    deathMatchPage = DeathMatchPage();
-    multiplayerPage = MultiplayerPage();
+    homePage = HomePage(0, updateCurrentTab);
+    multiplayerPage = MultiplayerPage(1);
+    deathMatchPage = DeathMatchPage(2);
+    quizzesPage = QuizzesPage(3);
+    settingsPage = SettingsPage(4);
     
     pageTitles = ["Home", "Multiplayer", "DeathMatch", "Quiz", "Settings"];
     pages = [homePage,multiplayerPage, deathMatchPage, quizzesPage, settingsPage];
@@ -40,9 +45,14 @@ class _NavigationControllerState extends State<NavigationController> {
     super.initState();   
   }
 
-  setCurrentTitle(String test){
+
+
+
+  updateCurrentTab(int index){
     setState(() {
-       currentTitle = test;   
+      currentTab = index;
+      currentPage = pages[index];
+      currentTitle = pageTitles[index];
     });
   }
 
@@ -53,13 +63,7 @@ class _NavigationControllerState extends State<NavigationController> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: currentTab,
-        onTap: (int index) {
-          setState(() {
-            currentTab = index;
-            currentPage = pages[index];
-            currentTitle = pageTitles[index];
-          });
-        },
+        onTap: (int index) => updateCurrentTab(index),
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), title: Text("Home")),
           BottomNavigationBarItem(icon: Icon(Icons.people), title: Text("Multiplayer")),
