@@ -38,6 +38,22 @@ class User{
 
   void setId(String s) => _id = s; 
 
+  void levelUp(int level) {
+    _level = level + 1;
+    _points = 0;
+  }
+
+  void addPoints(int level, int currentPoints){
+    int newPoints = currentPoints + 100;
+    int expForNextLevel = ((_level * 50) * (_level - 1)) + (_level * 100);
+
+    if(newPoints >= expForNextLevel){
+      levelUp(level);
+    }else {
+      _points = newPoints;
+    }
+  }
+
   Map<String,dynamic> toMap(){
     var map = new Map<String, dynamic>();
     map['displayName'] = _displayName;

@@ -101,5 +101,32 @@ class Database {
     return querySnapshot.documents;
   }
 
+  Future<User> levelUp(User user) async{
+    prefs = await SharedPreferences.getInstance();
+    String id = prefs.get("id");
+
+    DocumentSnapshot snapshot = await userCollectionRef.document(id).get();
+    int level = snapshot.data["level"];
+
+    user.levelUp(level);
+
+    userCollectionRef.document(id).setData(user.toMap());
+    return user;
+  }
+
+  Future<User> add100Points(User user) async{
+    prefs = await SharedPreferences.getInstance();
+    String id = prefs.get("id");
+
+    DocumentSnapshot snapshot = await userCollectionRef.document(id).get();
+    int level = snapshot.data["level"];
+    int points = snapshot.data["points"];
+
+    user.addPoints(level, points);
+
+    userCollectionRef.document(id).setData(user.toMap());
+    return user;
+  }
+
 
 }

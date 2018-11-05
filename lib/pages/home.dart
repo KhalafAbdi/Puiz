@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
               children: <Widget>[
                 welcomeCard(),
                 scoreCards(context),
-                newCategory(),
+                newCategoryContainer(),
                 challengeCard()
               ],
             ),
@@ -213,13 +213,13 @@ class _HomePageState extends State<HomePage> {
 
     */
 
-    int expForNextLevel =((user.level * 50) * (user.level - 1)) + (user.level * 100);
+    int expForNextLevel =
+        ((user.level * 50) * (user.level - 1)) + (user.level * 100);
     double percentLeft = 0.0;
 
-    if(user.points > 0){
+    if (user.points > 0) {
       percentLeft = user.points / expForNextLevel;
     }
-
 
     print(
         "level: ${user.level}, Current xp: ${user.points}, xp to next level: $expForNextLevel, you're $percentLeft% there");
@@ -273,7 +273,25 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget newCategory() {
+  Widget newCategoryContainer() {
+    return new FutureBuilder<DocumentSnapshot>(
+        future: Database().getNewestCategory(),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot != null) {
+              return newCategory(
+                  snapshot.data.documentID, snapshot.data['desc']);
+            } else {
+              return Container();
+            }
+          } else {
+            return Container();
+          }
+        });
+  }
+
+  Widget newCategory(String title, String subText) {
     return Container(
       margin: EdgeInsets.all(15.0),
       child: Column(
@@ -303,26 +321,16 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          new FutureBuilder<DocumentSnapshot>(
-            future: Database().getNewestCategory(),
-            builder: (BuildContext context,
-              AsyncSnapshot<DocumentSnapshot> snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot != null){
-                    return newCategoryCard(snapshot.data.documentID,snapshot.data['desc']);
-                  }else {
-                    return Container();
-                  }
-                } else {
-                   return new CircularProgressIndicator();
-                }
-              }
-          ),
+          newCategoryCard(title, subText)
         ],
       ),
     );
   }
 
+/*
+
+
+*/
 
 //newCategoryCard("History","Past events, Historic people, Wars, etc.")
   Widget newCategoryCard(String title, String subText) {
