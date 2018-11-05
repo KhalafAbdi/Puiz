@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pro/data/database.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pro/model/user.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -37,24 +37,28 @@ class _SettingsPageState extends State<SettingsPage> {
                 if (snapshot.connectionState == ConnectionState.done) {
                   return new Text(snapshot.data.toString());
                 } else {
-                   return new Text('Loading...');
+                   return new CircularProgressIndicator();
                 }
               }
           ), 
-          new FutureBuilder<SharedPreferences>(
-            future: SharedPreferences.getInstance(),
+          new FutureBuilder<User>(
+            future: Database().currentUser(),
             builder: (BuildContext context,
-              AsyncSnapshot<SharedPreferences> snapshot) {
+              AsyncSnapshot<User> snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  return Column(
+                  if (snapshot != null){
+                    return Column(
                     children: <Widget>[
-                      Text("ID: " + snapshot.data.get("id"), style: TextStyle(fontSize: 15.0, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold)),
-                      Text("Display Name: " + snapshot.data.get("displayName"), style: TextStyle(fontSize: 15.0, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold)),
-                      Text("Email: " + snapshot.data.get("email"), style: TextStyle(fontSize: 15.0, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold)),
+                      Text("ID: " + snapshot.data.id, style: TextStyle(fontSize: 15.0, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold)),
+                      Text("Display Name: " + snapshot.data.displayName, style: TextStyle(fontSize: 15.0, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold)),
+                      Text("Email: " + snapshot.data.email, style: TextStyle(fontSize: 15.0, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold)),
                     ],
                   );
+                  }else {
+
+                  }
                 } else {
-                   return new Text('Loading...');
+                   return new CircularProgressIndicator();
                 }
               }
           ), 

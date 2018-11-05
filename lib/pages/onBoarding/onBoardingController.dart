@@ -6,7 +6,6 @@ import 'package:pro/pages/onBoarding/animation/page_reveal.dart';
 import 'package:pro/pages/onBoarding/ui/pager_indicator.dart';
 import 'package:pro/pages/onBoarding/ui/pages.dart';
 
-
 class OnBoadingControllerPage extends StatefulWidget {
 
   @override
@@ -25,8 +24,8 @@ class _OnBoadingControllerPageState extends State<OnBoadingControllerPage> with 
    double slidePercent= 0.0;
 
   _OnBoadingControllerPageState(){
-    slideUpdateStream = StreamController<SlideUpdate>();
 
+    slideUpdateStream = StreamController<SlideUpdate>();
     slideUpdateStream.stream.listen((SlideUpdate event){
       setState(() {
         if( event.updateType == UpdateType.dragging){

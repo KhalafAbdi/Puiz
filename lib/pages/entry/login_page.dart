@@ -44,9 +44,9 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
     var db = new Database();
 
     db.getUserDisplay(user, user.displayName, user.email);
-    Navigator.of(context)
-        .pushNamedAndRemoveUntil('/onBoarding', (Route<dynamic> route) => false);
+    Navigator.of(context).pushNamedAndRemoveUntil('/onBoarding', (Route<dynamic> route) => false);
   }
+
 
   @override
   Widget build(BuildContext context) {

@@ -6,6 +6,7 @@ import '../model/user.dart';
 class Database {
   CollectionReference userCollectionRef;
   SharedPreferences prefs;
+  User user;
 
   Database(){
     init();
@@ -44,29 +45,50 @@ class Database {
     FirebaseAuth _auth = FirebaseAuth.instance;
     _auth.signOut();
 
-    removeLoggedInUserToPrefs();
   }
 
   Future<User> currentUser() async{
-    String dn = await prefs.get('displayName');
-    String email = await prefs.get('email');
-    String id = await prefs.get('id');
+    prefs = await SharedPreferences.getInstance();
+    String id = prefs.get("id");
 
-    User user = new User(dn, email);
-    user.setId(id);
+    DocumentSnapshot snapshot = await userCollectionRef.document(id).get();
+
+    User user = User.fromDatabase(
+      id, 
+      snapshot.data['displayName'], 
+      snapshot.data['email'], 
+      snapshot.data['level'], 
+      snapshot.data['points'], 
+      snapshot.data['coins'], 
+      snapshot.data['gold'], 
+      snapshot.data['completedRewards']
+    );
 
     return user;
+  }
+
+  Future<DocumentSnapshot> getNewestCategory() async{
+    Firestore firestore = Firestore.instance;
+    firestore.settings();
+
+    DocumentSnapshot snapshot = await firestore.collection('Categories').document('Newest Category').get();
+    String title = snapshot.data['title'];
+
+    return await firestore.collection('Categories').document(title).get();
+  }
+
+  Future isThisFirstLaunch(String id) async {
+    prefs = await SharedPreferences.getInstance();
+    String s = prefs.get(id);
+
+    print("Is this the first time logging in $s");
+    return null;
   }
 
   Future addLoggedInUserToPrefs(FirebaseUser user, String displayName, String email) async{
     await prefs.setString("displayName", displayName);
     await prefs.setString("email", email);
     await prefs.setString("id", user.uid);
-  }
-
-  Future removeLoggedInUserToPrefs() async{
-    prefs = await SharedPreferences.getInstance();
-    prefs.clear();
   }
 
   Future<List<DocumentSnapshot>> getQuizCategories() async {

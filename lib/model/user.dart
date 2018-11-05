@@ -5,7 +5,7 @@ class User{
   String _displayName;
   String _email;
   
-  int _level = 0;
+  int _level = 1;
   int _points = 0;
   int _coins = 0;
   int _gold = 0;
@@ -29,6 +29,12 @@ class User{
   String get displayName => _displayName;
   String get email => _email;
   String get id => _id;
+  int get level => _level;
+  int get points => _points;
+  int get coins => _coins;
+  int get gold => _gold;
+  int get completedReward => _completedRewards;
+
 
   void setId(String s) => _id = s; 
 
