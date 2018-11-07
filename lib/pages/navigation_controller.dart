@@ -10,8 +10,8 @@ class NavigationController extends StatefulWidget {
   @override
   _NavigationControllerState createState() => _NavigationControllerState();
 
-  updateCurrentTab(int index){
-    _NavigationControllerState().updateCurrentTab(index);
+  updateCurrentTab(int index, String title){
+    _NavigationControllerState().updateCurrentTab(index,title);
   }
 }
 
@@ -48,12 +48,25 @@ class _NavigationControllerState extends State<NavigationController> {
 
 
 
-  updateCurrentTab(int index){
-    setState(() {
-      currentTab = index;
-      currentPage = pages[index];
-      currentTitle = pageTitles[index];
-    });
+  updateCurrentTab(int index, String title){
+
+    if(title == null){
+      setState(() {
+        currentTab = index;
+        currentPage = pages[index];
+        currentTitle = pageTitles[index];
+      });
+    }else {
+      setState(() {
+        quizzesPage = QuizzesPage(3, title);
+        currentTab = 3;
+        currentPage = quizzesPage;
+        currentTitle = title;     
+      });
+    }
+
+
+    
   }
 
   @override
@@ -61,9 +74,11 @@ class _NavigationControllerState extends State<NavigationController> {
     return Scaffold(
       body: currentPage,
       bottomNavigationBar: BottomNavigationBar(
+        fixedColor: const Color(0xFFca4451),
+
         type: BottomNavigationBarType.fixed,
         currentIndex: currentTab,
-        onTap: (int index) => updateCurrentTab(index),
+        onTap: (int index) => updateCurrentTab(index, null),
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), title: Text("Home")),
           BottomNavigationBarItem(icon: Icon(Icons.people), title: Text("Multiplayer")),

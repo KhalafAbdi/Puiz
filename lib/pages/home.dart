@@ -6,9 +6,9 @@ import 'package:pro/pages/navigation_controller.dart';
 
 class HomePage extends StatefulWidget {
   int index;
-  final void Function(int) callback;
+  final void Function(int,String) quizPageCallBack;
 
-  HomePage(this.index, this.callback);
+  HomePage(this.index, this.quizPageCallBack);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -140,7 +140,7 @@ class _HomePageState extends State<HomePage> {
             style: TextStyle(
                 color: Colors.white, fontFamily: 'Roboto', fontSize: size),
           ),
-          onPressed: () => widget.callback(3),
+          onPressed: () => widget.quizPageCallBack(3,null),
     ));
   }
 
@@ -334,54 +334,57 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget newCategoryCard(String title, String subText) {
-    return Container(
-      margin: EdgeInsets.only(top: 7.0),
-      color: const Color(0xFF5592e1),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-              padding: EdgeInsets.only(top: 15.0, left: 15.0, bottom: 15.0),
-              child: Container(
-                decoration: BoxDecoration(
-                    border: BorderDirectional(
-                        end: BorderSide(color: Colors.white))),
-                padding: EdgeInsets.only(right: 15.0),
-                child: Icon(
-                  Icons.assistant,
-                  color: Colors.white,
-                  size: 40.0,
-                ),
-              )),
-          Container(
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(top: 10.0, left: 15.0),
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 25.0,
-                    fontWeight: FontWeight.w700,
+    return InkWell(
+      onTap: () => widget.quizPageCallBack(3,title),
+      child: Container(
+        margin: EdgeInsets.only(top: 7.0),
+        color: const Color(0xFF5592e1),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+                padding: EdgeInsets.only(top: 15.0, left: 15.0, bottom: 15.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                      border: BorderDirectional(
+                          end: BorderSide(color: Colors.white))),
+                  padding: EdgeInsets.only(right: 15.0),
+                  child: Icon(
+                    Icons.assistant,
                     color: Colors.white,
+                    size: 40.0,
+                  ),
+                )),
+            Container(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.only(top: 10.0, left: 15.0),
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 25.0,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                padding: EdgeInsets.only(left: 15.0, bottom: 5.0),
-                child: Text(
-                  subText,
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    fontWeight: FontWeight.w300,
-                    color: const Color(0xFFeaeaea),
+                Container(
+                  padding: EdgeInsets.only(left: 15.0, bottom: 5.0),
+                  child: Text(
+                    subText,
+                    style: TextStyle(
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.w300,
+                      color: const Color(0xFFeaeaea),
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ))
-        ],
+              ],
+            ))
+          ],
+        ),
       ),
     );
   }
@@ -424,52 +427,55 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          Container(
-              decoration: BoxDecoration(
-                  border: BorderDirectional(
-                bottom: BorderSide(width: 5.0, color: const Color(0xFFca4451)),
-              )),
-              margin: EdgeInsets.only(left: 15.0, right: 15.0, bottom: 15.0),
+          InkWell(
+            onTap: () => widget.quizPageCallBack(2,null),
               child: Container(
-                margin: EdgeInsets.only(top: 7.0),
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                        color: const Color(0xFFca4451),
-                        padding: EdgeInsets.only(
-                            top: 15.0, right: 15.0, left: 15.0, bottom: 10.0),
+              decoration: BoxDecoration(
+                    border: BorderDirectional(
+                  bottom: BorderSide(width: 5.0, color: const Color(0xFFca4451)),
+                )),
+                margin: EdgeInsets.only(left: 15.0, right: 15.0, bottom: 15.0),
+                child: Container(
+                  margin: EdgeInsets.only(top: 7.0),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                          color: const Color(0xFFca4451),
+                          padding: EdgeInsets.only(
+                              top: 15.0, right: 15.0, left: 15.0, bottom: 10.0),
+                          child: Container(
+                            child: Icon(
+                              Icons.whatshot,
+                              color: Colors.white,
+                              size: 40.0,
+                            ),
+                          )),
+                      Container(
                         child: Container(
-                          child: Icon(
-                            Icons.whatshot,
-                            color: Colors.white,
-                            size: 40.0,
-                          ),
-                        )),
-                    Container(
-                      child: Container(
-                        padding: EdgeInsets.only(left: 15.0),
-                        child: Text(
-                          "DeathMatch",
-                          style: TextStyle(
-                            fontSize: 25.0,
-                            fontWeight: FontWeight.w300,
-                            color: Colors.black,
+                          padding: EdgeInsets.only(left: 15.0),
+                          child: Text(
+                            "DeathMatch",
+                            style: TextStyle(
+                              fontSize: 25.0,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                        child: Container(
-                      padding: EdgeInsets.only(right: 10.0),
-                      alignment: Alignment(1.0, 0.0),
-                      child: Icon(
-                        Icons.keyboard_arrow_right,
-                        color: const Color(0xFFca4451),
-                      ),
-                    ))
-                  ],
-                ),
-              ))
+                      Expanded(
+                          child: Container(
+                        padding: EdgeInsets.only(right: 10.0),
+                        alignment: Alignment(1.0, 0.0),
+                        child: Icon(
+                          Icons.keyboard_arrow_right,
+                          color: const Color(0xFFca4451),
+                        ),
+                      ))
+                    ],
+                  ),
+                )),
+          )
         ],
       ),
     );

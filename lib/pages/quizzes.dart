@@ -4,8 +4,9 @@ import '../data/database.dart';
 
 class QuizzesPage extends StatefulWidget {
   int index;
+  String title;
 
-  QuizzesPage(this.index);
+  QuizzesPage(this.index, [this.title]);
 
   @override
   _QuizzesPageState createState() => _QuizzesPageState();
@@ -25,10 +26,18 @@ class _QuizzesPageState extends State<QuizzesPage> {
 
   @override
   initState() {
-    _currentPage = listCategories();
-    title = "Q U I Z";
+    if(widget.title == null){
+      _currentPage = listCategories();
+      title = "Q U I Z";
+    }else {
+      _currentPage = listSubCategories(widget.title);
+
+      title = styleText(widget.title);
+    }
+
     super.initState();
   }
+
 
   updatePage(Widget widget) {
     setState(() {
