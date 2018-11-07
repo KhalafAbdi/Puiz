@@ -17,25 +17,44 @@ class Database {
     firestore.settings();
 
     userCollectionRef = firestore.collection('Users');
+    
+  }
 
+  // ------------------ USER -----------------------
+  Future<bool> isLoggedIn()async{
     prefs = await SharedPreferences.getInstance();
+    bool t = (prefs.getKeys().contains("isLoggedin")) ? prefs.getBool("isLoggedin") : null;
+    print("isLoggedIn returned $t");
+    return (t == null) ? false : true;
+  }
+
+  login() async{
+    prefs = await SharedPreferences.getInstance();
+    prefs.setBool("isLoggedin", true);
+    print("Login has been called, which should now be ${ prefs.getBool("isLoggedin")}");
+  }
+
+  logout() async {
+    prefs = await SharedPreferences.getInstance();
+    prefs.setBool("isLoggedin", false);
   }
 
   Future createUserAndLogin(FirebaseUser user, String displayName, String email) async {
     User userData = User(displayName, email);
 
     userCollectionRef.document(user.uid).setData(userData.toMap()).whenComplete((){
-      print("User: - $displayName - Added");
       addLoggedInUserToPrefs(user, displayName, email);
     }).catchError((e) => print(e));
+
+    login();
   }
 
   Future getUserDisplay(FirebaseUser user, String displayName, String email) async{
     DocumentSnapshot snapshot = await userCollectionRef.document(user.uid).get();
 
     if(snapshot.exists){
-      await userCollectionRef.document(user.uid).get()
-        .then((value) => addLoggedInUserToPrefs(user, value.data['displayName'], value.data['email']));
+      await userCollectionRef.document(user.uid).get().then((value) => addLoggedInUserToPrefs(user, value.data['displayName'], value.data['email']));
+      login();
     }else{
       createUserAndLogin(user, displayName, email);
     }
@@ -44,8 +63,15 @@ class Database {
   signOut(){
     FirebaseAuth _auth = FirebaseAuth.instance;
     _auth.signOut();
-
+    logout();
   }
+
+
+  // ------------------ CATEGORIES -----------------------
+
+
+
+
 
   Future<User> currentUser() async{
     prefs = await SharedPreferences.getInstance();
@@ -86,9 +112,11 @@ class Database {
   }
 
   Future addLoggedInUserToPrefs(FirebaseUser user, String displayName, String email) async{
-    await prefs.setString("displayName", displayName);
-    await prefs.setString("email", email);
-    await prefs.setString("id", user.uid);
+    prefs = await SharedPreferences.getInstance();
+
+    prefs.setString("displayName", displayName);
+    prefs.setString("email", email);
+    prefs.setString("id", user.uid);
   }
 
   Future<List<DocumentSnapshot>> getQuizCategories() async {

@@ -113,7 +113,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
                     snapshot.data[index].documentID,
                     snapshot.data[index]['desc']));
           } else {
-            return Center(child: CircularProgressIndicator());
+            return new Center(child: new CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(const Color(0xFF2c304d))));
           }
         });
   }
@@ -196,11 +196,12 @@ class _QuizzesPageState extends State<QuizzesPage> {
       child: FutureBuilder<List<DocumentSnapshot>>(
           future: Database().getQuizCategory(title),
           builder: (BuildContext context,
-              AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
+ AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
             if (snapshot.hasError) print(snapshot.error);
+            
             return snapshot.hasData
                 ? cardTiles(snapshot.data)
-                : new Center(child: new CircularProgressIndicator());
+                : new Center(child: new CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(const Color(0xFF2c304d))));
           }),
     );
   }

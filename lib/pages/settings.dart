@@ -51,106 +51,108 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-                  child: Column(
-            children: <Widget>[
-              Container(
-                child: RaisedButton(
-                  child: Text("Sign Out"),
-                  onPressed: _signOut,
+    return SingleChildScrollView(
+          child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          
+                    child: Column(
+              children: <Widget>[
+                Container(
+                  child: RaisedButton(
+                    child: Text("Sign Out"),
+                    onPressed: _signOut,
+                  ),
                 ),
-              ),
-              new FutureBuilder<FirebaseUser>(
-                  future: FirebaseAuth.instance.currentUser(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<FirebaseUser> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return new Text(snapshot.data.toString());
-                    } else {
-                      return new CircularProgressIndicator();
-                    }
-                  }),
-              new FutureBuilder<User>(
-                  future: Database().currentUser(),
-                  builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      if (snapshot != null) {
-                        return Column(
-                          children: <Widget>[
-                            Text("ID: " + snapshot.data.id,
-                                style: TextStyle(
-                                    fontSize: 15.0,
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.bold)),
-                            Text("Display Name: " + snapshot.data.displayName,
-                                style: TextStyle(
-                                    fontSize: 15.0,
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.bold)),
-                            Text("Email: " + snapshot.data.email,
-                                style: TextStyle(
-                                    fontSize: 15.0,
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.bold)),
-                          ],
-                        );
-                      } else {}
-                    } else {
-                      return new CircularProgressIndicator();
-                    }
-                  }),
-              GridView.count(
-                // Create a grid with 2 columns. If you change the scrollDirection to
-                // horizontal, this would produce 2 rows.
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 3,
-                shrinkWrap: true,
-                // Generate 100 Widgets that display their index in the List
-                children: <Widget>[
-                  Center(
-                    child: RaisedButton(
-                      child: Text("+ One level"),
-                      onPressed: () => _levelUp(),
+                new FutureBuilder<FirebaseUser>(
+                    future: FirebaseAuth.instance.currentUser(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<FirebaseUser> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return new Text(snapshot.data.toString());
+                      } else {
+                        return new CircularProgressIndicator();
+                      }
+                    }),
+                new FutureBuilder<User>(
+                    future: Database().currentUser(),
+                    builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        if (snapshot != null) {
+                          return Column(
+                            children: <Widget>[
+                              Text("ID: " + snapshot.data.id,
+                                  style: TextStyle(
+                                      fontSize: 15.0,
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.bold)),
+                              Text("Display Name: " + snapshot.data.displayName,
+                                  style: TextStyle(
+                                      fontSize: 15.0,
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.bold)),
+                              Text("Email: " + snapshot.data.email,
+                                  style: TextStyle(
+                                      fontSize: 15.0,
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.bold)),
+                            ],
+                          );
+                        } else {}
+                      } else {
+                        return new CircularProgressIndicator();
+                      }
+                    }),
+                GridView.count(
+                  // Create a grid with 2 columns. If you change the scrollDirection to
+                  // horizontal, this would produce 2 rows.
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 3,
+                  shrinkWrap: true,
+                  // Generate 100 Widgets that display their index in the List
+                  children: <Widget>[
+                    Center(
+                      child: RaisedButton(
+                        child: Text("+ One level"),
+                        onPressed: () => _levelUp(),
+                      ),
                     ),
-                  ),
-                  Center(
-                    child: RaisedButton(
-                      child: Text("+ 100 points"),
-                      onPressed: () => _add100Points(),
+                    Center(
+                      child: RaisedButton(
+                        child: Text("+ 100 points"),
+                        onPressed: () => _add100Points(),
+                      ),
                     ),
-                  ),
-                  Center(
-                    child: RaisedButton(
-                      child: Text("Buy Coins"),
-                      onPressed: () => _addCoins(),
+                    Center(
+                      child: RaisedButton(
+                        child: Text("Buy Coins"),
+                        onPressed: () => _addCoins(),
+                      ),
                     ),
-                  ),
-                  Center(
-                    child: RaisedButton(
-                      child: Text("Buy gold"),
-                      onPressed: () => _addGold(),
+                    Center(
+                      child: RaisedButton(
+                        child: Text("Buy gold"),
+                        onPressed: () => _addGold(),
+                      ),
                     ),
-                  ),
-                  Center(
-                    child: RaisedButton(
-                      child: Text("Spend Coins"),
-                      onPressed: () => _removeCoins(),
+                    Center(
+                      child: RaisedButton(
+                        child: Text("Spend Coins"),
+                        onPressed: () => _removeCoins(),
+                      ),
                     ),
-                  ),
-                  Center(
-                    child: RaisedButton(
-                      child: Text("Add a Gold"),
-                      onPressed: () => _removeGold(),
-                    ),
-                  )
-                ],
-              ),
-              scoreCards(context)
-            ],
+                    Center(
+                      child: RaisedButton(
+                        child: Text("Add a Gold"),
+                        onPressed: () => _removeGold(),
+                      ),
+                    )
+                  ],
+                ),
+                scoreCards(context)
+              ],
+            ),
           ),
-        ));
+    );
   }
 
   Widget scoreCards(BuildContext context) {
