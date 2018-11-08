@@ -220,7 +220,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
 
   Widget cardTiles(List<DocumentSnapshot> data, String title) {
 
-    bla(data.length, title);
+    openQuiz(data.length, title);
 
     return GridView.count(
       primary: false,
@@ -240,7 +240,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
     int i = index%3;
 
     return InkWell (
-      onTap: () => print("You tapped on $title"),
+      onTap: () => openQuiz(0, title),
       child: Container(
         decoration: BoxDecoration(
             color: Colors.white,
@@ -278,7 +278,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
     updatePage(listCategories());
   }
 
-  bla(int i, String title) async{
+  openQuiz(int i, String title) async{
     FirebaseUser _auth = await FirebaseAuth.instance.currentUser();
 
     if(i <= 0){
