@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../data/database.dart';
+import 'package:pro/config/application.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class QuizzesPage extends StatefulWidget {
   int index;
@@ -81,16 +83,19 @@ class _QuizzesPageState extends State<QuizzesPage> {
             ),
           ),
         ),
-        SingleChildScrollView(
-          child: Container(
+        Container(
             margin: EdgeInsets.all(15.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[_currentPage],
+            child: SingleChildScrollView(
+                          child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  _currentPage
+                ],
+              ),
             ),
           ),
-        )
+        
       ],
     );
   }
@@ -106,6 +111,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
           if (snapshot.connectionState == ConnectionState.done) {
             return ListView.builder(
                 shrinkWrap: true,
+                controller: ScrollController(),
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) => (snapshot.data[index].documentID.contains("Newest")) ? Container() : categoryButton(
                     index,
@@ -113,7 +119,14 @@ class _QuizzesPageState extends State<QuizzesPage> {
                     snapshot.data[index].documentID,
                     snapshot.data[index]['desc']));
           } else {
-            return new Center(child: new CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(const Color(0xFF2c304d))));
+            return Container(
+              margin: EdgeInsets.all(5.0), 
+              child: new Center(
+                child: new CircularProgressIndicator(
+                  valueColor: new AlwaysStoppedAnimation<Color>(const Color(0xFF2c304d))
+                )
+              )
+              );
           }
         });
   }
@@ -195,18 +208,20 @@ class _QuizzesPageState extends State<QuizzesPage> {
       onWillPop: _onWillPop,
       child: FutureBuilder<List<DocumentSnapshot>>(
           future: Database().getQuizCategory(title),
-          builder: (BuildContext context,
- AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
+          builder: (BuildContext context,AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
             if (snapshot.hasError) print(snapshot.error);
             
             return snapshot.hasData
-                ? cardTiles(snapshot.data)
+                ?cardTiles(snapshot.data, title)
                 : new Center(child: new CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(const Color(0xFF2c304d))));
           }),
     );
   }
 
-  Widget cardTiles(List<DocumentSnapshot> data) {
+  Widget cardTiles(List<DocumentSnapshot> data, String title) {
+
+    bla(data.length, title);
+
     return GridView.count(
       primary: false,
       crossAxisCount: 3,
@@ -222,6 +237,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
 
   Widget loadCard(title, index) {
     List icons = [Icons.palette, Icons.near_me, Icons.nature, Icons.movie];
+    int i = index%3;
 
     return InkWell (
       onTap: () => print("You tapped on $title"),
@@ -238,7 +254,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Icon(
-                  icons[index],
+                  icons[i],
                   color: const Color(0xFFca4451),
                   size: 100.0,
                 ),
@@ -260,6 +276,14 @@ class _QuizzesPageState extends State<QuizzesPage> {
 
   Future<bool> _onWillPop() {
     updatePage(listCategories());
+  }
+
+  bla(int i, String title) async{
+    FirebaseUser _auth = await FirebaseAuth.instance.currentUser();
+
+    if(i <= 0){
+      Application.router.navigateTo(context, "/quiz?subject=$title", clearStack: true);
+    }
   }
 }
 

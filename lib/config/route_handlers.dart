@@ -1,0 +1,40 @@
+import 'package:fluro/fluro.dart';
+import 'package:flutter/material.dart';
+
+import 'package:pro/pages/landingPage.dart';
+import 'package:pro/pages/entry/login_page.dart';
+import 'package:pro/pages/entry/register_page.dart';
+import 'package:pro/pages/navigation_controller.dart';
+import 'package:pro/pages/onBoarding/onBoardingController.dart';
+import 'package:pro/pages/quizpage.dart';
+
+var rootHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return LandingPage();
+});
+
+var loginHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return LoginPage();
+});
+
+var registerHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return RegisterPage();
+});
+
+var homeHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return NavigationController();
+});
+
+var onBoardingHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return OnBoadingControllerPage();
+});
+
+var quizHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+    String subject = params["subject"]?.first;
+  return QuizPage(subject : subject);
+});
