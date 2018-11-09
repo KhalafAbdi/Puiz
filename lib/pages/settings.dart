@@ -38,7 +38,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   _add100Points() {
-    Database().add100Points(user).then((value) => updatepage(value));
+    Database().addPoints(user, 100).then((value) => updatepage(value));
   }
 
   _addCoins() {}

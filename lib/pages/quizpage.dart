@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pro/config/application.dart';
 import 'package:http/http.dart' as http;
-import 'dart:math';
+import 'package:pro/data/database.dart';
+import 'package:pro/model/user.dart';
 
 class QuizPage extends StatefulWidget {
   final subject;
@@ -18,45 +19,56 @@ class _QuizPageState extends State<QuizPage> {
   var subjects = {
     'Any Category': null, //https://opentdb.com/api.php?amount=1
     'General Knowledge': 9, //https://opentdb.com/api.php?amount=1&category=9
-    'Books' : 10,
-    'Film' : 11,
-    'Music' : 12,
-    'Musicals & Theatres' : 13,
-    'Television' : 14,
-    'Video Games' : 15,
-    'Board Games' : 16,
-    'Science & Nature' : 17,
-    'Computers' : 18,
-    'Mathematics' : 19,
-    'Mythology' : 20,
-    'Sports' : 21,
-    'Geography' : 22,
-    'History' : 23,
-    'Politics' : 24,
-    'Art' : 25,
-    'Celebrities' : 26,
-    'Animals' : 27,
-    'Vehicles' : 28,
-    'Entertainment' : 29,
-    'Gadgets' : 30,
-    'Japanese Anime & Manga' : 31,
-    'Cartoon & Animations' : 32,
+    'Books': 10,
+    'Film': 11,
+    'Music': 12,
+    'Musicals & Theatres': 13,
+    'Television': 14,
+    'Video Games': 15,
+    'Board Games': 16,
+    'Science & Nature': 17,
+    'Computers': 18,
+    'Mathematics': 19,
+    'Mythology': 20,
+    'Sports': 21,
+    'Geography': 22,
+    'History': 23,
+    'Politics': 24,
+    'Art': 25,
+    'Celebrities': 26,
+    'Animals': 27,
+    'Vehicles': 28,
+    'Entertainment': 29,
+    'Gadgets': 30,
+    'Japanese Anime & Manga': 31,
+    'Cartoon & Animations': 32,
   };
 
   int responseCode;
   List<Results> results;
+  List<AnswerWidget> ansCards;
   String link;
-  int nQuestions = 5;
+  int nQuestions = 10;
+  int score = 0;
 
-  int counter = 0;
-  Widget w;
-   
+  int questionNumber = 0;
+  Color difficultyColor = Colors.greenAccent;
+  int pointsForCorrectAnswer = 50;
+
+  bool doneLoadingData = false;
+  User user;
+
+  int correctAnswers = 0;
+
   @override
   void initState() {
     super.initState();
 
     link = "https://opentdb.com/api.php?amount=$nQuestions&category=${subjects[widget.subject]}&type=multiple";
     print(link);
+
+
+    fetchQuestions();
   }
 
   Future<void> fetchQuestions() async {
@@ -65,6 +77,11 @@ class _QuizPageState extends State<QuizPage> {
     print(decRes);
 
     fromJson(decRes);
+
+    user = await Database().currentUser();
+    setState(() {
+      doneLoadingData = true;
+    });
   }
 
   fromJson(Map<String, dynamic> json) {
@@ -90,59 +107,138 @@ class _QuizPageState extends State<QuizPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onWillPop,
-        child: Material(
-          child: RefreshIndicator(
-        onRefresh: fetchQuestions,
-        child: FutureBuilder(
-            future: fetchQuestions(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.none:
-                  return Text('Press button to start.');
-                case ConnectionState.active:
-                case ConnectionState.waiting:
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                case ConnectionState.done:
-                  if (snapshot.hasError) return errorData(snapshot);
-                  return questionList();
-              }
-              return Container();
-            }),
-      ),
+      child: Material(
+        color: const Color(0xcc2c304d),
+        child: doneLoadingData ? questionList() : Container(child: Center(child: CircularProgressIndicator()))
       ),
     );
   }
 
-  Widget questionList(){
-    List l = [];
-    l.addAll(results[counter].allAnswers);
+  setUpQuestion(){
+    if(results[questionNumber].difficulty == "hard"){
+      difficultyColor = Colors.redAccent;
+      pointsForCorrectAnswer = 200;
+    }else if(results[questionNumber].difficulty == "medium"){
+      difficultyColor = Colors.orangeAccent;
+      pointsForCorrectAnswer = 100;
+    }
 
+  }
+
+
+
+  Widget questionList() {
+
+    setUpQuestion();
 
     return Container(
-      margin: EdgeInsets.only(top:30.0, left: 15.0, right: 15.0),
+      margin: EdgeInsets.only(top: 75.0, left: 15.0, right: 15.0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text("Question $counter/$nQuestions"),
-          Text(results[counter].question),
-          Text(l.toString()),
-          
-          RaisedButton(
-            onPressed: () => couterAdd,
+          new Container(
+            margin: EdgeInsets.only(bottom: 5.0),
+            alignment: Alignment.centerRight,
+            child: new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                new Text("Question ${questionNumber + 1} of ${results.length}",
+                    style: TextStyle(
+                        fontSize: 18.0,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w300)),
+                new Text("Score: $score",
+                    style: TextStyle(
+                        fontSize: 18.0,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w300))
+              ],
+            ),
+          ),
+          Card(
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(top:5.0),
+                alignment: Alignment.center,
+                child: Text(results[questionNumber].difficulty,
+                    style: TextStyle(
+                        color: difficultyColor,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15.0)),
+              ),
+              Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.only(
+                    top: 65.0, bottom: 75.0, left: 15.0, right: 15.0),
+                child: Text(results[questionNumber].question,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.w300,
+                        color: const Color(0xcc2c304d))),
+              ),
+            ],
+          )),
+          Container(
+            alignment: Alignment.center,
+            padding: EdgeInsets.only(right: 5.0, bottom: 5.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Text("+$pointsForCorrectAnswer", style: TextStyle(color: Colors.greenAccent, fontSize: 15.0)),
+                Text(" points for the correct answer",
+                    style: TextStyle(color: Colors.white))
+              ],
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(top:30.0),
+            child: Column(
+              children: results[questionNumber].allAnswers.map((m) {
+                return AnswerWidget(results[questionNumber], m,answer);
+              }).toList(),
+            ),
           )
         ],
       ),
     );
   }
 
-  couterAdd(){
-    setState(() {
-      counter++;
-    w = questionList();    
-        });
-    
+  answer(bool correctAnswer){
+
+    if(correctAnswer){
+      print("Correct!");
+      correctAnswers++;
+      answeredCorrectly();
+    }else {
+      print("Wrong");
+      nextQuestion();
+    }
   }
+
+  answeredCorrectly(){
+    setState(() {
+      score = score+pointsForCorrectAnswer; 
+      Database().addPoints(user, pointsForCorrectAnswer);
+      nextQuestion();  
+    }); 
+  }
+
+  nextQuestion(){
+    if(questionNumber == results.length - 1){
+      print("quiz is over!");
+      print("You got $correctAnswers correct out of ${results.length}");
+
+      //Switch to results page
+    }else{
+      setState(() {
+        questionNumber++;
+      });
+    }
+  }
+
 
   Padding errorData(AsyncSnapshot snapshot) {
     return Padding(
@@ -173,7 +269,60 @@ class _QuizPageState extends State<QuizPage> {
   }
 }
 
+class AnswerWidget extends StatefulWidget {
 
+  final String m;
+  final void Function(bool) answer;
+  final Results result;
+
+
+  AnswerWidget(this.result, this.m, this.answer);
+
+
+  @override
+  _AnswerWidgetState createState() => _AnswerWidgetState();
+}
+
+class _AnswerWidgetState extends State<AnswerWidget> {
+  Color answerColor = Colors.white;
+  bool correctAnswer = false;
+
+  answer(){
+    setState(() {
+      
+      
+      if (widget.result.correctAnswer == widget.m) {
+        //answerColor = Colors.greenAccent;
+        correctAnswer = true;
+      }else {
+        //answerColor = Colors.redAccent;
+      }
+      
+      
+      widget.answer(correctAnswer);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: answerColor,
+      margin: EdgeInsets.only(bottom: 20.0),
+      child: ListTile(
+        enabled: true,
+        onTap: () => answer(),
+        title: Text(
+          widget.m,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: const Color(0xcc2c304d),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class Results {
   String category;
@@ -213,3 +362,5 @@ class Results {
     return data;
   }
 }
+
+

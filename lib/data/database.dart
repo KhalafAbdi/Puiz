@@ -142,15 +142,15 @@ class Database {
     return user;
   }
 
-  Future<User> add100Points(User user) async{
+  Future<User> addPoints(User user, int points) async{
     prefs = await SharedPreferences.getInstance();
     String id = prefs.get("id");
 
     DocumentSnapshot snapshot = await userCollectionRef.document(id).get();
     int level = snapshot.data["level"];
-    int points = snapshot.data["points"];
+    int currentPoints = snapshot.data["points"];
 
-    user.addPoints(level, points);
+    user.addPoints(level, currentPoints, points);
 
     userCollectionRef.document(id).setData(user.toMap());
     return user;
