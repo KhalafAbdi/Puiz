@@ -6,6 +6,9 @@ import 'package:pro/pages/deathmatch.dart';
 import 'package:pro/pages/multiplayer.dart';
 
 class NavigationController extends StatefulWidget {
+  final subject;
+
+  NavigationController([this.subject]);
   
   @override
   _NavigationControllerState createState() => _NavigationControllerState();
@@ -40,8 +43,17 @@ class _NavigationControllerState extends State<NavigationController> {
     
     pageTitles = ["Home", "Multiplayer", "DeathMatch", "Quiz", "Settings"];
     pages = [homePage,multiplayerPage, deathMatchPage, quizzesPage, settingsPage];
-    currentPage = homePage;
-    currentTitle = "Home";
+
+    if(widget.subject == null){
+      currentPage = homePage;
+      currentTitle = "Home";
+    }else {
+      quizzesPage = QuizzesPage(3, widget.subject);
+        currentTab = 3;
+        currentPage = quizzesPage;
+        currentTitle = widget.subject; 
+    }
+
     super.initState();   
   }
 

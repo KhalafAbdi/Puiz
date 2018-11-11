@@ -28,7 +28,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
 
   @override
   initState() {
-    if(widget.title == null){
+    if(widget.title == null || widget.title == "quiz"){
       _currentPage = listCategories();
       title = "Q U I Z";
     }else {

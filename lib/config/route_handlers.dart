@@ -7,6 +7,7 @@ import 'package:pro/pages/entry/register_page.dart';
 import 'package:pro/pages/navigation_controller.dart';
 import 'package:pro/pages/onBoarding/onBoardingController.dart';
 import 'package:pro/pages/quizpage.dart';
+import 'package:pro/pages/scorepage.dart';
 
 var rootHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
@@ -25,7 +26,8 @@ var registerHandler = new Handler(
 
 var homeHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-  return NavigationController();
+    String subject = params["subject"]?.first;
+  return NavigationController(subject);
 });
 
 var onBoardingHandler = new Handler(
@@ -37,4 +39,12 @@ var quizHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
     String subject = params["subject"]?.first;
   return QuizPage(subject : subject);
+});
+
+var scoreHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+    String subject = params["subject"]?.first;
+    String score = params["score"]?.first;
+    String totalScore = params["totalScore"]?.first;
+  return ScorePage(subject: subject, score: score, totalScore: totalScore);
 });

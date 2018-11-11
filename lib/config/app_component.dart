@@ -21,7 +21,7 @@ class AppComponentState extends State<AppComponent> {
   @override
   Widget build(BuildContext context) {
     final app = new MaterialApp(
-      title: 'Fluro',
+      title: 'Puiz',
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),

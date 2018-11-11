@@ -5,6 +5,7 @@ import 'package:pro/config/application.dart';
 import 'package:http/http.dart' as http;
 import 'package:pro/data/database.dart';
 import 'package:pro/model/user.dart';
+import 'package:html_unescape/html_unescape.dart';
 
 class QuizPage extends StatefulWidget {
   final subject;
@@ -48,7 +49,7 @@ class _QuizPageState extends State<QuizPage> {
   List<Results> results;
   List<AnswerWidget> ansCards;
   String link;
-  int nQuestions = 10;
+  int nQuestions = 3;
   int score = 0;
 
   int questionNumber = 0;
@@ -60,13 +61,16 @@ class _QuizPageState extends State<QuizPage> {
 
   int correctAnswers = 0;
 
+  var unescape = new HtmlUnescape();
+
+  int maxScore = 0;
+
   @override
   void initState() {
     super.initState();
 
     link = "https://opentdb.com/api.php?amount=$nQuestions&category=${subjects[widget.subject]}&type=multiple";
     print(link);
-
 
     fetchQuestions();
   }
@@ -76,6 +80,8 @@ class _QuizPageState extends State<QuizPage> {
     var decRes = jsonDecode(res.body);
     print(decRes);
 
+    
+    
     fromJson(decRes);
 
     user = await Database().currentUser();
@@ -132,12 +138,20 @@ class _QuizPageState extends State<QuizPage> {
     setUpQuestion();
 
     return Container(
-      margin: EdgeInsets.only(top: 75.0, left: 15.0, right: 15.0),
+      margin: EdgeInsets.only(top: 40.0, left: 15.0, right: 15.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          Center(
+                      child: Text(widget.subject,
+              style: TextStyle(
+                  fontSize: 30.0,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w300)),
+          ),
+
           new Container(
-            margin: EdgeInsets.only(bottom: 5.0),
+            margin: EdgeInsets.only(bottom: 5.0, top: 25.0),
             alignment: Alignment.centerRight,
             child: new Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -172,7 +186,7 @@ class _QuizPageState extends State<QuizPage> {
                 alignment: Alignment.center,
                 margin: EdgeInsets.only(
                     top: 65.0, bottom: 75.0, left: 15.0, right: 15.0),
-                child: Text(results[questionNumber].question,
+                child: Text(unescape.convert(results[questionNumber].question),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: 20.0,
@@ -207,6 +221,7 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   answer(bool correctAnswer){
+    maxScore = maxScore + pointsForCorrectAnswer;
 
     if(correctAnswer){
       print("Correct!");
@@ -231,7 +246,8 @@ class _QuizPageState extends State<QuizPage> {
       print("quiz is over!");
       print("You got $correctAnswers correct out of ${results.length}");
 
-      //Switch to results page
+
+      Application.router.navigateTo(context, "/score?subject=${widget.subject}&score=$score&totalScore=$maxScore", clearStack: true);
     }else{
       setState(() {
         questionNumber++;
@@ -267,6 +283,16 @@ class _QuizPageState extends State<QuizPage> {
   Future<bool> _onWillPop() {
     Application.router.navigateTo(context, "/", clearStack: true);
   }
+
+  String styleText(String title) {
+    String upperCasetitle = title.toUpperCase();
+    String result = "";
+
+    for (int i = 0; i < upperCasetitle.length; i++) {
+      result = result + upperCasetitle[i] + " ";
+    }
+    return result;
+  }
 }
 
 class AnswerWidget extends StatefulWidget {
@@ -286,6 +312,7 @@ class AnswerWidget extends StatefulWidget {
 class _AnswerWidgetState extends State<AnswerWidget> {
   Color answerColor = Colors.white;
   bool correctAnswer = false;
+  var unescape = new HtmlUnescape();
 
   answer(){
     setState(() {
@@ -312,7 +339,7 @@ class _AnswerWidgetState extends State<AnswerWidget> {
         enabled: true,
         onTap: () => answer(),
         title: Text(
-          widget.m,
+          unescape.convert(widget.m),
           textAlign: TextAlign.center,
           style: TextStyle(
             color: const Color(0xcc2c304d),
