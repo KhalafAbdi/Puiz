@@ -10,7 +10,11 @@ import 'package:html_unescape/html_unescape.dart';
 class QuizPage extends StatefulWidget {
   final subject;
 
-  QuizPage({@required this.subject});
+  QuizPage({@required this.subject}){
+    print("I have been summoned with this $subject");
+  }
+
+  
 
   @override
   _QuizPageState createState() => _QuizPageState();
@@ -23,11 +27,11 @@ class _QuizPageState extends State<QuizPage> {
     'Books': 10,
     'Film': 11,
     'Music': 12,
-    'Musicals & Theatres': 13,
+    'Musicals and Theatres': 13,
     'Television': 14,
     'Video Games': 15,
     'Board Games': 16,
-    'Science & Nature': 17,
+    'Science and Nature': 17,
     'Computers': 18,
     'Mathematics': 19,
     'Mythology': 20,
@@ -39,10 +43,10 @@ class _QuizPageState extends State<QuizPage> {
     'Celebrities': 26,
     'Animals': 27,
     'Vehicles': 28,
-    'Entertainment': 29,
+    'Comics': 29,
     'Gadgets': 30,
-    'Japanese Anime & Manga': 31,
-    'Cartoon & Animations': 32,
+    'Japanese Anime and Manga': 31,
+    'Cartoon and Animations': 32,
   };
 
   int responseCode;
@@ -134,6 +138,8 @@ class _QuizPageState extends State<QuizPage> {
 
 
   Widget questionList() {
+    String title = widget.subject;
+    title = title.replaceAll("and", "&");
 
     setUpQuestion();
 
@@ -143,7 +149,7 @@ class _QuizPageState extends State<QuizPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Center(
-                      child: Text(widget.subject,
+                      child: Text(title,
               style: TextStyle(
                   fontSize: 30.0,
                   color: Colors.white,
@@ -281,7 +287,7 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   Future<bool> _onWillPop() {
-    Application.router.navigateTo(context, "/", clearStack: true);
+    Application.router.navigateTo(context, "/home?subject=quiz", clearStack: true);
   }
 
   String styleText(String title) {

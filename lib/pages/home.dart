@@ -230,9 +230,12 @@ class _HomePageState extends State<HomePage> {
     print(
         "level: ${user.level}, Current xp: ${user.points}, xp to next level: $expForNextLevel, you're $percentLeft% there");
 
-    double percent = width * percentLeft;
+       
 
-    Color textColor = (percentLeft > 0.60) ? Colors.white : Colors.black;
+    double percent = width * percentLeft;
+     print("width = $width, percent: $percent");
+
+    Color textColor = Colors.white ;
 
     return Container(
       margin: EdgeInsets.only(top: 10.0),
@@ -253,24 +256,31 @@ class _HomePageState extends State<HomePage> {
               children: <Widget>[
                 Container(
                   width: width,
-                  height: 20.0,
+                  height: 30.0,
                   decoration: BoxDecoration(
                     color: const Color(0xFFeaeaea),
                   ),
                 ),
                 Container(
                   width: percent,
-                  height: 20.0,
+                  height: 30.0,
                   color: const Color(0xFFca4451),
                 ),
                 Container(
-                    height: 20.0,
+                    height: 30.0,
+
                     alignment: Alignment.center,
-                    child: Text("${user.points}/$expForNextLevel",
-                        style: TextStyle(
-                            color: textColor,
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.w300)))
+                    child: InkWell(
+                      child: Container(
+                                            padding: EdgeInsets.only(left: 5.0, right: 5.0),
+                                            color: Colors.black26,
+                                                                                      child: Text("${user.points}/$expForNextLevel",
+                          style: TextStyle(
+                              color: textColor,
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.w300)),
+                                          ),
+                    ))
               ],
             ),
           )

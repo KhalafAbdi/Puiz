@@ -41,6 +41,32 @@ flutter:
     - assets/facebook.png
     - assets/google.png
     - assets/avataaars.png
+    - assets/Animals.png
+    - assets/Art.png
+    - assets/Celebrities.png
+    - assets/Entertainment.png
+    - assets/GeneralKnowledge.png
+    - assets/Geography.png
+    - assets/History.png
+    - assets/Mythology.png
+    - assets/Politics.png
+    - assets/Science&Nature.png
+    - assets/Sports.png
+    - assets/Vehicles.png
+    - assets/BoardGames.png
+    - assets/Books.png
+    - assets/Cartoon&Animation.png
+    - assets/Comics.png
+    - assets/Film.png
+    - assets/JapaneseAnime&Manga.png
+    - assets/Music.png
+    - assets/Musicals&Theatres.png
+    - assets/Television.png
+    - assets/VideoGames.png
+    - assets/Computers.png
+    - assets/Gadgets.png
+    - assets/Mathematics.png
+
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

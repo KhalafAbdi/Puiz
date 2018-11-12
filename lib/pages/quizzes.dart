@@ -5,8 +5,8 @@ import 'package:pro/config/application.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class QuizzesPage extends StatefulWidget {
-  int index;
-  String title;
+  final int index;
+  final String title;
 
   QuizzesPage(this.index, [this.title]);
 
@@ -15,31 +15,22 @@ class QuizzesPage extends StatefulWidget {
 }
 
 class _QuizzesPageState extends State<QuizzesPage> {
+  bool canGoBack = false;
   Widget _currentPage;
   String title;
-  bool goback = false;
-  List colors = [
-    Colors.indigo,
-    Colors.blue,
-    Colors.red,
-    Colors.green,
-    Colors.orange,
-  ];
-
+  
   @override
   initState() {
-    if(widget.title == null || widget.title == "quiz"){
+    if (widget.title == null || widget.title == "quiz") {
       _currentPage = listCategories();
       title = "Q U I Z";
-    }else {
+    } else {
       _currentPage = listSubCategories(widget.title);
-
       title = styleText(widget.title);
     }
 
     super.initState();
   }
-
 
   updatePage(Widget widget) {
     setState(() {
@@ -60,7 +51,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
                         color: Colors.white,
                         fontWeight: FontWeight.w300)),
                 backgroundColor: const Color(0xFF2c304d),
-                leading: goback
+                leading: canGoBack
                     ? IconButton(
                         tooltip: 'Previous choice',
                         icon: const Icon(Icons.arrow_back),
@@ -84,106 +75,108 @@ class _QuizzesPageState extends State<QuizzesPage> {
           ),
         ),
         Container(
-            margin: EdgeInsets.all(15.0),
-            child: SingleChildScrollView(
-                          child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  _currentPage
-                ],
-              ),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[_currentPage],
             ),
           ),
-        
+        ),
       ],
     );
   }
 
   Widget listCategories() {
     title = "Q U I Z";
-    goback = false;
+    canGoBack = false;
 
     return FutureBuilder<List<DocumentSnapshot>>(
         future: Database().getQuizCategories(),
-        builder: (BuildContext context,
-            AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return ListView.builder(
-                shrinkWrap: true,
-                controller: ScrollController(),
-                itemCount: snapshot.data.length,
-                itemBuilder: (context, index) => (snapshot.data[index].documentID.contains("Newest")) ? Container() : categoryButton(
-                    index,
-                    Icons.assistant,
-                    snapshot.data[index].documentID,
-                    snapshot.data[index]['desc']));
-          } else {
-            return Container(
-              margin: EdgeInsets.all(5.0), 
-              child: new Center(
-                child: new CircularProgressIndicator(
-                  valueColor: new AlwaysStoppedAnimation<Color>(const Color(0xFF2c304d))
-                )
-              )
-              );
-          }
+        builder: (BuildContext context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
+          return snapShotRes(snapshot, categoryList);
         });
   }
 
-  Widget categoryButton(index, icon, title, subText) {
-    int i = index%5;
+  Widget listSubCategories(String title) {
+    this.title = styleText(title);
+    canGoBack = true;
 
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: FutureBuilder<List<DocumentSnapshot>>(
+          future: Database().getQuizCategory(title),
+          builder: (BuildContext context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
+            return snapShotRes(snapshot, cardTiles, title);
+          }),
+    );
+  }
 
-    return InkWell(
-      onTap: () => updatePage(listSubCategories(title)),
-      child: Container(
-        margin: EdgeInsets.only(bottom: 10.0),
-        color: colors[i],
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget snapShotRes(AsyncSnapshot<List<DocumentSnapshot>> snapshot, Function func, [String name]){
+    if (snapshot.hasError) print(snapshot.error);
+
+    return snapshot.hasData
+      ? (name == null) ? func(snapshot.data) : func(snapshot.data, name)
+      : new Center(
+        child: new CircularProgressIndicator(
+          valueColor: new AlwaysStoppedAnimation<Color>(
+            const Color(0xFF2c304d))));
+  }
+
+  Widget categoryList(List<DocumentSnapshot> data) {
+    Map<String, Widget> map = new Map.fromIterable(data,
+        key: (item) => item.documentID,
+        value: (item) => categoryCards(item.documentID, listSubCategories, updatePage));
+
+    List<Widget> list = [];
+    map.forEach((s, w) => (s == "Newest Category") ? null : list.add(w));
+
+    return gridWidget(list);
+  }
+
+    Widget cardTiles(List<DocumentSnapshot> data, String name) {
+    openQuiz(data.length, name);
+
+    List<Widget> list = List.generate(data.length, (index) {
+      return categoryCards(data[index].documentID, openQuiz);
+    });
+
+    return gridWidget(list);
+  }
+
+  Widget categoryCards(String name, Function func, [Function func2]) {
+    return card(name, 'assets/${name.replaceAll(" ", "")}.png', func, func2);
+  }
+
+  Widget gridWidget(List<Widget> list) {
+    return GridView.count(
+        primary: false,
+        crossAxisCount: 3,
+        shrinkWrap: true,
+        childAspectRatio: 0.65,
+        mainAxisSpacing: 7.0,
+        crossAxisSpacing: 7.0,
+        children: list);
+  }
+
+  Widget card(String name, String iconPath, Function func, [Function func2]){
+    return Card(
+      margin: EdgeInsets.all(5.0),
+      color: Colors.white,
+      child: InkWell(
+        onTap: () => (func2 == null) ? func(0, name) : func2(func(name)), // Quiz(int, string) : updatePage(listSubCategories(string))
+        child: Column(
           children: <Widget>[
             Container(
-                padding: EdgeInsets.only(top: 15.0, left: 15.0, bottom: 15.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                      border: BorderDirectional(
-                          end: BorderSide(color: Colors.white))),
-                  padding: EdgeInsets.only(right: 15.0),
-                  child: Icon(
-                    icon,
-                    color: Colors.white,
-                    size: 40.0,
-                  ),
-                )),
-            Container(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(top: 10.0, left: 15.0),
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 25.0,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(left: 15.0, bottom: 5.0),
-                  child: Text(
-                    subText,
-                    style: TextStyle(
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.w300,
-                      color: const Color(0xFFeaeaea),
-                    ),
-                  ),
-                ),
-              ],
-            ))
+                padding: EdgeInsets.all(5.0),
+                margin: EdgeInsets.only(bottom: 10.0, top: 10.0),
+                child: Image.asset(iconPath)),
+            Text(name,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 15.0,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w300))
           ],
         ),
       ),
@@ -191,6 +184,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
   }
 
   String styleText(String title) {
+
     String upperCasetitle = title.toUpperCase();
     String result = "";
 
@@ -200,89 +194,18 @@ class _QuizzesPageState extends State<QuizzesPage> {
     return result;
   }
 
-  Widget listSubCategories(String title) {
-    this.title = styleText(title);
-    goback = true;
-
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: FutureBuilder<List<DocumentSnapshot>>(
-          future: Database().getQuizCategory(title),
-          builder: (BuildContext context,AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
-            if (snapshot.hasError) print(snapshot.error);
-            
-            return snapshot.hasData
-                ?cardTiles(snapshot.data, title)
-                : new Center(child: new CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(const Color(0xFF2c304d))));
-          }),
-    );
-  }
-
-  Widget cardTiles(List<DocumentSnapshot> data, String title) {
-
-    openQuiz(data.length, title);
-
-    return GridView.count(
-      primary: false,
-      crossAxisCount: 3,
-      shrinkWrap: true,
-      childAspectRatio: 0.80,
-      mainAxisSpacing: 7.0,
-      crossAxisSpacing: 7.0,
-      children: List.generate(data.length, (index) {
-        return loadCard(data[index].documentID, index);
-      }),
-    );
-  }
-
-  Widget loadCard(title, index) {
-    List icons = [Icons.palette, Icons.near_me, Icons.nature, Icons.movie];
-    int i = index%3;
-
-    return InkWell (
-      onTap: () => openQuiz(0, title),
-      child: Container(
-        decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border(
-              bottom: BorderSide(color: const Color(0xAA2c304d), width: 2.0),
-              right: BorderSide(color: const Color(0xAA2c304d), width: 2.0),
-            )),
-        child: Center(
-          child: Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(
-                  icons[i],
-                  color: const Color(0xFFca4451),
-                  size: 100.0,
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 20.0, bottom: 5.0),
-                  child: Text(title,
-                      style: TextStyle(
-                          fontSize: 15.0,
-                          color: const Color(0xFF2c304d),
-                          fontWeight: FontWeight.w300)),
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   Future<bool> _onWillPop() {
     updatePage(listCategories());
   }
 
-  openQuiz(int i, String title) async{
-    FirebaseUser _auth = await FirebaseAuth.instance.currentUser();
+  openQuiz(int i, String title) async {
+    title = title.replaceAll("&", "and"); // fluro can't handle &
+    FirebaseUser _auth = await FirebaseAuth.instance.currentUser(); //hack
 
-    if(i <= 0){
-      Application.router.navigateTo(context, "/quiz?subject=$title", clearStack: true);
+    if (i <= 0) {
+      Application.router
+          .navigateTo(context, "/quiz?subject=$title", clearStack: true);
     }
   }
 }
@@ -399,3 +322,4 @@ Category
 
 
 */
+
