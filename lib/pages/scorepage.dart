@@ -36,7 +36,7 @@ class ScorePage extends StatelessWidget {
 
     return Material(
       child: Container(
-        color: const Color(0xFF1c2754),
+        color: const Color(0xFF2c304d),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[

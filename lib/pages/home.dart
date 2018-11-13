@@ -6,7 +6,7 @@ import 'package:pro/pages/navigation_controller.dart';
 
 class HomePage extends StatefulWidget {
   int index;
-  final void Function(int,String) quizPageCallBack;
+  final void Function(int, String) quizPageCallBack;
 
   HomePage(this.index, this.quizPageCallBack);
 
@@ -15,6 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool doneLoading = false;
   User user;
 
   @override
@@ -117,31 +118,28 @@ class _HomePageState extends State<HomePage> {
               margin: EdgeInsets.only(
                   top: 5.0, bottom: 5.0, left: 10.0, right: 10.0),
               child: new IconButton(
-                iconSize: 125.0,
-                icon: new Image.asset('assets/avataaars.png'),
-                tooltip: 'Edit Avatar',
-                onPressed: () => {}
-              )),
+                  iconSize: 125.0,
+                  icon: new Image.asset('assets/avataaars.png'),
+                  tooltip: 'Edit Avatar',
+                  onPressed: () => {})),
           themeButton("Start new Quiz", 20.0)
         ],
       ),
     );
   }
 
-
-
   Widget themeButton(title, size) {
     return Container(
-      margin: EdgeInsets.only(bottom: 10.0),
-      color: const Color(0xFF2c304d),
-      child: MaterialButton(
+        margin: EdgeInsets.only(bottom: 10.0),
+        color: const Color(0xFF2c304d),
+        child: MaterialButton(
           child: Text(
             title,
             style: TextStyle(
                 color: Colors.white, fontFamily: 'Roboto', fontSize: size),
           ),
-          onPressed: () => widget.quizPageCallBack(3,null),
-    ));
+          onPressed: () => widget.quizPageCallBack(3, null),
+        ));
   }
 
   Widget scoreCards(BuildContext context) {
@@ -230,12 +228,10 @@ class _HomePageState extends State<HomePage> {
     print(
         "level: ${user.level}, Current xp: ${user.points}, xp to next level: $expForNextLevel, you're $percentLeft% there");
 
-       
-
     double percent = width * percentLeft;
-     print("width = $width, percent: $percent");
+    print("width = $width, percent: $percent");
 
-    Color textColor = Colors.white ;
+    Color textColor = Colors.white;
 
     return Container(
       margin: EdgeInsets.only(top: 10.0),
@@ -258,7 +254,7 @@ class _HomePageState extends State<HomePage> {
                   width: width,
                   height: 30.0,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFeaeaea),
+                    color: const Color(0xFFbcbcbc),
                   ),
                 ),
                 Container(
@@ -268,19 +264,28 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Container(
                     height: 30.0,
-
                     alignment: Alignment.center,
                     child: InkWell(
                       child: Container(
-                                            padding: EdgeInsets.only(left: 5.0, right: 5.0),
-                                            color: Colors.black26,
-                                                                                      child: Text("${user.points}/$expForNextLevel",
-                          style: TextStyle(
-                              color: textColor,
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.w300)),
-                                          ),
-                    ))
+                        padding: EdgeInsets.only(left: 5.0, right: 5.0),
+                        child: Text("${user.points}/$expForNextLevel",
+                            style: TextStyle(
+                                color: textColor,
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.w300)),
+                      ),
+                    )),
+                Container(
+                  width: width,
+                  height: 15.0,
+                  decoration: new BoxDecoration(
+                    gradient: new LinearGradient(
+                        colors: [Colors.black12, const Color(0x00000000)],
+                        begin: Alignment.topCenter,
+                        end: new Alignment(0.0, -0.4),
+                        tileMode: TileMode.clamp),
+                  ),
+                ),
               ],
             ),
           )
@@ -345,7 +350,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget newCategoryCard(String title, String subText) {
     return InkWell(
-      onTap: () => widget.quizPageCallBack(3,title),
+      onTap: () => widget.quizPageCallBack(3, title),
       child: Container(
         margin: EdgeInsets.only(top: 7.0),
         color: const Color(0xFF5592e1),
@@ -438,11 +443,12 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           InkWell(
-            onTap: () => widget.quizPageCallBack(2,null),
-              child: Container(
-              decoration: BoxDecoration(
+            onTap: () => widget.quizPageCallBack(2, null),
+            child: Container(
+                decoration: BoxDecoration(
                     border: BorderDirectional(
-                  bottom: BorderSide(width: 5.0, color: const Color(0xFFca4451)),
+                  bottom:
+                      BorderSide(width: 5.0, color: const Color(0xFFca4451)),
                 )),
                 margin: EdgeInsets.only(left: 15.0, right: 15.0, bottom: 15.0),
                 child: Container(
@@ -490,7 +496,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
 }
 
 class MyClipper extends CustomClipper<Path> {

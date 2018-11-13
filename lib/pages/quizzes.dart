@@ -76,11 +76,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
         ),
         Container(
           child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[_currentPage],
-            ),
+            child: _currentPage
           ),
         ),
       ],
@@ -117,10 +113,14 @@ class _QuizzesPageState extends State<QuizzesPage> {
 
     return snapshot.hasData
       ? (name == null) ? func(snapshot.data) : func(snapshot.data, name)
-      : new Center(
-        child: new CircularProgressIndicator(
-          valueColor: new AlwaysStoppedAnimation<Color>(
-            const Color(0xFF2c304d))));
+      : Container(
+        height: MediaQuery.of(context).size.height-60.0,
+        width: MediaQuery.of(context).size.width,
+        alignment: Alignment.center,   
+          child: new CircularProgressIndicator(
+            valueColor: new AlwaysStoppedAnimation<Color>(
+              const Color(0xFFca4451))),
+      );
   }
 
   Widget categoryList(List<DocumentSnapshot> data) {
@@ -175,8 +175,8 @@ class _QuizzesPageState extends State<QuizzesPage> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 15.0,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w300))
+                    color: const Color(0xFF2c304d),
+                    fontWeight: FontWeight.w600))
           ],
         ),
       ),
