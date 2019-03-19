@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:pro/data/database.dart';
 import 'package:pro/model/user.dart';
 import 'package:html_unescape/html_unescape.dart';
+import 'package:pro/widgets/correct_wrong_overlay.dart';
 
 class QuizPage extends StatefulWidget {
   final subject;
@@ -53,7 +54,7 @@ class _QuizPageState extends State<QuizPage> {
   List<Results> results;
   List<AnswerWidget> ansCards;
   String link;
-  int nQuestions = 3;
+  int nQuestions = 10;
   int score = 0;
 
   int questionNumber = 0;
@@ -61,6 +62,8 @@ class _QuizPageState extends State<QuizPage> {
   int pointsForCorrectAnswer = 50;
 
   bool doneLoadingData = false;
+  bool overlayShouldBeVisable = false;
+  bool wasAnswerCorrect = false;
   User user;
 
   int correctAnswers = 0;
@@ -143,99 +146,113 @@ class _QuizPageState extends State<QuizPage> {
 
     setUpQuestion();
 
-    return Container(
-      margin: EdgeInsets.only(top: 40.0, left: 15.0, right: 15.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Center(
-                      child: Text(title,
-              style: TextStyle(
-                  fontSize: 30.0,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w300)),
-          ),
+    return Stack(
+      fit: StackFit.expand,
+      children: <Widget>[ 
+      Container(
+        margin: EdgeInsets.only(top: 40.0, left: 15.0, right: 15.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Center(
+                        child: Text(title,
+                style: TextStyle(
+                    fontSize: 30.0,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w300)),
+            ),
 
-          new Container(
-            margin: EdgeInsets.only(bottom: 5.0, top: 25.0),
-            alignment: Alignment.centerRight,
-            child: new Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                new Text("Question ${questionNumber + 1} of ${results.length}",
-                    style: TextStyle(
-                        fontSize: 18.0,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w300)),
-                new Text("Score: $score",
-                    style: TextStyle(
-                        fontSize: 18.0,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w300))
-              ],
+            new Container(
+              margin: EdgeInsets.only(bottom: 5.0, top: 25.0),
+              alignment: Alignment.centerRight,
+              child: new Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  new Text("Question ${questionNumber + 1} of ${results.length}",
+                      style: TextStyle(
+                          fontSize: 18.0,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w300)),
+                  new Text("Score: $score",
+                      style: TextStyle(
+                          fontSize: 18.0,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w300))
+                ],
+              ),
             ),
-          ),
-          Card(
+            Card(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(top:5.0),
+                  alignment: Alignment.center,
+                  child: Text(results[questionNumber].difficulty,
+                      style: TextStyle(
+                          color: difficultyColor,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15.0)),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.only(
+                      top: 65.0, bottom: 75.0, left: 15.0, right: 15.0),
+                  child: Text(unescape.convert(results[questionNumber].question),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w300,
+                          color: const Color(0xcc2c304d))),
+                ),
+              ],
+            )),
+            Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.only(right: 5.0, bottom: 5.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Text("+$pointsForCorrectAnswer", style: TextStyle(color: Colors.greenAccent, fontSize: 15.0)),
+                  Text(" points for the correct answer",
+                      style: TextStyle(color: Colors.white))
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top:30.0),
               child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.only(top:5.0),
-                alignment: Alignment.center,
-                child: Text(results[questionNumber].difficulty,
-                    style: TextStyle(
-                        color: difficultyColor,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 15.0)),
+                children: results[questionNumber].allAnswers.map((m) {
+                  return AnswerWidget(results[questionNumber], m,answer);
+                }).toList(),
               ),
-              Container(
-                alignment: Alignment.center,
-                margin: EdgeInsets.only(
-                    top: 65.0, bottom: 75.0, left: 15.0, right: 15.0),
-                child: Text(unescape.convert(results[questionNumber].question),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.w300,
-                        color: const Color(0xcc2c304d))),
-              ),
-            ],
-          )),
-          Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.only(right: 5.0, bottom: 5.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Text("+$pointsForCorrectAnswer", style: TextStyle(color: Colors.greenAccent, fontSize: 15.0)),
-                Text(" points for the correct answer",
-                    style: TextStyle(color: Colors.white))
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top:30.0),
-            child: Column(
-              children: results[questionNumber].allAnswers.map((m) {
-                return AnswerWidget(results[questionNumber], m,answer);
-              }).toList(),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
+      overlayShouldBeVisable == true ? 
+        Container(  
+          child: CorrectWrongOverlay(wasAnswerCorrect,nextQuestion)
+        ): Container()
+    ]
     );
   }
 
-  answer(bool correctAnswer){
+ answer(bool correctAnswer){
     maxScore = maxScore + pointsForCorrectAnswer;
 
     if(correctAnswer){
       print("Correct!");
       correctAnswers++;
+      wasAnswerCorrect = true;
       answeredCorrectly();
     }else {
+      setState(() {
+        wasAnswerCorrect = false;
+        overlayShouldBeVisable = true;      
+      });
       print("Wrong");
-      nextQuestion();
+      
     }
   }
 
@@ -243,7 +260,7 @@ class _QuizPageState extends State<QuizPage> {
     setState(() {
       score = score+pointsForCorrectAnswer; 
       Database().addPoints(user, pointsForCorrectAnswer);
-      nextQuestion();  
+      overlayShouldBeVisable = true;
     }); 
   }
 
@@ -256,6 +273,8 @@ class _QuizPageState extends State<QuizPage> {
       Application.router.navigateTo(context, "/score?subject=${widget.subject}&score=$score&totalScore=$maxScore", clearStack: true);
     }else{
       setState(() {
+        wasAnswerCorrect = false;
+        overlayShouldBeVisable = false;
         questionNumber++;
       });
     }

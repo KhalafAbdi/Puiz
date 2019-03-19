@@ -18,6 +18,7 @@ class _RegisterPageState extends State<RegisterPage>
   String _email;
   String _password;
 
+
   _RegisterPageState() {
     _registerPagePresenter = RegisterPagePresenter(this);
   }
@@ -114,7 +115,7 @@ class _RegisterPageState extends State<RegisterPage>
         decoration: InputDecoration(
             labelText: "Display Name",
             ),
-        validator: (value) => value.isEmpty ? 'Display Name can\'t be empty' : null,
+        validator: (value) => _displayNameValidate(value),
         onSaved: (value) => _displayName = value,
         ),
         TextFormField(
@@ -135,6 +136,21 @@ class _RegisterPageState extends State<RegisterPage>
       ],
     );
   }
+
+  _displayNameValidate(String value) {
+    String res;
+
+    if(value.isEmpty){
+      res = 'Display Name can\'t be empty';
+    }else {
+      res = null;
+    }
+
+    return res;
+  }
+
+
+
 
   Widget buildSubmitBottons() {
     return Column(
