@@ -18,6 +18,7 @@ class _RegisterPageState extends State<RegisterPage>
   String _email;
   String _password;
 
+  String _flutterErrorMsg = "";
 
   _RegisterPageState() {
     _registerPagePresenter = RegisterPagePresenter(this);
@@ -44,6 +45,13 @@ class _RegisterPageState extends State<RegisterPage>
   @override
   void onRegisterError(String error) {
     print("error: $error");
+    List<String> res = error.split(new RegExp(r','));
+    print(res.toString());
+
+    setState(() {
+      _flutterErrorMsg = res[1].trimLeft(); 
+    });
+    
   }
 
   @override
@@ -115,14 +123,14 @@ class _RegisterPageState extends State<RegisterPage>
         decoration: InputDecoration(
             labelText: "Display Name",
             ),
-        validator: (value) => _displayNameValidate(value),
+        validator: _validateDisplayName,
         onSaved: (value) => _displayName = value,
         ),
         TextFormField(
           decoration: InputDecoration(
               labelText: "Email",
               ),
-          validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
+          validator: _validateEmail,
           onSaved: (value) => _email = value,
         ),
         TextFormField(
@@ -130,25 +138,57 @@ class _RegisterPageState extends State<RegisterPage>
               labelText: 'Password',
               ),
           obscureText: true,
-          validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
+          validator: _validatePassword,
           onSaved: (value) => _password = value,
         ),
       ],
     );
   }
 
-  _displayNameValidate(String value) {
-    String res;
+  String _validateDisplayName(String value) {
+    RegExp length = new RegExp(r'^(?=.{3,15}$)'); 
+    RegExp allowedChar = new RegExp(r'^[a-zA-Z0-9._-]+$'); 
+
+    RegExp format = new RegExp(r'^(?=.{3,15}$)(?!.*[_.-]{2})[a-zA-Z0-9._-]+$');
 
     if(value.isEmpty){
-      res = 'Display Name can\'t be empty';
-    }else {
-      res = null;
+      return 'Display Name can\'t be empty';
+    } else if (!length.hasMatch(value)){
+      return 'Display Name must be between 3-15 Charecters';
+    } else if (!allowedChar.hasMatch(value)){
+      return 'Display Name can\'t containt special charecters';
+    } else if (!format.hasMatch(value)){
+      return 'invalid Display Name';
     }
-
-    return res;
+    
+    return null;
   }
 
+  String _validateEmail(String value) {
+    RegExp emailCheck = new RegExp(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)'); 
+
+    if(value.isEmpty){
+      return 'Email can\'t be empty';
+    }else if(!emailCheck.hasMatch(value)){
+      return 'not a valid Email';
+    }
+
+    return null;
+  }
+
+  String _validatePassword(String value) {
+    RegExp allowedChar = new RegExp(r'^[a-zA-Z0-9]+$'); 
+
+    if(value.isEmpty){
+      return 'Password can\'t be empty';
+    } else if(value.length < 6){
+      return 'Password should be at least 6 characters';
+    } else if(!allowedChar.hasMatch(value)){
+      return 'Password can only contain letters and numbers';
+    }
+
+    return null;
+  }
 
 
 
@@ -156,6 +196,17 @@ class _RegisterPageState extends State<RegisterPage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        
+        Container(
+          margin: EdgeInsets.only(top: 15.0),
+          alignment: Alignment.centerRight,
+          child: Text(
+            _flutterErrorMsg,
+            style: TextStyle(
+                color: Colors.redAccent),
+          ),
+        ),
+        
         themButton("Register", 20.0,const Color(0xFF2c304d)),
       Container(
         margin: EdgeInsets.only(top: 15.0, bottom: 15.0),
