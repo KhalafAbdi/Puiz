@@ -87,7 +87,11 @@ class Database {
       snapshot.data['points'], 
       snapshot.data['coins'], 
       snapshot.data['gold'], 
-      snapshot.data['completedRewards']
+      snapshot.data['completedRewards'],
+      snapshot.data['easyRecord'],
+      snapshot.data['mediumRecord'],
+      snapshot.data['hardRecord'],
+      snapshot.data['randomRecord']
     );
 
     return user;

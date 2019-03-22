@@ -92,7 +92,7 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Material(
-        color: const Color(0xcc2c304d),
+        color: const Color(0xFFca4451),
         child: doneLoadingData ? questionList() : Container(child: Center(child: CircularProgressIndicator()))
       ),
     );
@@ -114,6 +114,8 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
   Widget questionList() {
     String title = results[questionNumber].category;
     title = title.replaceAll("and", "&");
+    title = title.replaceAll("Entertainment: ", "");
+
 
     setUpQuestion();
 
@@ -126,7 +128,7 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Center(
-                        child: Text(title,
+                        child: Text("D E A T H M A T C H",
                 style: TextStyle(
                     fontSize: 30.0,
                     color: Colors.white,
@@ -139,12 +141,12 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
               child: new Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  new Text("Question ${questionNumber + 1} of ${results.length}",
+                  new Text("Question: ${questionNumber + 1}",
                       style: TextStyle(
                           fontSize: 18.0,
                           color: Colors.white,
                           fontWeight: FontWeight.w300)),
-                  new Text("Score: $score",
+                  new Text("Record: $score",
                       style: TextStyle(
                           fontSize: 18.0,
                           color: Colors.white,
@@ -159,11 +161,13 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
                 Container(
                   margin: EdgeInsets.only(top:5.0),
                   alignment: Alignment.center,
-                  child: Text(results[questionNumber].difficulty,
+                  child: Center(
+                    child: Text(title+": "+results[questionNumber].difficulty,
                       style: TextStyle(
                           color: difficultyColor,
                           fontWeight: FontWeight.w500,
-                          fontSize: 15.0)),
+                          fontSize: 15.0))
+                  )
                 ),
                 Container(
                   alignment: Alignment.center,
