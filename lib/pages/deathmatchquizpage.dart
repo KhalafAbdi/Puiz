@@ -9,46 +9,17 @@ import 'package:html_unescape/html_unescape.dart';
 import 'package:pro/widgets/correct_wrong_overlay.dart';
 
 class DeathMatchQuizPage extends StatefulWidget {
-  final subject;
+  final difficulty;
 
-  DeathMatchQuizPage({@required this.subject}){
-    print("I have been summoned with this $subject");
+  DeathMatchQuizPage({@required this.difficulty}){
+    print("You have choosen $difficulty");
   }
-
-  
 
   @override
   _DeathMatchQuizPageState createState() => _DeathMatchQuizPageState();
 }
 
 class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
-  var subjects = {
-    'Any Category': null, //https://opentdb.com/api.php?amount=1
-    'General Knowledge': 9, //https://opentdb.com/api.php?amount=1&category=9
-    'Books': 10,
-    'Film': 11,
-    'Music': 12,
-    'Musicals and Theatres': 13,
-    'Television': 14,
-    'Video Games': 15,
-    'Board Games': 16,
-    'Science and Nature': 17,
-    'Computers': 18,
-    'Mathematics': 19,
-    'Mythology': 20,
-    'Sports': 21,
-    'Geography': 22,
-    'History': 23,
-    'Politics': 24,
-    'Art': 25,
-    'Celebrities': 26,
-    'Animals': 27,
-    'Vehicles': 28,
-    'Comics': 29,
-    'Gadgets': 30,
-    'Japanese Anime and Manga': 31,
-    'Cartoon and Animations': 32,
-  };
 
   int responseCode;
   List<Results> results;
@@ -76,7 +47,7 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
   void initState() {
     super.initState();
 
-    link = "https://opentdb.com/api.php?amount=$nQuestions&category=${subjects[widget.subject]}&type=multiple";
+    link = "https://opentdb.com/api.php?amount=$nQuestions&type=multiple";
     print(link);
 
     fetchQuestions();
@@ -141,7 +112,7 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
 
 
   Widget questionList() {
-    String title = widget.subject;
+    String title = results[questionNumber].category;
     title = title.replaceAll("and", "&");
 
     setUpQuestion();
@@ -268,9 +239,11 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
     if(questionNumber == results.length - 1){
       print("quiz is over!");
       print("You got $correctAnswers correct out of ${results.length}");
+      
+      String dm = "DeathMatch";
 
 
-      Application.router.navigateTo(context, "/score?subject=${widget.subject}&score=$score&totalScore=$maxScore", clearStack: true);
+      Application.router.navigateTo(context, "/score?subject=$dm&score=$score&totalScore=$maxScore", clearStack: true);
     }else{
       setState(() {
         wasAnswerCorrect = false;

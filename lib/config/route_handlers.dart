@@ -44,8 +44,8 @@ var quizHandler = new Handler(
 
 var dmquizHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-    String level = params["level"]?.first;
-  return DeathMatchQuizPage(subject : level);
+    String difficulty = params["difficulty"]?.first;
+  return DeathMatchQuizPage(difficulty : difficulty);
 });
 
 var scoreHandler = new Handler(

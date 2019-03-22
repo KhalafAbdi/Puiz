@@ -11,6 +11,7 @@ class ScorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String t = "Good";
+    String path;
 
     print("info for $subject: Score:$score, Total score:$totalScore");
 
@@ -32,6 +33,12 @@ class ScorePage extends StatelessWidget {
       t = "marvelous";
     }else if(res > 0.95 && res == 1){
       t = "unbelievable";
+    }
+
+    if (subject == "DeathMatch"){
+      path = "/dmquiz?difficulty=Random";
+    }else {
+      path = "/quiz?subject=$subject";
     }
 
     return Material(
@@ -62,7 +69,7 @@ class ScorePage extends StatelessWidget {
                       padding: EdgeInsets.only(top:10.0, bottom: 10.0, left: 20.0, right: 20.0),
                     )),
                   InkWell(
-                    onTap: () => Application.router.navigateTo(context, "/quiz?subject=$subject", clearStack: true),
+                    onTap: () => Application.router.navigateTo(context, path, clearStack: true),
                     child: Container(
                       color: Colors.white,
                       child: Text("Play again", style: textStyle(25.0, const Color(0xFF1c2754)),),
