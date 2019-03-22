@@ -25,7 +25,7 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
   List<Results> results;
   List<AnswerWidget> ansCards;
   String link;
-  int nQuestions = 10;
+  int nQuestions = 3;
   int score = 0;
 
   int questionNumber = 0;
@@ -78,6 +78,17 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
     });
   }
 
+    Future<void> getNewQuestions() async {
+    var res = await http.get(link);
+    var decRes = jsonDecode(res.body);
+    print(decRes);
+
+    fromJson(decRes);
+
+
+    print("@@@@@@");
+  }
+
   test(){
     String dif = widget.difficulty.toString();
 
@@ -101,10 +112,15 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
   fromJson(Map<String, dynamic> json) {
     responseCode = json['response_code'];
     if (json['results'] != null) {
-      results = List<Results>();
+
+      if(results == null){
+        results = List<Results>();
+      }
+
       json['results'].forEach((v) {
         results.add(Results.fromJson(v));
       });
+      
     }
   }
 
@@ -173,12 +189,12 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
               child: new Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  new Text("Question: ${questionNumber + 1}",
+                  new Text("Question: ${questionNumber}",
                       style: TextStyle(
                           fontSize: 18.0,
                           color: Colors.white,
                           fontWeight: FontWeight.w300)),
-                  new Text("Record: ${user.randomRecord}",
+                  new Text("Record: $currentRecord",
                       style: TextStyle(
                           fontSize: 18.0,
                           color: Colors.white,
@@ -252,6 +268,12 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
       print("Correct!");
       correctAnswers++;
       wasAnswerCorrect = true;
+
+      if(questionNumber == results.length - 2){
+        fetchQuestions();
+        print("warning only one questions left!");
+      }
+
       answeredCorrectly();
     }else {
       setState(() {
@@ -300,6 +322,7 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
       
     }else{
       setState(() {
+
         wasAnswerCorrect = false;
         overlayShouldBeVisable = false;
         questionNumber++;
