@@ -9,6 +9,7 @@ class Routes {
   static String home = "/home";
   static String onBoarding = "/onBoarding";
   static String quiz = "/quiz";
+  static String dmquiz = "/dmquiz";
   static String score = "/score";
 
 
@@ -23,6 +24,7 @@ class Routes {
     router.define(home, handler: homeHandler);
     router.define(onBoarding, handler: onBoardingHandler);
     router.define(quiz, handler: quizHandler);
+    router.define(dmquiz, handler: dmquizHandler);
     router.define(score, handler: scoreHandler);
   }
 }

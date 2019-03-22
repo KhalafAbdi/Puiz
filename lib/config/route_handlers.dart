@@ -8,6 +8,7 @@ import 'package:pro/pages/navigation_controller.dart';
 import 'package:pro/pages/onBoarding/onBoardingController.dart';
 import 'package:pro/pages/quizpage.dart';
 import 'package:pro/pages/scorepage.dart';
+import 'package:pro/pages/deathmatchquizpage.dart';
 
 var rootHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
@@ -39,6 +40,12 @@ var quizHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
     String subject = params["subject"]?.first;
   return QuizPage(subject : subject);
+});
+
+var dmquizHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+    String level = params["level"]?.first;
+  return DeathMatchQuizPage(subject : level);
 });
 
 var scoreHandler = new Handler(

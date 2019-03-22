@@ -47,7 +47,30 @@ class _DeathMatchPageState extends State<DeathMatchPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                Center(child: Text("Content here!"))
+                Center(
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          RaisedButton(
+                            child: Text("Easy"),
+                            onPressed: () => print("Easy was pressed"),
+                          ),
+                          RaisedButton(
+                            child: Text("Medium"),
+                            onPressed: () => print("Medium was pressed"),
+                          ),
+                          RaisedButton(
+                            child: Text("Hard"),
+                            onPressed: () => print("Hard was pressed"),
+                          ),
+                        ],
+                      ),
+                      themeButton("Random", 15.0)
+                    ],
+                  )
+                )
               ],
             ),
           ),
@@ -56,6 +79,21 @@ class _DeathMatchPageState extends State<DeathMatchPage> {
     );
   }
 }
+
+  Widget themeButton(title, size) {
+    return Container(
+        margin: EdgeInsets.only(top: 10.0),
+        color: const Color(0xFF2c304d),
+        child: MaterialButton(
+          child: Text(
+            title,
+            style: TextStyle(
+                color: Colors.white, fontFamily: 'Roboto', fontSize: size),
+          ),
+          onPressed: () => print("RANDOM was pressed"),
+        ));
+  }
+
 
 
 /*
