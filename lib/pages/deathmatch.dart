@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pro/config/application.dart';
 
 
@@ -53,7 +52,18 @@ class _DeathMatchPageState extends State<DeathMatchPage> {
                 Center(
                   child: Column(
                     children: <Widget>[
-                      Text("Whats good"),
+                      RaisedButton(
+                        child: Text("Easy"),
+                        onPressed: () => Application.router.navigateTo(context, "/dmquiz?difficulty=easy", clearStack: true),
+                      ),
+                      RaisedButton(
+                        child: Text("Medium"),
+                        onPressed: () => Application.router.navigateTo(context, "/dmquiz?difficulty=medium", clearStack: true),
+                      ),
+                      RaisedButton(
+                        child: Text("Hard"),
+                        onPressed: () => Application.router.navigateTo(context, "/dmquiz?difficulty=hard", clearStack: true),
+                      ),
                       Container(
                         margin: EdgeInsets.only(top: 10.0),
                         color: const Color(0xFF2c304d),
@@ -63,7 +73,7 @@ class _DeathMatchPageState extends State<DeathMatchPage> {
                             style: TextStyle(
                                 color: Colors.white, fontFamily: 'Roboto', fontSize: 15.0),
                           ),
-                          onPressed: () => Application.router.navigateTo(context, "/dmquiz?difficulty=Random", clearStack: true),
+                          onPressed: () => Application.router.navigateTo(context, "/dmquiz?difficulty=random", clearStack: true),
                         ))
                     ],
                   )

@@ -37,6 +37,8 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
   bool wasAnswerCorrect = false;
   User user;
 
+  int currentRecord;
+
   int correctAnswers = 0;
 
   var unescape = new HtmlUnescape();
@@ -47,7 +49,12 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
   void initState() {
     super.initState();
 
-    link = "https://opentdb.com/api.php?amount=$nQuestions&type=multiple";
+    if(widget.difficulty.toString()=="random"){
+      link = "https://opentdb.com/api.php?amount=$nQuestions&type=multiple";
+    }else {
+      link = "https://opentdb.com/api.php?amount=$nQuestions&difficulty=${widget.difficulty}&type=multiple";
+    }
+    
     print(link);
 
     fetchQuestions();
@@ -58,15 +65,38 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
     var decRes = jsonDecode(res.body);
     print(decRes);
 
-    
-    
     fromJson(decRes);
 
     user = await Database().currentUser();
+    test();
+
+    print("Current Record is: $currentRecord");
+
+
     setState(() {
       doneLoadingData = true;
     });
   }
+
+  test(){
+    String dif = widget.difficulty.toString();
+
+    switch(dif){
+      case "easy" : 
+        currentRecord = user.easyRecord;
+        break;
+      case "medium" :
+        currentRecord = user.mediumRecord;
+        break;
+      case "hard" :
+        currentRecord = user.hardRecord;
+        break;
+      case "random" :
+        currentRecord = user.randomRecord;
+        break;
+    }
+  }
+
 
   fromJson(Map<String, dynamic> json) {
     responseCode = json['response_code'];
@@ -89,6 +119,9 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
 
   @override
   Widget build(BuildContext context) {
+
+
+    
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Material(
@@ -115,7 +148,6 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
     String title = results[questionNumber].category;
     title = title.replaceAll("and", "&");
     title = title.replaceAll("Entertainment: ", "");
-
 
     setUpQuestion();
 
@@ -146,7 +178,7 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
                           fontSize: 18.0,
                           color: Colors.white,
                           fontWeight: FontWeight.w300)),
-                  new Text("Record: $score",
+                  new Text("Record: ${user.randomRecord}",
                       style: TextStyle(
                           fontSize: 18.0,
                           color: Colors.white,
@@ -227,7 +259,7 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
         overlayShouldBeVisable = true;      
       });
       print("Wrong");
-      
+
     }
   }
 
@@ -239,15 +271,33 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
     }); 
   }
 
+  getRecord(){
+    String dif = widget.difficulty.toString();
+
+    if(dif=="random"){
+      print("WTF");
+      currentRecord = 10;
+      print("Current record set to $currentRecord");
+    }
+  }
+
   nextQuestion(){
-    if(questionNumber == results.length - 1){
-      print("quiz is over!");
-      print("You got $correctAnswers correct out of ${results.length}");
+    if(!wasAnswerCorrect){
       
-      String dm = "DeathMatch";
+      if(questionNumber > currentRecord){
+
+        Database().updateCurrentRecord(user,widget.difficulty, questionNumber);
 
 
-      Application.router.navigateTo(context, "/score?subject=$dm&score=$score&totalScore=$maxScore", clearStack: true);
+
+      }else if(questionNumber == currentRecord){
+        print("Tied");
+      }else {
+        print("You did not beat your record@@");
+      }
+
+      Application.router.navigateTo(context, "/score?subject=DeathMatch:${widget.difficulty}&score=$score&totalScore=$maxScore", clearStack: true);
+      
     }else{
       setState(() {
         wasAnswerCorrect = false;
@@ -283,7 +333,7 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
   }
 
   Future<bool> _onWillPop() {
-    Application.router.navigateTo(context, "/home?subject=quiz", clearStack: true);
+    Application.router.navigateTo(context, "/home?subject=deathmatch", clearStack: true);
   }
 
   String styleText(String title) {

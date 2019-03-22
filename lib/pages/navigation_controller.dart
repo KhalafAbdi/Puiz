@@ -47,12 +47,17 @@ class _NavigationControllerState extends State<NavigationController> {
     if(widget.subject == null){
       currentPage = homePage;
       currentTitle = "Home";
-    }else {
+    }else if(widget.subject.toString().contains("quiz")){
       quizzesPage = QuizzesPage(3, widget.subject);
         currentTab = 3;
         currentPage = quizzesPage;
-        currentTitle = widget.subject; 
+        
+    }else if(widget.subject.toString().contains("deathmatch")){
+      currentTab = 2;
+      currentPage = deathMatchPage;
     }
+
+    currentTitle = widget.subject; 
 
     super.initState();   
   }

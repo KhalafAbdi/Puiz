@@ -35,8 +35,9 @@ class ScorePage extends StatelessWidget {
       t = "unbelievable";
     }
 
-    if (subject == "DeathMatch"){
-      path = "/dmquiz?difficulty=Random";
+    if (subject.toString().contains("DeathMatch")){
+
+      path = "/dmquiz?difficulty=${subject.toString().split(":")[1]}";
     }else {
       path = "/quiz?subject=$subject";
     }

@@ -160,5 +160,14 @@ class Database {
     return user;
   }
 
+    Future<User> updateCurrentRecord(User user, String difficulty, int newRecord) async{
+    prefs = await SharedPreferences.getInstance();
+    String id = prefs.get("id");
+
+    user.newRecord(difficulty, newRecord);
+
+    userCollectionRef.document(id).setData(user.toMap());
+    return user;
+  }
 
 }

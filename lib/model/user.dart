@@ -57,6 +57,25 @@ class User{
     _points = 0;
   }
 
+  void newRecord(String difficulty, int record){
+
+    switch(difficulty){
+      case "easy" : 
+        _easyRecord = record;
+        break;
+      case "medium" :
+        _mediumRecord = record;
+        break;
+      case "hard" :
+        _hardRecord = record;
+        break;
+      case "random" :
+        _randomRecord = record;
+        break;
+    }
+
+  }
+
   void addPoints(int level, int currentPoints, points){
     int newPoints = currentPoints + points;
     int expForNextLevel = ((_level * 50) * (_level - 1)) + (_level * 100);

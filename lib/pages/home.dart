@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pro/model/user.dart';
 import 'package:pro/data/database.dart';
-import 'package:pro/pages/navigation_controller.dart';
+
 
 class HomePage extends StatefulWidget {
   int index;
