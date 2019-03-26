@@ -189,7 +189,7 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
               child: new Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  new Text("Question: ${questionNumber}",
+                  new Text("Question: $questionNumber",
                       style: TextStyle(
                           fontSize: 18.0,
                           color: Colors.white,
@@ -297,9 +297,7 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
     String dif = widget.difficulty.toString();
 
     if(dif=="random"){
-      print("WTF");
       currentRecord = 10;
-      print("Current record set to $currentRecord");
     }
   }
 
@@ -307,18 +305,10 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
     if(!wasAnswerCorrect){
       
       if(questionNumber > currentRecord){
-
         Database().updateCurrentRecord(user,widget.difficulty, questionNumber);
-
-
-
-      }else if(questionNumber == currentRecord){
-        print("Tied");
-      }else {
-        print("You did not beat your record@@");
       }
 
-      Application.router.navigateTo(context, "/score?subject=DeathMatch:${widget.difficulty}&score=$score&totalScore=$maxScore", clearStack: true);
+      Application.router.navigateTo(context, "/score?subject=DeathMatch:${widget.difficulty}:$currentRecord:$questionNumber&score=$score&totalScore=$maxScore", clearStack: true);
       
     }else{
       setState(() {
