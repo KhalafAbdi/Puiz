@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../model/user.dart';
+import '../model/game.dart';
 
 class Database {
   CollectionReference userCollectionRef;
@@ -68,10 +69,6 @@ class Database {
 
 
   // ------------------ CATEGORIES -----------------------
-
-
-
-
 
   Future<User> currentUser() async{
     prefs = await SharedPreferences.getInstance();
@@ -160,7 +157,7 @@ class Database {
     return user;
   }
 
-    Future<User> updateCurrentRecord(User user, String difficulty, int newRecord) async{
+  Future<User> updateCurrentRecord(User user, String difficulty, int newRecord) async{
     prefs = await SharedPreferences.getInstance();
     String id = prefs.get("id");
 
