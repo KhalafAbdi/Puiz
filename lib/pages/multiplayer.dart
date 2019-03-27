@@ -121,6 +121,8 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
             margin: EdgeInsets.only(bottom: 15.0, right: 15.0),
             alignment: Alignment.bottomRight,
             child: FloatingActionButton(
+              backgroundColor: const Color(0xFFca4451),
+              foregroundColor:  Colors.white,
               child:  Icon(Icons.add),
               onPressed: _showDialog
           ),
