@@ -9,6 +9,7 @@ import 'package:pro/pages/onBoarding/onBoardingController.dart';
 import 'package:pro/pages/quizpage.dart';
 import 'package:pro/pages/scorepage.dart';
 import 'package:pro/pages/deathmatchquizpage.dart';
+import 'package:pro/pages/createnewgame.dart';
 
 var rootHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
@@ -55,3 +56,10 @@ var scoreHandler = new Handler(
     String totalScore = params["totalScore"]?.first;
   return ScorePage(subject: subject, score: score, totalScore: totalScore);
 });
+
+var createNewGameHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return CreateNewGame();
+});
+
+

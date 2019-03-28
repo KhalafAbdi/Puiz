@@ -11,12 +11,13 @@ class Routes {
   static String quiz = "/quiz";
   static String dmquiz = "/dmquiz";
   static String score = "/score";
-
+  static String createNewGame = "/createNewGame";
 
   static void configureRoutes(Router router) {
     router.notFoundHandler = new Handler(
         handlerFunc: (BuildContext context, Map<String, List<String>> params) {
       print("ROUTE WAS NOT FOUND !!!");
+      return Container();
     });
     router.define(root, handler: rootHandler);
     router.define(login, handler: loginHandler);
@@ -26,5 +27,6 @@ class Routes {
     router.define(quiz, handler: quizHandler);
     router.define(dmquiz, handler: dmquizHandler);
     router.define(score, handler: scoreHandler);
+    router.define(createNewGame, handler: createNewGameHandler);
   }
 }

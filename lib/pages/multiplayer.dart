@@ -13,32 +13,7 @@ class MultiplayerPage extends StatefulWidget {
 }
 
 class _MultiplayerPageState extends State<MultiplayerPage> {
-  List<String> _categories = [
-    'General Knowledge',
-    'Books',
-    'Film',
-    'Music',
-    'Musicals and Theatres',
-    'Television',
-    'Video Games',
-    'Board Games',
-    'Science and Nature',
-    'Computers',
-    'Mathematics',
-    'Mythology',
-    'Sports',
-    'Geography',
-    'History',
-    'Politics',
-    'Art',
-    'Celebrities',
-    'Animals',
-    'Vehicles',
-    'Comics',
-    'Gadgets',
-    'Japanese Anime and Manga',
-    'Cartoon and Animations',
-    ];
+
 
 
 
@@ -49,16 +24,10 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
 
   List<Game> games = [];
 
-  
-  List<DropdownMenuItem<String>> _dropDownMenuItems;
-  String _currentCategory;
-
   @override
     void initState() {
       super.initState();
 
-      _dropDownMenuItems = getDropDownMenuItems();
-      _currentCategory = _dropDownMenuItems[0].value;
 
       fetchOpenGames();
     }
@@ -124,7 +93,9 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
               backgroundColor: const Color(0xFFca4451),
               foregroundColor:  Colors.white,
               child:  Icon(Icons.add),
-              onPressed: _showDialog
+              onPressed: () {
+                  Navigator.pushNamed(context, '/createNewGame');
+                },
           ),
           )  
       ],
@@ -156,86 +127,6 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
         ),
       );
   }
-
-
-
-  _showDialog() async {
-    await showDialog(
-             context: context,
-                builder: (BuildContext context) {
-                   return new SimpleDialog(
-                      title: new Text('Create New Game'),
-                      children: <Widget>[
-                         new SimpleDialogOption(
-                            onPressed: () {
-                             print("test");
-                            },
-                      child: new Center(
-                        child: new DropdownButton<String>(
-                            hint: new Text("Select Category"),
-                            value: getCat(),
-                            items: _categories.map((String val) {
-                              return new DropdownMenuItem<String>(
-                                value: val,
-                                child: new Text(val),
-                              );
-                            }).toList(),
-                            onChanged: changedDropDownItem,)
-                      ),
-                    ),
-                  ],
-                );
-              });
-  }
-
-  String getCat(){
-    return _currentCategory;
-  }
-
-  List<DropdownMenuItem<String>> getDropDownMenuItems() {
-    List<DropdownMenuItem<String>> items = new List();
-    for (String category in _categories) {
-      // here we are creating the drop down menu items, you can customize the item right here
-      // but I'll just use a simple text for this
-      items.add(new DropdownMenuItem(
-          value: category,
-          child: new Text(category)
-      ));
-    }
-    return items;
-  }
-
-    void changedDropDownItem(String selectedCategory) {
-    print("Selected city $selectedCategory, we are going to refresh the UI");
-    setState(() {
-      _currentCategory = selectedCategory;
-    });
-  }
-
-
-/*
-
-new Row(
-          children: <Widget>[
-            new Expanded(
-              child: new TextField(
-                autofocus: true,
-                decoration: new InputDecoration(
-                    labelText: 'Full Name', hintText: 'eg. John Smith'),
-              ),
-            )
-          ],
-        ),
-        actions: <Widget>[
-          new FlatButton(
-              child: const Text('CANCEL'),
-              onPressed: () => print('cancel')),
-          new FlatButton(
-              child: const Text('OPEN'),
-              onPressed: () => print('open')),
-        ],
-*/
-
 
   Widget listOpenGames(){
     if (games.isEmpty){
@@ -335,20 +226,6 @@ new Row(
       ),
     );
   }
-
-
-
-
-
-
-/*
-Column(
-          children: <Widget>[
-            Text(games[index].category),
-            Text(games[index].creatorName, style: TextStyle(color: Colors.deepPurple))
-          ],
-        ),
-*/
 
   Future<void> _refreshOpenGames() async{
     games = [];
