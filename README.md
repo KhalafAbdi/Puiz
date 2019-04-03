@@ -5,15 +5,18 @@ I have written this in flutter, for the sole reason that you can develop both fo
 whilst only having to maintain a single codebase. 
 
 ----
-left of:
+##left of:
     Search bar duplicates search results for some reason. 
 
-Todo:
+##Todo:
 
     Sonner than later:
-    
+
         Multiplayer backened - using nodeJS
             - Move fetchOpenGames() into Database class.
+
+            - Create game 
+                - Open new Lobby class until someone joins (currently just updates server with new game, but doesn't change view)
 
             - Join feature 
             - Small chat (all multiplayer games should have a chat to roast each other duuh)
