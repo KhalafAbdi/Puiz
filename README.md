@@ -9,7 +9,9 @@ left of:
     Search bar duplicates search results for some reason. 
 
 Todo:
+
     Sonner than later:
+    
         Multiplayer backened - using nodeJS
             - Move fetchOpenGames() into Database class.
 
