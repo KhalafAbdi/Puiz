@@ -10,7 +10,7 @@ whilst only having to maintain a single codebase.
 
 ## Todo:
 
-    ### Sonner than later:
+    ###### Sonner than later:
 
         Multiplayer backened - using nodeJS
             - Move fetchOpenGames() into Database class.
@@ -29,7 +29,7 @@ whilst only having to maintain a single codebase.
         DeathMatch
             - make a design in AdobeXD
 
-    ### later:
+    ###### later:
         - REMOVE debug printouts
         - Make a Contants file
         - let users make a custom avatar
