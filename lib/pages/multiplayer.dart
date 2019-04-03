@@ -23,6 +23,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
   int liveGames = 0;
 
   List<Game> games = [];
+  List<Game> duplicateGames = [];
 
   @override
     void initState() {
@@ -110,6 +111,9 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
         child: Padding(
           padding: EdgeInsets.only(left:30.0,top:5.0),
           child: TextField(
+          onChanged: (value) {
+            filterSearchResults(value);
+          },
           cursorColor: Color(0xFF2c304d),
           style: TextStyle(fontSize: 16.0, color: Color(0xFF2c304d), fontWeight: FontWeight.w300),
           decoration: InputDecoration(
@@ -129,13 +133,11 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
   }
 
   Widget listOpenGames(){
-    if (games.isEmpty){
-      return Text("There is currently no live games");
-    }
 
     return Container(
       child: RefreshIndicator(
-        child: ListView.builder(
+        child: games.isEmpty ? Text("There is currently no live games") :
+        ListView.builder(
           itemBuilder: buildGameTile,
           itemCount: games.length
         ),
@@ -229,6 +231,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
 
   Future<void> _refreshOpenGames() async{
     games = [];
+    duplicateGames = [];
     fetchOpenGames();
   }
 
@@ -246,6 +249,8 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
     for(DocumentSnapshot snapshot in d){
       if(snapshot.data['password'] != ""){
         hasPassword = true;
+      }else {
+        hasPassword = false;
       }
 
       games.add(
@@ -259,6 +264,8 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
           hasPassword,
           )
       );
+
+      duplicateGames.addAll(games);
     }
 
     setState(() {
@@ -266,7 +273,33 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
     });
   }
 
+  void filterSearchResults(String query) {
+  List<Game> dummySearchList = List<Game>();
+  dummySearchList.addAll(duplicateGames);
 
+  if(query.isNotEmpty) {
+    List<Game> dummyListData = List<Game>();
+
+    dummySearchList.forEach((item) {
+      if(item.contains(query)) {
+        dummyListData.add(item);
+      }
+    });
+
+    setState(() {
+      games.clear();
+      games.addAll(dummyListData);
+    });
+
+    return;
+
+  } else {
+    setState(() {
+      games.clear();
+      games.addAll(duplicateGames);
+    });
+  }
+}
 
 
 

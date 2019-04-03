@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:pro/data/database.dart';
+import 'package:pro/model/user.dart';
+import 'package:pro/model/game.dart';
 
 class CreateNewGame extends StatefulWidget {
   @override
@@ -52,13 +55,36 @@ class _CreateNewGameState extends State<CreateNewGame> {
   String creatorID;
   String creatorName;
 
-  Difficulty difficulty;
   String password;
 
   String _flutterErrorMsg = "";
+  String difficulty;
+
+  User user;
+
+  int _radioValue1 = -1;
+
+  @override
+    void initState() {
+      super.initState();
+
+      grabUser();
+    }
+
+  Future<void> grabUser() async{
+    user = await Database().currentUser();
+  }
 
   void _submit() {
+    if(selected != null && _radioValue1 > -1){
 
+      Game game = Game.creat(selected,difficulty,user.id, user.displayName, password);
+
+      Database().createGame(game);
+      print("everything is fine");
+    }else {
+      print("missing parameters");
+    }
   }
   
   @override
@@ -277,7 +303,7 @@ class _CreateNewGameState extends State<CreateNewGame> {
     );
   }
 
-  int _radioValue1 = -1;
+
 
   void _handleRadioValueChange1(int value) {
     setState(() {
@@ -285,16 +311,16 @@ class _CreateNewGameState extends State<CreateNewGame> {
 
       switch (_radioValue1) {
         case 0:
-          print("Easy was pressed");
+          difficulty = "easy";
           break;
         case 1:
-          print("Medium was pressed");
+          difficulty = "medium";
           break;
         case 2:
-          print("Hard was pressed");
+          difficulty = "hard";
           break;
         case 2:
-          print("Random was pressed");
+          difficulty = "random";
           break;
       }
     });
@@ -305,7 +331,7 @@ class _CreateNewGameState extends State<CreateNewGame> {
   bool _value1 = false;
   void _value1Changed(bool value) => setState(() {
     _value1 = value;
-    password = randomPassword().toString();
+    password = value? randomPassword().toString() : "";
   });
 
   int randomPassword() {

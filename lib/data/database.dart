@@ -6,6 +6,7 @@ import '../model/game.dart';
 
 class Database {
   CollectionReference userCollectionRef;
+
   SharedPreferences prefs;
   User user;
 
@@ -165,6 +166,16 @@ class Database {
 
     userCollectionRef.document(id).setData(user.toMap());
     return user;
+  }
+
+  Future<void> createGame(Game game){
+    Firestore firestore = Firestore.instance;
+    firestore.settings();
+
+    CollectionReference gameCollection = firestore.collection('Games');
+
+    print("Creating game!");
+    gameCollection.add(game.toMap()).whenComplete(() => print("done"));
   }
 
 }
