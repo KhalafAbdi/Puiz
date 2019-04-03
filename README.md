@@ -11,6 +11,8 @@ left of:
 Todo:
     Sonner than later:
         Multiplayer backened - using nodeJS
+            - Move fetchOpenGames() into Database class.
+
             - Join feature 
             - Small chat (all multiplayer games should have a chat to roast each other duuh)
             - Start game
