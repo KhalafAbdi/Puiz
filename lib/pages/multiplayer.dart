@@ -150,20 +150,23 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
 
   Widget buildGameTile(BuildContext context, int index) {
     return Card(
-      child: Container(
-        margin: EdgeInsets.only(top: 15.0, bottom: 15.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            scoreCard("Category", games[index].category, true),
-            scoreCard("Creator", games[index].creatorName, true),
-            scoreCard("Dificulty", games[index].difficulty[0].toUpperCase() + games[index].difficulty.substring(1), true),
-            Container(
-              margin: EdgeInsets.only(left: 10.0, right: 10.0),
-              child: joinCard(games[index].hasPassword),
-            ),
-          ],
-        )
+      child: InkWell(
+        onTap: () => print("Clicked ${games[index].creatorName}"),
+        child: Container(
+          margin: EdgeInsets.only(top: 15.0, bottom: 15.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              scoreCard("Category", games[index].category, true),
+              scoreCard("Creator", games[index].creatorName, true),
+              scoreCard("Dificulty", games[index].difficulty[0].toUpperCase() + games[index].difficulty.substring(1), true),
+              Container(
+                margin: EdgeInsets.only(left: 10.0, right: 10.0),
+                child: joinCard(games[index].hasPassword),
+              ),
+            ],
+          )
+        ),
       ),
     );
   }
