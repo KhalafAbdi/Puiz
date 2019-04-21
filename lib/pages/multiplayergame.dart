@@ -15,15 +15,17 @@ class MultiPlayerGame extends StatefulWidget {
 
 class _MultiPlayerGameState extends State<MultiPlayerGame> {
   bool gameStarted = false;
+
   Game game;
-  bool doneLoading = false;
+
+  Widget currentWidget;
 
 
   @override
   void initState() {
     super.initState();
 
-    
+    currentWidget = lobbyWidget();
     getGameInfo();
   }
 
@@ -33,14 +35,44 @@ class _MultiPlayerGameState extends State<MultiPlayerGame> {
     return Material(
       child: WillPopScope(
         onWillPop: _onWillPop,
-        child: Container(
-        padding: EdgeInsets.all(25.0),
-        child: Text("This is multiplayer game: ${widget.gameID}"),
-        ),
+        child: currentWidget
       ),
     );
   }
 
+  Widget us(String s){
+    return Container(
+      child: s == "" ? Text("1") : Text("2"),
+    );
+  }
+
+
+  Widget lobbyWidget(){
+    return Container(
+        padding: EdgeInsets.all(25.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Text("This is multiplayer game: ${widget.gameID}"),
+            widget.owner == "true" ?
+              StreamBuilder(
+                stream:  Firestore.instance.collection('Games').document(widget.gameID).snapshots(),
+                builder: (context, snapshot) {
+                  if(!snapshot.hasData) {
+                    return const Text("Loading...");
+                  }else {
+                    return us(snapshot.data['joiner'].toString());
+                  }
+                    
+                  
+                },
+              )
+              :
+              Text("Joiner")
+          ],
+        ),
+    );
+  }
 
 
   Future<bool> _onWillPop() {
@@ -72,7 +104,5 @@ class _MultiPlayerGameState extends State<MultiPlayerGame> {
           documentSnapshot.data['state'],
           documentSnapshot.data['password'],
       );
-
-      doneLoading = true;
   }
 }

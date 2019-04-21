@@ -171,7 +171,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
               scoreCard("Dificulty", games[index].difficulty[0].toUpperCase() + games[index].difficulty.substring(1), true),
               Container(
                 margin: EdgeInsets.only(left: 10.0, right: 10.0),
-                child: joinCard((games[index].password != "")),
+                child: joinCard((games[index].password != null)),
               ),
             ],
           )
@@ -181,7 +181,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
   }
 
   Future joinGame(int index) async{
-    if(games[index].password != ""){
+    if(games[index].password != null){
       print("Game ${games[index].creatorName} has password");
     }else {
       DocumentReference documentReference = Firestore.instance.collection('Games').document(games[index].gameID);

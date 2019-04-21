@@ -26,6 +26,7 @@ class Game{
     map['creatorName'] = creatorName;
     map['state'] = state;
     map['password'] = password;
+    map['joiner'] = "";
 
     return map;
   }
