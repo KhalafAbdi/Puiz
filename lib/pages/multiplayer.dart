@@ -14,8 +14,8 @@ class MultiplayerPage extends StatefulWidget {
 
 class _MultiplayerPageState extends State<MultiplayerPage> {
 
-
-
+  TextEditingController controller = new TextEditingController();
+  String filter;
 
   bool doneLoading = false;
   User user;
@@ -23,13 +23,17 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
   int liveGames = 0;
 
   List<Game> games = [];
-  List<Game> duplicateGames = [];
+
 
   @override
     void initState() {
       super.initState();
 
-
+      controller.addListener(() {
+        setState(() {
+          filter = controller.text;
+        });
+      });
       fetchOpenGames();
     }
 
@@ -78,6 +82,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                             fontWeight: FontWeight.w300)),
                   ),*/
                   CustomSearchBox(),
+
                   Expanded(
                     child: Container(
                       alignment: Alignment.center,
@@ -114,6 +119,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
           onChanged: (value) {
             filterSearchResults(value);
           },
+          controller: controller,
           cursorColor: Color(0xFF2c304d),
           style: TextStyle(fontSize: 16.0, color: Color(0xFF2c304d), fontWeight: FontWeight.w300),
           decoration: InputDecoration(
@@ -138,15 +144,19 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
       child: RefreshIndicator(
         child: games.isEmpty ? Text("There is currently no live games") :
         ListView.builder(
-          itemBuilder: buildGameTile,
-          itemCount: games.length
+          itemCount: games.length,
+          itemBuilder: (BuildContext context, int index) {
+            return filter == null || filter == "" ? 
+            buildGameTile(context, index) : games[index].creatorName.contains(filter) ? 
+            buildGameTile(context, index) : new Container();
+          },
         ),
         onRefresh: _refreshOpenGames,
       )
-
     );
-
   }
+
+  
 
   Widget buildGameTile(BuildContext context, int index) {
     return Card(
@@ -234,12 +244,14 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
 
   Future<void> _refreshOpenGames() async{
     games = [];
-    duplicateGames = [];
     fetchOpenGames();
   }
 
 
   Future<void> fetchOpenGames() async{
+    
+    
+
     var respectsQuery = Firestore.instance.collection('Games').where('state', isEqualTo: 'open');
     var querySnapshot = await respectsQuery.getDocuments();
     List<DocumentSnapshot> d = querySnapshot.documents;
@@ -268,40 +280,18 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
           )
       );
 
-      duplicateGames.addAll(games);
+      
     }
 
     setState(() {
       doneLoading = true;
+      
     });
   }
 
   void filterSearchResults(String query) {
-  List<Game> dummySearchList = List<Game>();
-  dummySearchList.addAll(duplicateGames);
-
-  if(query.isNotEmpty) {
-    List<Game> dummyListData = List<Game>();
-
-    dummySearchList.forEach((item) {
-      if(item.contains(query)) {
-        dummyListData.add(item);
-      }
-    });
-
-    setState(() {
-      games.clear();
-      games.addAll(dummyListData);
-    });
-
-    return;
-
-  } else {
-    setState(() {
-      games.clear();
-      games.addAll(duplicateGames);
-    });
-  }
+  
+  
 }
 
 
