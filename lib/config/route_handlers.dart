@@ -10,6 +10,7 @@ import 'package:pro/pages/quizpage.dart';
 import 'package:pro/pages/scorepage.dart';
 import 'package:pro/pages/deathmatchquizpage.dart';
 import 'package:pro/pages/createnewgame.dart';
+import 'package:pro/pages/multiplayergame.dart';
 
 var rootHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
@@ -60,6 +61,12 @@ var scoreHandler = new Handler(
 var createNewGameHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
   return CreateNewGame();
+});
+
+var multiplayerGameHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+    String gameID = params["gameID"]?.first;
+  return MultiPlayerGame(gameID : gameID);
 });
 
 

@@ -156,8 +156,6 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
     );
   }
 
-  
-
   Widget buildGameTile(BuildContext context, int index) {
     return Card(
       child: InkWell(
@@ -278,9 +276,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
           snapshot.data['state'],
           hasPassword,
           )
-      );
-
-      
+      );     
     }
 
     setState(() {

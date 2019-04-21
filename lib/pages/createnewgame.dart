@@ -80,8 +80,8 @@ class _CreateNewGameState extends State<CreateNewGame> {
 
       Game game = Game.creat(selected,difficulty,user.id, user.displayName, password);
 
-      Database().createGame(game);
-      print("everything is fine");
+      Database().createGame(game).then((onValue) => Navigator.popAndPushNamed(context, '/multiplayerGame?gameID=${onValue.documentID}'));
+      
     }else {
       print("missing parameters");
     }

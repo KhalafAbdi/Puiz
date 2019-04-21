@@ -12,6 +12,7 @@ class Routes {
   static String dmquiz = "/dmquiz";
   static String score = "/score";
   static String createNewGame = "/createNewGame";
+  static String multiplayerGame = "/multiplayerGame";
 
   static void configureRoutes(Router router) {
     router.notFoundHandler = new Handler(
@@ -28,5 +29,6 @@ class Routes {
     router.define(dmquiz, handler: dmquizHandler);
     router.define(score, handler: scoreHandler);
     router.define(createNewGame, handler: createNewGameHandler);
+    router.define(multiplayerGame, handler: multiplayerGameHandler);
   }
 }

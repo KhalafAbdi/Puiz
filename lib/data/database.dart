@@ -168,14 +168,26 @@ class Database {
     return user;
   }
 
-  Future<void> createGame(Game game){
+  Future<DocumentReference> createGame(Game game){
     Firestore firestore = Firestore.instance;
     firestore.settings();
 
+
     CollectionReference gameCollection = firestore.collection('Games');
 
-    print("Creating game!");
-    gameCollection.add(game.toMap()).whenComplete(() => print("done"));
+
+
+    return gameCollection.add(game.toMap());
+
+    
+
+  }
+
+  deleteGame(gameID) {
+    Firestore firestore = Firestore.instance;
+    firestore.settings();
+
+    firestore.collection('Games').document(gameID).delete().then((v) => print("Delete success "));
   }
 
 }
