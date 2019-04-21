@@ -66,7 +66,8 @@ var createNewGameHandler = new Handler(
 var multiplayerGameHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
     String gameID = params["gameID"]?.first;
-  return MultiPlayerGame(gameID : gameID);
+    String owner = params["owner"]?.first;
+  return MultiPlayerGame(gameID : gameID, owner: owner);
 });
 
 

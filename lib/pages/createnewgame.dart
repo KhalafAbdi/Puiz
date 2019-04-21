@@ -78,9 +78,9 @@ class _CreateNewGameState extends State<CreateNewGame> {
   void _submit() {
     if(selected != null && _radioValue1 > -1){
 
-      Game game = Game.creat(selected,difficulty,user.id, user.displayName, password);
+      Game game = Game.creat(selected,difficulty,user.id, user.displayName, "open", password);
 
-      Database().createGame(game).then((onValue) => Navigator.popAndPushNamed(context, '/multiplayerGame?gameID=${onValue.documentID}'));
+      Database().createGame(game).then((onValue) => Navigator.popAndPushNamed(context, '/multiplayerGame?gameID=${onValue.documentID}&owner=true'));
       
     }else {
       print("missing parameters");

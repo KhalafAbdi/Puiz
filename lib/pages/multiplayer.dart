@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pro/data/database.dart';
 import 'package:pro/model/user.dart';
 import 'package:pro/model/game.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MultiplayerPage extends StatefulWidget {
   int index;
@@ -159,7 +160,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
   Widget buildGameTile(BuildContext context, int index) {
     return Card(
       child: InkWell(
-        onTap: () => print("Clicked ${games[index].creatorName}"),
+        onTap: () => joinGame(index),
         child: Container(
           margin: EdgeInsets.only(top: 15.0, bottom: 15.0),
           child: Row(
@@ -170,13 +171,33 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
               scoreCard("Dificulty", games[index].difficulty[0].toUpperCase() + games[index].difficulty.substring(1), true),
               Container(
                 margin: EdgeInsets.only(left: 10.0, right: 10.0),
-                child: joinCard(games[index].hasPassword),
+                child: joinCard((games[index].password != "")),
               ),
             ],
           )
         ),
       ),
     );
+  }
+
+  Future joinGame(int index) async{
+    if(games[index].password != ""){
+      print("Game ${games[index].creatorName} has password");
+    }else {
+      DocumentReference documentReference = Firestore.instance.collection('Games').document(games[index].gameID);
+      DocumentSnapshot documentSnapshot = await documentReference.get();
+
+      if(documentSnapshot.data['state'].toString() == "open"){
+        print("what");
+        Database().updateGameState(games[index]);
+
+        print("updating date ${games[index].toMap()}");
+        Navigator.pushNamed(context, '/multiplayerGame?gameID=${games[index].gameID}&owner=false');
+      }
+
+    }
+
+    
   }
 
   Widget joinCard(bool isPasswordLocked){
@@ -246,38 +267,11 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
   }
 
 
-  Future<void> fetchOpenGames() async{
+  fetchOpenGames() async{
     
+    games = await Database().getOpenGames();
+    liveGames = games.length;
     
-
-    var respectsQuery = Firestore.instance.collection('Games').where('state', isEqualTo: 'open');
-    var querySnapshot = await respectsQuery.getDocuments();
-    List<DocumentSnapshot> d = querySnapshot.documents;
-
-    liveGames = querySnapshot.documents.length;
-
-    bool hasPassword = false;
-
-
-    for(DocumentSnapshot snapshot in d){
-      if(snapshot.data['password'] != ""){
-        hasPassword = true;
-      }else {
-        hasPassword = false;
-      }
-
-      games.add(
-        Game(
-          snapshot.documentID,
-          snapshot.data['category'],
-          snapshot.data['difficulty'],
-          snapshot.data['creatorID'],
-          snapshot.data['creatorName'],
-          snapshot.data['state'],
-          hasPassword,
-          )
-      );     
-    }
 
     setState(() {
       doneLoading = true;

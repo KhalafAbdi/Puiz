@@ -183,11 +183,56 @@ class Database {
 
   }
 
+  Future<List<Game>> getOpenGames()async{
+    print("GetOpenGames called");
+    var respectsQuery = Firestore.instance.collection('Games').where('state', isEqualTo: 'open');
+    var querySnapshot = await respectsQuery.getDocuments();
+    List<DocumentSnapshot> d = querySnapshot.documents;
+
+    List<Game> games = [];
+
+    for(DocumentSnapshot snapshot in d){
+      
+
+      games.add(
+        Game(
+          snapshot.documentID,
+          snapshot.data['category'],
+          snapshot.data['difficulty'],
+          snapshot.data['creatorID'],
+          snapshot.data['creatorName'],
+          snapshot.data['state'],
+          snapshot.data['password'],
+          )
+      );     
+    }
+    return games;
+  }
+
   deleteGame(gameID) {
     Firestore firestore = Firestore.instance;
     firestore.settings();
 
     firestore.collection('Games').document(gameID).delete().then((v) => print("Delete success "));
   }
+
+  updateGameState(Game game) async{
+    DocumentReference documentReference = Firestore.instance.collection('Games').document(game.gameID);
+
+    game.state = "closed";
+
+    documentReference.updateData(game.toMap());
+  }
+
+  Future<String> getGameState(Game game) async{
+    print("getGameState called");
+    DocumentReference documentReference = Firestore.instance.collection('Games').document(game.gameID);
+    DocumentSnapshot documentSnapshot = await documentReference.get();
+
+    print("res: ${documentSnapshot.data['state'].toString()}");
+    return documentSnapshot.data['state'].toString();
+  }
+
+
 
 }

@@ -11,13 +11,12 @@ class Game{
   String joinerID;
 
   String state;
-  bool hasPassword;
 
   String password;
 
-  Game(this.gameID,this.category, this.difficulty, this.creatorID, this.creatorName, this.state, this.hasPassword);
+  Game(this.gameID,this.category, this.difficulty, this.creatorID, this.creatorName, this.state, this.password);
 
-  Game.creat(this.category, this.difficulty, this.creatorID,this.creatorName, this.password);
+  Game.creat(this.category, this.difficulty, this.creatorID,this.creatorName,this.state, this.password);
 
   Map<String,dynamic> toMap(){
     var map = new Map<String, dynamic>();
@@ -25,7 +24,7 @@ class Game{
     map['difficulty'] = difficulty;
     map['creatorID'] = creatorID;
     map['creatorName'] = creatorName;
-    map['state'] = "open";
+    map['state'] = state;
     map['password'] = password;
 
     return map;
