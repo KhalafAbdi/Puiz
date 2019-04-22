@@ -7,12 +7,12 @@ class Game{
   String creatorID;
   String creatorName;
 
-  String joiner;
-  String joinerID;
-
   String state;
 
   String password;
+
+  String joinerName = "";
+  String joinerID = "";
 
   Game(this.gameID,this.category, this.difficulty, this.creatorID, this.creatorName, this.state, this.password);
 
@@ -26,7 +26,8 @@ class Game{
     map['creatorName'] = creatorName;
     map['state'] = state;
     map['password'] = password;
-    map['joiner'] = "";
+    map['joinerName'] = joinerName;
+    map['joinerID'] = joinerID;
 
     return map;
   }

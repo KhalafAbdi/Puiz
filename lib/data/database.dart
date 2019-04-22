@@ -216,10 +216,14 @@ class Database {
     firestore.collection('Games').document(gameID).delete().then((v) => print("Delete success "));
   }
 
-  updateGameState(Game game) async{
+  joinGame(Game game) async{
     DocumentReference documentReference = Firestore.instance.collection('Games').document(game.gameID);
 
     game.state = "closed";
+    User cUser = await currentUser();
+
+    game.joinerID = cUser.id;
+    game.joinerName = cUser.displayName;
 
     documentReference.updateData(game.toMap());
   }

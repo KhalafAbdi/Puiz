@@ -117,9 +117,6 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
         child: Padding(
           padding: EdgeInsets.only(left:30.0,top:5.0),
           child: TextField(
-          onChanged: (value) {
-            filterSearchResults(value);
-          },
           controller: controller,
           cursorColor: Color(0xFF2c304d),
           style: TextStyle(fontSize: 16.0, color: Color(0xFF2c304d), fontWeight: FontWeight.w300),
@@ -189,8 +186,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
 
       if(documentSnapshot.data['state'].toString() == "open"){
         print("what");
-        Database().updateGameState(games[index]);
-
+        Database().joinGame(games[index]);
         print("updating date ${games[index].toMap()}");
         Navigator.pushNamed(context, '/multiplayerGame?gameID=${games[index].gameID}&owner=false');
       }
@@ -279,10 +275,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
     });
   }
 
-  void filterSearchResults(String query) {
-  
-  
-}
+
 
 
 
