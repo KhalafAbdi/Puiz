@@ -3,7 +3,7 @@ import 'package:pro/data/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pro/model/game.dart';
 import 'package:pro/model/user.dart';
-import 'package:pro/pages/chatmessage.dart';
+import 'package:pro/pages/multiplayer/chatmessage.dart';
 
 class MultiPlayerGame extends StatefulWidget {
   final gameID;

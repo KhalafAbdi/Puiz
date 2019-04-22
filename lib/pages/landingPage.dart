@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LandingPage extends StatefulWidget {
-  final String title = "Base App";
+  final String title = "APP";
 
   @override
   _LandingPageState createState() => new _LandingPageState();

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pro/pages/settings.dart';
 import 'package:pro/pages/home.dart';
-import 'package:pro/pages/quizzes.dart';
-import 'package:pro/pages/deathmatch.dart';
-import 'package:pro/pages/multiplayer.dart';
+import 'package:pro/pages/quiz/quizzes.dart';
+import 'package:pro/pages/deathmatch/deathmatch.dart';
+import 'package:pro/pages/multiplayer/multiplayer.dart';
 
 class NavigationController extends StatefulWidget {
   final subject;

@@ -6,11 +6,11 @@ import 'package:pro/pages/entry/login_page.dart';
 import 'package:pro/pages/entry/register_page.dart';
 import 'package:pro/pages/navigation_controller.dart';
 import 'package:pro/pages/onBoarding/onBoardingController.dart';
-import 'package:pro/pages/quizpage.dart';
-import 'package:pro/pages/scorepage.dart';
-import 'package:pro/pages/deathmatchquizpage.dart';
-import 'package:pro/pages/createnewgame.dart';
-import 'package:pro/pages/multiplayergame.dart';
+import 'package:pro/pages/quiz/quizpage.dart';
+import 'package:pro/widgets/scorepage.dart';
+import 'package:pro/pages/deathmatch/deathmatchquizpage.dart';
+import 'package:pro/pages/multiplayer/createnewgame.dart';
+import 'package:pro/pages/multiplayer/multiplayergame.dart';
 
 var rootHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
