@@ -20,7 +20,8 @@ class Question{
     var map = new Map<String, dynamic>();
     map['question'] = question;
     map['correctAnswer'] = correctAnswer;
-    map['allAnswers'] = incorrectAnswers;
+    map['incorrectAnswers'] = incorrectAnswers;
+
     //map['sent'] = DateTime.now().millisecondsSinceEpoch;
     return map;
   }

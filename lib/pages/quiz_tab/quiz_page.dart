@@ -4,17 +4,17 @@ import '../../data/database.dart';
 import 'package:pro/config/application.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class QuizzesPage extends StatefulWidget {
+class QuizPage extends StatefulWidget {
   final int index;
   final String title;
 
-  QuizzesPage(this.index, [this.title]);
+  QuizPage(this.index, [this.title]);
 
   @override
-  _QuizzesPageState createState() => _QuizzesPageState();
+  _QuizPageState createState() => _QuizPageState();
 }
 
-class _QuizzesPageState extends State<QuizzesPage> {
+class _QuizPageState extends State<QuizPage> {
   bool canGoBack = false;
   Widget _currentPage;
   String title;

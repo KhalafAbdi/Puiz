@@ -8,20 +8,20 @@ import 'package:pro/model/user.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:pro/widgets/correct_wrong_overlay.dart';
 
-class QuizPage extends StatefulWidget {
+class QuizGame extends StatefulWidget {
   final subject;
 
-  QuizPage({@required this.subject}){
+  QuizGame({@required this.subject}){
     print("I have been summoned with this $subject");
   }
 
   
 
   @override
-  _QuizPageState createState() => _QuizPageState();
+  _QuizGameState createState() => _QuizGameState();
 }
 
-class _QuizPageState extends State<QuizPage> {
+class _QuizGameState extends State<QuizGame> {
   var subjects = {
     'Any Category': null, //https://opentdb.com/api.php?amount=1
     'General Knowledge': 9, //https://opentdb.com/api.php?amount=1&category=9

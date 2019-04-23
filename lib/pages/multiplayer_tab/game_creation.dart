@@ -4,9 +4,9 @@ import 'package:pro/data/database.dart';
 import 'package:pro/model/user.dart';
 import 'package:pro/model/game.dart';
 
-class CreateNewGame extends StatefulWidget {
+class GameCreation extends StatefulWidget {
   @override
-  _CreateNewGameState createState() => _CreateNewGameState();
+  _GameCreationState createState() => _GameCreationState();
 }
 
 enum Difficulty {
@@ -16,7 +16,7 @@ enum Difficulty {
   any
 }
 
-class _CreateNewGameState extends State<CreateNewGame> {
+class _GameCreationState extends State<GameCreation> {
   List<String> _categories = [
     'General Knowledge',
     'Books',

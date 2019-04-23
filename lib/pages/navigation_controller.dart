@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:pro/pages/settings.dart';
-import 'package:pro/pages/home.dart';
-import 'package:pro/pages/quiz/quizzes.dart';
-import 'package:pro/pages/deathmatch/deathmatch.dart';
-import 'package:pro/pages/multiplayer/multiplayer.dart';
+
+import 'package:pro/pages/settings_page.dart';
+import 'package:pro/pages/home_page.dart';
+import 'package:pro/pages/quiz_tab/quiz_page.dart';
+import 'package:pro/pages/deathmatch_tab/deathmatch_page.dart';
+import 'package:pro/pages/multiplayer_tab/multiplayer_page.dart';
+
 
 class NavigationController extends StatefulWidget {
   final subject;
@@ -24,7 +26,7 @@ class _NavigationControllerState extends State<NavigationController> {
   HomePage homePage;
   MultiplayerPage multiplayerPage;
   DeathMatchPage deathMatchPage;
-  QuizzesPage quizzesPage;
+  QuizPage quizzesPage;
   SettingsPage settingsPage;
 
   List<Widget> pages;
@@ -38,7 +40,7 @@ class _NavigationControllerState extends State<NavigationController> {
     homePage = HomePage(0, updateCurrentTab);
     multiplayerPage = MultiplayerPage(1);
     deathMatchPage = DeathMatchPage(2);
-    quizzesPage = QuizzesPage(3);
+    quizzesPage = QuizPage(3);
     settingsPage = SettingsPage(4);
     
     pageTitles = ["Home", "Multiplayer", "DeathMatch", "Quiz", "Settings"];
@@ -48,7 +50,7 @@ class _NavigationControllerState extends State<NavigationController> {
       currentPage = homePage;
       currentTitle = "Home";
     }else if(widget.subject.toString().contains("quiz")){
-      quizzesPage = QuizzesPage(3, widget.subject);
+      quizzesPage = QuizPage(3, widget.subject);
         currentTab = 3;
         currentPage = quizzesPage;
         
@@ -75,7 +77,7 @@ class _NavigationControllerState extends State<NavigationController> {
       });
     }else {
       setState(() {
-        quizzesPage = QuizzesPage(3, title);
+        quizzesPage = QuizPage(3, title);
         currentTab = 3;
         currentPage = quizzesPage;
         currentTitle = title;     

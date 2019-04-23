@@ -1,16 +1,23 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 
-import 'package:pro/pages/landingPage.dart';
+import 'package:pro/pages/landing_page.dart';
+
 import 'package:pro/pages/entry/login_page.dart';
 import 'package:pro/pages/entry/register_page.dart';
+
 import 'package:pro/pages/navigation_controller.dart';
-import 'package:pro/pages/onBoarding/onBoardingController.dart';
-import 'package:pro/pages/quiz/quizpage.dart';
-import 'package:pro/widgets/scorepage.dart';
-import 'package:pro/pages/deathmatch/deathmatchquizpage.dart';
-import 'package:pro/pages/multiplayer/createnewgame.dart';
-import 'package:pro/pages/multiplayer/multiplayergame.dart';
+
+import 'package:pro/pages/onBoarding/onboarding_controller.dart';
+
+import 'package:pro/pages/quiz_tab/quiz_game.dart';
+
+import 'package:pro/widgets/score_page.dart';
+
+import 'package:pro/pages/deathmatch_tab/deathmatch_quiz.dart';
+
+import 'package:pro/pages/multiplayer_tab/game_creation.dart';
+import 'package:pro/pages/multiplayer_tab/game_lobby.dart';
 
 var rootHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
@@ -41,7 +48,7 @@ var onBoardingHandler = new Handler(
 var quizHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
     String subject = params["subject"]?.first;
-  return QuizPage(subject : subject);
+  return QuizGame(subject : subject);
 });
 
 var dmquizHandler = new Handler(
@@ -60,14 +67,14 @@ var scoreHandler = new Handler(
 
 var createNewGameHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-  return CreateNewGame();
+  return GameCreation();
 });
 
 var multiplayerGameHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
     String gameID = params["gameID"]?.first;
     String owner = params["owner"]?.first;
-  return MultiPlayerGame(gameID : gameID, owner: owner);
+  return GameLobby(gameID : gameID, owner: owner);
 });
 
 

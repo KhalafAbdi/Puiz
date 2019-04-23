@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:pro/data/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pro/model/game.dart';
-import 'package:pro/pages/multiplayer/chatmessage.dart';
+import 'package:pro/pages/multiplayer_tab/model/chatmessage.dart';
 import 'package:pro/data/constants.dart' as constants;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:pro/pages/multiplayer/question.dart';
+import 'package:pro/pages/multiplayer_tab/model/question.dart';
+import 'game_quiz.dart';
 
-class MultiPlayerGame extends StatefulWidget {
+class GameLobby extends StatefulWidget {
   final gameID;
   final owner;
 
-  MultiPlayerGame({@required this.gameID, @required this.owner});
+  GameLobby({@required this.gameID, @required this.owner});
 
   @override
-  _MultiPlayerGameState createState() => _MultiPlayerGameState();
+  _GameLobbyState createState() => _GameLobbyState();
 }
 
-class _MultiPlayerGameState extends State<MultiPlayerGame> {
+class _GameLobbyState extends State<GameLobby> {
   final TextEditingController _chatController = new TextEditingController();
   List<ChatMessage> _messages = <ChatMessage>[];
 
@@ -53,7 +54,7 @@ class _MultiPlayerGameState extends State<MultiPlayerGame> {
                 return chat();
               }else if(snap.data['state'] == "started") {
                 gameStarted = true;
-                return quiz();
+                return MultiPlayerQuiz();
               }
 
               return Text("Something is horriably wrong");
@@ -194,6 +195,14 @@ class _MultiPlayerGameState extends State<MultiPlayerGame> {
                           child: Text(btnText),
 
                             onPressed: btnText!="Start" ? null : () {
+
+                              game.state = "started";
+                              game.joinerID = snap.data['joinerID'];
+                              game.joinerName = snap.data['joinerName'];
+
+                              DocumentReference documentReference = Firestore.instance.collection('Games').document(widget.gameID);
+
+                              documentReference.updateData(game.toMap());
                               print("Start Game");
                             }
                           );
@@ -359,8 +368,6 @@ class _MultiPlayerGameState extends State<MultiPlayerGame> {
 
         Firestore.instance.collection('Messages').document(widget.gameID).collection("questions").document("question_${i+1}").setData(question.toMap());
       }
-
-      
     }
   }
 
