@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:pro/data/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pro/model/game.dart';
-import 'package:pro/model/user.dart';
 import 'package:pro/pages/multiplayer/chatmessage.dart';
+import 'package:pro/data/constants.dart' as constants;
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:pro/pages/multiplayer/question.dart';
 
 class MultiPlayerGame extends StatefulWidget {
   final gameID;
@@ -28,10 +31,8 @@ class _MultiPlayerGameState extends State<MultiPlayerGame> {
   void initState() {
     super.initState();
 
-    getGameInfo();
+    setupGame();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +56,7 @@ class _MultiPlayerGameState extends State<MultiPlayerGame> {
                 return quiz();
               }
 
-              return Text("wtf");
+              return Text("Something is horriably wrong");
 
             },
           )
@@ -313,7 +314,7 @@ class _MultiPlayerGameState extends State<MultiPlayerGame> {
 
 
 
-  getGameInfo() async{
+  setupGame() async{
     DocumentReference documentReference = Firestore.instance.collection('Games').document(widget.gameID);
     DocumentSnapshot documentSnapshot = await documentReference.get();
 
@@ -325,9 +326,43 @@ class _MultiPlayerGameState extends State<MultiPlayerGame> {
           documentSnapshot.data['creatorName'],
           documentSnapshot.data['state'],
           documentSnapshot.data['password'],
-      );    
+      );  
+
+    String link = "https://opentdb.com/api.php?amount=5&category=${constants.subjects[game.category]}&difficulty=${game.difficulty}&type=multiple";
+    if(widget.owner == "true"){
+      fetchQuestions(link);
+    }
   }
 
+  Future<void> fetchQuestions(String link) async {
+    var res = await http.get(link);
+    var decRes = jsonDecode(res.body);
+    print(decRes);
+
+    fromJson(decRes);
+  }
+  
+  int responseCode;
+
+  fromJson(Map<String, dynamic> json) {
+    responseCode = json['response_code'];
+    if (json['results'] != null) {
+
+      for (var i = 0; i < json['results'].length; i++) {
+        Results res = Results.fromJson(json['results'][i]);
+
+        Question question = Question(
+            question: res.question,
+            correctAnswer: res.correctAnswer,
+            incorrectAnswers: res.incorrectAnswers
+        );
+
+        Firestore.instance.collection('Messages').document(widget.gameID).collection("questions").document("question_${i+1}").setData(question.toMap());
+      }
+
+      
+    }
+  }
 
 
 
@@ -361,4 +396,42 @@ class _MultiPlayerGameState extends State<MultiPlayerGame> {
     
   }
 
+}
+
+
+class Results {
+  String category;
+  String type;
+  String difficulty;
+  String question;
+  String correctAnswer;
+  List<String> incorrectAnswers;
+
+  Results({
+    this.category,
+    this.type,
+    this.difficulty,
+    this.question,
+    this.correctAnswer,
+  });
+
+  Results.fromJson(Map<String, dynamic> json) {
+    category = json['category'];
+    type = json['type'];
+    difficulty = json['difficulty'];
+    question = json['question'];
+    correctAnswer = json['correct_answer'];
+    incorrectAnswers = json['incorrect_answers'].cast<String>();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['category'] = this.category;
+    data['type'] = this.type;
+    data['difficulty'] = this.difficulty;
+    data['question'] = this.question;
+    data['correct_answer'] = this.correctAnswer;
+    data['incorrect_answers'] = this.incorrectAnswers;
+    return data;
+  }
 }
