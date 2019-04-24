@@ -22,7 +22,16 @@ class Question{
     map['correctAnswer'] = correctAnswer;
     map['incorrectAnswers'] = incorrectAnswers;
 
-    //map['sent'] = DateTime.now().millisecondsSinceEpoch;
+    if(ownerAnswer != null && ownerAnswertime != null){
+      map['ownerAnswer'] = ownerAnswer;
+      map['ownerAnswertime'] = DateTime.now().millisecondsSinceEpoch;
+    }
+
+    if(joinerAnswer != null && joinerAnswertime != null){
+      map['joinerAnswer'] = ownerAnswer;
+      map['joinerAnswertime'] = DateTime.now().millisecondsSinceEpoch;
+    }
+
     return map;
   }
 }

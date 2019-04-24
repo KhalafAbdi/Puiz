@@ -95,6 +95,20 @@ class Database {
     return user;
   }
 
+  Future<User> getUser(String id) async{
+    DocumentSnapshot snapshot = await userCollectionRef.document(id).get();
+
+    User user = User.public(
+      id, 
+      snapshot.data['displayName'],  
+      snapshot.data['level'], 
+    );
+
+    return user;
+  }
+
+
+
   Future<DocumentSnapshot> getNewestCategory() async{
     Firestore firestore = Firestore.instance;
     firestore.settings();

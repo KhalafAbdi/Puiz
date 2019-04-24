@@ -21,6 +21,8 @@ class User{
   User.fromDatabase(this._id,this._displayName,this._email,this._level, this._points,this._coins,this._gold,this._completedRewards,
   this._easyRecord,this._mediumRecord,this._hardRecord,this._randomRecord);
 
+  User.public(this._id,this._displayName,this._level);
+
   User.map(dynamic obj){
     this._id = obj['id'];
     this._displayName = obj['displayName'];
@@ -102,5 +104,9 @@ class User{
     map['randomRecord'] = _randomRecord;
 
     return map;
+  }
+
+  String to(){
+    return _displayName;
   }
 }

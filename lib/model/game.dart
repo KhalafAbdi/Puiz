@@ -17,6 +17,8 @@ class Game{
   Game(this.gameID,this.category, this.difficulty, this.creatorID, this.creatorName, this.state, this.password);
 
   Game.creat(this.category, this.difficulty, this.creatorID,this.creatorName,this.state, this.password);
+  
+  Game.start(this.gameID,this.category, this.difficulty, this.creatorID, this.creatorName, this.state, this.joinerID, this.joinerName);
 
   Map<String,dynamic> toMap(){
     var map = new Map<String, dynamic>();
