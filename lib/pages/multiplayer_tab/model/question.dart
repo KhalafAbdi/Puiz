@@ -5,9 +5,9 @@ class Question{
   String correctAnswer;
   List<String> incorrectAnswers;
 
-  String ownerAnswer;
+  String ownerAnswer = "";
   DateTime ownerAnswertime;
-  String joinerAnswer;
+  String joinerAnswer = "";
   DateTime joinerAnswertime;
 
   Question({
@@ -22,16 +22,32 @@ class Question{
     map['correctAnswer'] = correctAnswer;
     map['incorrectAnswers'] = incorrectAnswers;
 
-    if(ownerAnswer != null && ownerAnswertime != null){
-      map['ownerAnswer'] = ownerAnswer;
+   
+    map['ownerAnswer'] = ownerAnswer;
+    map['joinerAnswer'] = joinerAnswer;
+      
+    return map;
+  }
+
+  Map<String,dynamic> toNewMap(String one, String two){
+    var map = new Map<String, dynamic>();
+    map['question'] = question;
+    map['correctAnswer'] = correctAnswer;
+    map['incorrectAnswers'] = incorrectAnswers;
+
+    map['joinerAnswer'] = two;
+    map['ownerAnswer'] = one;
+
+    if(one != ""){
+      
       map['ownerAnswertime'] = DateTime.now().millisecondsSinceEpoch;
     }
 
-    if(joinerAnswer != null && joinerAnswertime != null){
-      map['joinerAnswer'] = ownerAnswer;
+    if(two != ""){
+      
       map['joinerAnswertime'] = DateTime.now().millisecondsSinceEpoch;
     }
-
+    
     return map;
   }
 }

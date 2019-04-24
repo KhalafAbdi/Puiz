@@ -34,6 +34,8 @@ class _GameQuizState extends State<GameQuiz> {
 
   int timeLeft;
 
+  String statusMessage;
+
   @override
   void initState() {
     super.initState();
@@ -161,7 +163,6 @@ Widget quiz() {
             ),
 
             Card(
-              //margin: EdgeInsets.only(top: 25.0),
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
@@ -241,29 +242,36 @@ Widget quiz() {
       opponentAnswer = ownerAnswer;
     }
 
+    bool showAnswer = false;
+
+    if(ownAnswer != "" && opponentAnswer != ""){
+      showAnswer = true;
+    }
+
+
     return ListView.builder(
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
       itemCount: allAnswers.length,
       itemBuilder: (BuildContext context, int index) {
-        return answerWidget(allAnswers[index], ownAnswer, opponentAnswer);
+        return answerWidget(allAnswers[index], ownAnswer, opponentAnswer, showAnswer);
       }
     );
   }
   
 
-  Widget answerWidget(String answer, String ownAnswer, String opponentAnswer){
+  Widget answerWidget(String answer, String ownAnswer, String opponentAnswer, bool showAnswer){
 
     return Stack(
       children: <Widget>[
         Card(
-          color: Colors.white,
+          color: answer == questions[currenQuestion].correctAnswer && showAnswer ? Colors.greenAccent : Colors.white,
           margin: EdgeInsets.only(bottom: 20.0),
           child: Column(
             children: <Widget>[
               ListTile(
             enabled: true,
-            onTap: () => print("You pressed answer"),
+            onTap: () => pressedAnswer(answer, ownAnswer, opponentAnswer),
             title: Text(
               answer,
               textAlign: TextAlign.center,
@@ -295,6 +303,35 @@ Widget quiz() {
       )
       ],
     );
+  }
+
+  pressedAnswer(String answer, String ownAnswer, String opponentAnswer) async {
+    print("Pressed $answer - fecthing database");
+    //DocumentSnapshot s = await Firestore.instance.collection('Messages').document(tempGameID).collection('questions').document('question_${currenQuestion+1}').get();
+
+    Question q = Question(
+      question: questions[currenQuestion].question,
+      correctAnswer: questions[currenQuestion].correctAnswer,
+      incorrectAnswers: questions[currenQuestion].incorrectAnswers
+    );
+
+    String temp1; 
+    String temp2;
+
+    if(isCreator){
+      temp1 = answer;
+      temp2 = opponentAnswer;
+    }else {
+      temp1 = opponentAnswer;
+      temp2 = answer;
+    }
+
+    print("Updating database");
+    Firestore.instance.collection('Messages').document(tempGameID).collection('questions').document('question_${currenQuestion+1}').setData(q.toNewMap(temp1, temp2));
+
+
+
+
   }
 
 
