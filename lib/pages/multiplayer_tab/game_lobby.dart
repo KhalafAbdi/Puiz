@@ -54,7 +54,7 @@ class _GameLobbyState extends State<GameLobby> {
                 return chat();
               }else if(snap.data['state'] == "started") {
                 gameStarted = true;
-                return MultiPlayerQuiz();
+                return GameQuiz(widget.gameID);
               }
 
               return Text("Something is horriably wrong");
