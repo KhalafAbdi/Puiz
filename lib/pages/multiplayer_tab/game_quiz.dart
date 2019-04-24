@@ -307,7 +307,6 @@ Widget quiz() {
 
   pressedAnswer(String answer, String ownAnswer, String opponentAnswer) async {
     print("Pressed $answer - fecthing database");
-    //DocumentSnapshot s = await Firestore.instance.collection('Messages').document(tempGameID).collection('questions').document('question_${currenQuestion+1}').get();
 
     Question q = Question(
       question: questions[currenQuestion].question,
