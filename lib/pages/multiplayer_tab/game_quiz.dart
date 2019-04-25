@@ -21,7 +21,7 @@ class _GameQuizState extends State<GameQuiz> {
   bool isLoading = true;
 
   List<Question> questions = [];
-  int currenQuestionIndex = 0;
+
 
   Game game;
 
@@ -36,7 +36,6 @@ class _GameQuizState extends State<GameQuiz> {
   int timeLeft;
 
   String statusMessage;
-  int currentQuestion;
 
   @override
   void initState() {
@@ -47,7 +46,7 @@ class _GameQuizState extends State<GameQuiz> {
   }
 
   Future<void> setUp() async {
-    currentQuestion = currenQuestionIndex +1;
+
     
     QuerySnapshot v = await Firestore.instance.collection('Messages').document(tempGameID).collection("questions").getDocuments();
     DocumentSnapshot documentSnapshot = await Firestore.instance.collection('Games').document(tempGameID).get();
@@ -138,18 +137,43 @@ class _GameQuizState extends State<GameQuiz> {
 List<String> allAnswers = [];
 
 Widget quiz() {
-  if(allAnswers != null) allAnswers.clear();
-
-  allAnswers.addAll(questions[currenQuestionIndex].incorrectAnswers);
-  allAnswers.add(questions[currenQuestionIndex].correctAnswer);
-  allAnswers.shuffle();
+  
 
   
 
     return Stack(
       fit: StackFit.expand,
       children: <Widget>[ 
-      Container(
+        questionStream()
+      ]
+    );
+  }
+
+  Widget questionStream(){
+
+    return StreamBuilder(
+      stream: Firestore.instance.collection('Messages').document(tempGameID).snapshots(),
+      builder: (context, snap) {
+        if(!snap.hasData){
+          return Text("");
+        }
+
+          return placeholder(snap.data['currentquestion']);
+        
+
+        },
+    ); 
+  }
+
+  Widget placeholder(int index){
+    if(allAnswers != null) allAnswers.clear();
+
+    allAnswers.addAll(questions[index-1].incorrectAnswers);
+    allAnswers.add(questions[index-1].correctAnswer);
+   allAnswers.shuffle();
+
+
+    return Container(
         margin: EdgeInsets.only(top: 40.0, left: 15.0, right: 15.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -157,10 +181,10 @@ Widget quiz() {
 
             scoreBoardStream(),
 
-            new Container(
+             new Container(
               margin: EdgeInsets.only(bottom: 2.0, top: 5.0),
               alignment: Alignment.centerRight,
-              child: new Text("Question $currentQuestion of ${questions.length}",
+              child: new Text("Question $index of ${questions.length}",
                 style: TextStyle(
                   fontSize: 13.0,
                   color: Colors.white,
@@ -184,7 +208,7 @@ Widget quiz() {
                         alignment: Alignment.center,
                         margin: EdgeInsets.only(
                             top: 15.0, bottom: 15.0, left: 15.0, right: 15.0),
-                        child: Text(questions[currenQuestionIndex].question,
+                        child: Text(questions[index-1].question,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 20.0,
@@ -205,21 +229,22 @@ Widget quiz() {
               margin: EdgeInsets.only(top:0.0),
               child: Column(
                 children: <Widget>[
-                  answerStream()
+                  answerStream(index-1)
                 ],
               ),
             )
+
           ],
         ),
-      ),
-    ]
-    );
+      );
   }
 
 
 
-  Widget answerStream(){
-    String questionPath = 'question_$currentQuestion';
+
+
+  Widget answerStream(int currenQuestionIndex){
+    String questionPath = 'question_${currenQuestionIndex+1}';
 
     return StreamBuilder(
       stream: Firestore.instance.collection('Messages').document(tempGameID).collection('questions').document(questionPath).snapshots(),
@@ -228,14 +253,14 @@ Widget quiz() {
           return Text("");
         }
 
-        return answerCardsList(snap.data['ownerAnswer'], snap.data['joinerAnswer']);
+        return answerCardsList(snap.data['ownerAnswer'], snap.data['joinerAnswer'], currenQuestionIndex);
 
         },
     );
   }
 
 
-  Widget answerCardsList(String ownerAnswer, String joinerAnswer){
+  Widget answerCardsList(String ownerAnswer, String joinerAnswer,int currenQuestionIndex){
     String ownAnswer;
     String opponentAnswer;
 
@@ -246,19 +271,13 @@ Widget quiz() {
       ownAnswer = joinerAnswer;
       opponentAnswer = ownerAnswer;
     }
-
-    /*if(ownAnswer != "" && ownAnswer != null && opponentAnswer != "" && opponentAnswer != null){
-      showAnswer = true;
-      nextQuestion();
-    }*/
-
     
     return ListView.builder(
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
       itemCount: allAnswers.length,
       itemBuilder: (BuildContext context, int index) {
-        return answerWidget(allAnswers[index], ownAnswer, opponentAnswer, showAnswer);
+        return answerWidget(allAnswers[index], ownAnswer, opponentAnswer, showAnswer, currenQuestionIndex);
       }
     );
   }
@@ -272,7 +291,7 @@ Widget quiz() {
   }
   
 
-  Widget answerWidget(String answer, String ownAnswer, String opponentAnswer, bool showAnswer){
+  Widget answerWidget(String answer, String ownAnswer, String opponentAnswer, bool showAnswer, int currenQuestionIndex){
 
 
     return Stack(
@@ -284,7 +303,7 @@ Widget quiz() {
             children: <Widget>[
               ListTile(
             enabled: true,
-            onTap: () => pressedAnswer(answer, ownAnswer, opponentAnswer),
+            onTap: () => pressedAnswer(answer, ownAnswer, opponentAnswer, currenQuestionIndex),
             title: Text(
               answer,
               textAlign: TextAlign.center,
@@ -318,7 +337,7 @@ Widget quiz() {
     );
   }
 
-  pressedAnswer(String answer, String ownAnswer, String opponentAnswer) async {
+  pressedAnswer(String answer, String ownAnswer, String opponentAnswer, int currenQuestionIndex) async {
     print("Pressed $answer - fecthing database");
 
     Question q = Question(
@@ -339,7 +358,7 @@ Widget quiz() {
     }
 
     print("Updating database");
-    Firestore.instance.collection('Messages').document(tempGameID).collection('questions').document('question_${currenQuestion+1}').setData(q.toNewMap(temp1, temp2));
+    Firestore.instance.collection('Messages').document(tempGameID).collection('questions').document('question_${currenQuestionIndex+1}').setData(q.toNewMap(temp1, temp2));
 
 
 
