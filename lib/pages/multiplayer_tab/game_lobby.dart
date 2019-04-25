@@ -369,6 +369,15 @@ class _GameLobbyState extends State<GameLobby> {
         Firestore.instance.collection('Messages').document(widget.gameID).collection("questions").document("question_${i+1}").setData(question.toMap());
       }
     }
+
+    var map = new Map<String, dynamic>();
+    map['joinerscore'] = 0;
+    map['creatorscore'] = 0;
+    map['currentquestion'] = 1;
+    
+    Firestore.instance.collection('Messages').document(widget.gameID).setData(map);
+
+
   }
 
 

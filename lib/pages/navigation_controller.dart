@@ -25,7 +25,7 @@ class _NavigationControllerState extends State<NavigationController> {
   int currentTab = 0;
 
   HomePage homePage;
-  GameQuiz gameQuiz;
+  MultiplayerPage multiplayerPage;
   DeathMatchPage deathMatchPage;
   QuizPage quizzesPage;
   SettingsPage settingsPage;
@@ -39,13 +39,13 @@ class _NavigationControllerState extends State<NavigationController> {
   @override
   initState(){
     homePage = HomePage(0, updateCurrentTab);
-    gameQuiz = GameQuiz(1);
+    multiplayerPage = MultiplayerPage(1);
     deathMatchPage = DeathMatchPage(2);
     quizzesPage = QuizPage(3);
     settingsPage = SettingsPage(4);
     
     pageTitles = ["Home", "Multiplayer", "DeathMatch", "Quiz", "Settings"];
-    pages = [homePage,gameQuiz, deathMatchPage, quizzesPage, settingsPage];
+    pages = [homePage,multiplayerPage, deathMatchPage, quizzesPage, settingsPage];
 
     if(widget.subject == null){
       currentPage = homePage;

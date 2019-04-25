@@ -28,7 +28,7 @@ class _GameQuizState extends State<GameQuiz> {
   User user;
   User opponent;
 
-  String tempGameID = "-Ld9Nx41L3-Dhxpd_ze3";
+
   bool showAnswer = false;
   
   bool isCreator = false;
@@ -48,8 +48,8 @@ class _GameQuizState extends State<GameQuiz> {
   Future<void> setUp() async {
 
     
-    QuerySnapshot v = await Firestore.instance.collection('Messages').document(tempGameID).collection("questions").getDocuments();
-    DocumentSnapshot documentSnapshot = await Firestore.instance.collection('Games').document(tempGameID).get();
+    QuerySnapshot v = await Firestore.instance.collection('Messages').document(widget.gameID).collection("questions").getDocuments();
+    DocumentSnapshot documentSnapshot = await Firestore.instance.collection('Games').document(widget.gameID).get();
 
     user = await Database().currentUser(); 
     print("joiner: " + documentSnapshot.data['joinerID']);
@@ -94,8 +94,17 @@ class _GameQuizState extends State<GameQuiz> {
       documentSnapshot.data['joinerName'],
     );
 
+
+
     setState(() {
       isLoading = false;
+    });
+
+    Future.delayed(const Duration(milliseconds: 3000), () {
+      setState(() {
+        gameHasStarted = true;
+      });
+
     });
   }
 
@@ -109,14 +118,16 @@ class _GameQuizState extends State<GameQuiz> {
     );
   }
 
+  bool gameHasStarted = false;
+
   Widget questionList(){
     return Container(
       child: Stack(
         children: <Widget>[
           quiz(),
           
-          //blur(),
-          //startScreen()
+          (!gameHasStarted) ? blur() : Container(),
+          (!gameHasStarted) ? startScreen() : Container()
         ],
       ),
     );
@@ -152,7 +163,7 @@ Widget quiz() {
   Widget questionStream(){
 
     return StreamBuilder(
-      stream: Firestore.instance.collection('Messages').document(tempGameID).snapshots(),
+      stream: Firestore.instance.collection('Messages').document(widget.gameID).snapshots(),
       builder: (context, snap) {
         if(!snap.hasData){
           return Text("");
@@ -247,7 +258,7 @@ Widget quiz() {
     String questionPath = 'question_${currenQuestionIndex+1}';
 
     return StreamBuilder(
-      stream: Firestore.instance.collection('Messages').document(tempGameID).collection('questions').document(questionPath).snapshots(),
+      stream: Firestore.instance.collection('Messages').document(widget.gameID).collection('questions').document(questionPath).snapshots(),
       builder: (context, snap) {
         if(!snap.hasData){
           return Text("");
@@ -281,19 +292,8 @@ Widget quiz() {
       }
     );
   }
-  
-  nextQuestion() async {
-    //await new Future.delayed(const Duration(seconds: 3));
-    setState(() {
-     //currenQuestion++; 
-    });
-    //print("wainted 3 secs now moving on to next question");
-  }
-  
-
+   
   Widget answerWidget(String answer, String ownAnswer, String opponentAnswer, bool showAnswer, int currenQuestionIndex){
-
-
     return Stack(
       children: <Widget>[
         Card(
@@ -358,18 +358,13 @@ Widget quiz() {
     }
 
     print("Updating database");
-    Firestore.instance.collection('Messages').document(tempGameID).collection('questions').document('question_${currenQuestionIndex+1}').setData(q.toNewMap(temp1, temp2));
-
-
-
+    Firestore.instance.collection('Messages').document(widget.gameID).collection('questions').document('question_${currenQuestionIndex+1}').setData(q.toNewMap(temp1, temp2));
 
   }
 
-
-
   Widget scoreBoardStream(){
     return StreamBuilder(
-      stream: Firestore.instance.collection('Messages').document(tempGameID).snapshots(),
+      stream: Firestore.instance.collection('Messages').document(widget.gameID).snapshots(),
       builder: (context, snap) {
         if(!snap.hasData){
           return Text("");
@@ -441,6 +436,10 @@ Widget quiz() {
 
 
 
+
+
+
+
   Widget startScreen(){
     return Stack(
         children: <Widget>[
@@ -482,8 +481,8 @@ Widget quiz() {
                               shape: BoxShape.circle,
                             ),
                           ),
-                          Text("UserName", style: TextStyle(fontSize: 18.0, color: Colors.redAccent),),
-                          Text("level 45", style: TextStyle(fontSize: 11.0, color: Colors.greenAccent),)
+                          Text(user.displayName, style: TextStyle(fontSize: 18.0, color: Colors.redAccent),),
+                          Text("Level " + user.level.toString(), style: TextStyle(fontSize: 11.0, color: Colors.greenAccent),)
                         ],
                       ),
                     ),
@@ -507,8 +506,8 @@ Widget quiz() {
                               shape: BoxShape.circle,
                             ),
                           ),
-                          Text("UserName", style: TextStyle(fontSize: 18.0, color: Colors.redAccent),),
-                          Text("level 12", style: TextStyle(fontSize: 11.0, color: Colors.greenAccent),)
+                          Text(opponent.displayName, style: TextStyle(fontSize: 18.0, color: Colors.redAccent),),
+                          Text("Level " + opponent.level.toString(), style: TextStyle(fontSize: 11.0, color: Colors.greenAccent),)
                         ],
                       ),
                     ),
