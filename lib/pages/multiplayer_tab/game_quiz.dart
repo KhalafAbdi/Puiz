@@ -21,7 +21,7 @@ class _GameQuizState extends State<GameQuiz> {
   bool isLoading = true;
 
   List<Question> questions = [];
-  int currenQuestion = 0;
+  int currenQuestionIndex = 0;
 
   Game game;
 
@@ -29,12 +29,14 @@ class _GameQuizState extends State<GameQuiz> {
   User opponent;
 
   String tempGameID = "-Ld9Nx41L3-Dhxpd_ze3";
+  bool showAnswer = false;
   
   bool isCreator = false;
 
   int timeLeft;
 
   String statusMessage;
+  int currentQuestion;
 
   @override
   void initState() {
@@ -45,6 +47,7 @@ class _GameQuizState extends State<GameQuiz> {
   }
 
   Future<void> setUp() async {
+    currentQuestion = currenQuestionIndex +1;
     
     QuerySnapshot v = await Firestore.instance.collection('Messages').document(tempGameID).collection("questions").getDocuments();
     DocumentSnapshot documentSnapshot = await Firestore.instance.collection('Games').document(tempGameID).get();
@@ -137,9 +140,11 @@ List<String> allAnswers = [];
 Widget quiz() {
   if(allAnswers != null) allAnswers.clear();
 
-  allAnswers.addAll(questions[currenQuestion].incorrectAnswers);
-  allAnswers.add(questions[currenQuestion].correctAnswer);
+  allAnswers.addAll(questions[currenQuestionIndex].incorrectAnswers);
+  allAnswers.add(questions[currenQuestionIndex].correctAnswer);
   allAnswers.shuffle();
+
+  
 
     return Stack(
       fit: StackFit.expand,
@@ -155,7 +160,7 @@ Widget quiz() {
             new Container(
               margin: EdgeInsets.only(bottom: 2.0, top: 5.0),
               alignment: Alignment.centerRight,
-              child: new Text("Question ${currenQuestion+1} of ${questions.length}",
+              child: new Text("Question $currentQuestion of ${questions.length}",
                 style: TextStyle(
                   fontSize: 13.0,
                   color: Colors.white,
@@ -179,7 +184,7 @@ Widget quiz() {
                         alignment: Alignment.center,
                         margin: EdgeInsets.only(
                             top: 15.0, bottom: 15.0, left: 15.0, right: 15.0),
-                        child: Text(questions[currenQuestion].question,
+                        child: Text(questions[currenQuestionIndex].question,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 20.0,
@@ -214,7 +219,7 @@ Widget quiz() {
 
 
   Widget answerStream(){
-    String questionPath = 'question_${currenQuestion+1}';
+    String questionPath = 'question_$currentQuestion';
 
     return StreamBuilder(
       stream: Firestore.instance.collection('Messages').document(tempGameID).collection('questions').document(questionPath).snapshots(),
@@ -242,13 +247,12 @@ Widget quiz() {
       opponentAnswer = ownerAnswer;
     }
 
-    bool showAnswer = false;
-
-    if(ownAnswer != "" && opponentAnswer != ""){
+    /*if(ownAnswer != "" && ownAnswer != null && opponentAnswer != "" && opponentAnswer != null){
       showAnswer = true;
-    }
+      nextQuestion();
+    }*/
 
-
+    
     return ListView.builder(
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
@@ -259,13 +263,22 @@ Widget quiz() {
     );
   }
   
+  nextQuestion() async {
+    //await new Future.delayed(const Duration(seconds: 3));
+    setState(() {
+     //currenQuestion++; 
+    });
+    //print("wainted 3 secs now moving on to next question");
+  }
+  
 
   Widget answerWidget(String answer, String ownAnswer, String opponentAnswer, bool showAnswer){
+
 
     return Stack(
       children: <Widget>[
         Card(
-          color: answer == questions[currenQuestion].correctAnswer && showAnswer ? Colors.greenAccent : Colors.white,
+          color: answer == questions[currenQuestionIndex].correctAnswer && showAnswer ? Colors.greenAccent : Colors.white,
           margin: EdgeInsets.only(bottom: 20.0),
           child: Column(
             children: <Widget>[
@@ -309,9 +322,9 @@ Widget quiz() {
     print("Pressed $answer - fecthing database");
 
     Question q = Question(
-      question: questions[currenQuestion].question,
-      correctAnswer: questions[currenQuestion].correctAnswer,
-      incorrectAnswers: questions[currenQuestion].incorrectAnswers
+      question: questions[currenQuestionIndex].question,
+      correctAnswer: questions[currenQuestionIndex].correctAnswer,
+      incorrectAnswers: questions[currenQuestionIndex].incorrectAnswers
     );
 
     String temp1; 
