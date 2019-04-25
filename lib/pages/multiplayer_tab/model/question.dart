@@ -35,17 +35,22 @@ class Question{
     map['correctAnswer'] = correctAnswer;
     map['incorrectAnswers'] = incorrectAnswers;
 
-    map['joinerAnswer'] = two;
-    map['ownerAnswer'] = one;
+    
+    
 
-    if(one != ""){
+    if(one != "" && one != null){
       
       map['ownerAnswertime'] = DateTime.now().millisecondsSinceEpoch;
+      map['ownerAnswer'] = one;
+    }else {
+      map['ownerAnswer'] = "";
     }
 
-    if(two != ""){
-      
+    if(two != "" && two != null){
+      map['joinerAnswer'] = two;
       map['joinerAnswertime'] = DateTime.now().millisecondsSinceEpoch;
+    }else {
+      map['joinerAnswer'] = "";
     }
     
     return map;

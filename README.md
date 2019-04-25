@@ -6,7 +6,7 @@ whilst only having to maintain a single codebase.
 
 ----
 ## left of:
-    Search bar duplicates search results for some reason. 
+    handle wins and when there is no more questions. 
 
 ## Todo:
 
@@ -15,12 +15,8 @@ whilst only having to maintain a single codebase.
         Multiplayer backened - using nodeJS
             - Move fetchOpenGames() into Database class.
 
-            - Create game 
-                - Open new Lobby class until someone joins (currently just updates server with new game, but doesn't change view)
-
-            - Join feature 
-            - Small chat (all multiplayer games should have a chat to roast each other duuh)
-            - Start game
+            - handle wins/points from cloud functions
+            - make quiz and chat two tabs you can swipe between.
 
         Responsiveness (smaller screens might get a pixel overflow)
             - design should also work in protait mode
@@ -31,7 +27,7 @@ whilst only having to maintain a single codebase.
 
      later:
         - REMOVE debug printouts
-        - Make a Contants file
+        - Make a Contants file 
         - let users make a custom avatar
         - settings tabs when everything else works
 
