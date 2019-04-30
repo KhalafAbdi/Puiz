@@ -6,18 +6,14 @@ whilst only having to maintain a single codebase.
 
 ----
 ## left of:
-    handle wins and when there is no more questions. 
-    Handle if answered at the same time
+    Added avatar support
 
 ## Todo:
 
     Sonner than later:
 
-        Multiplayer backened - using nodeJS
-            - Move fetchOpenGames() into Database class.
-
-            - handle wins/points from cloud functions
-            - make quiz and chat two tabs you can swipe between.
+        Multiplayer backened
+            - lots of cleanup. 
 
         Responsiveness (smaller screens might get a pixel overflow)
             - design should also work in protait mode
