@@ -89,7 +89,8 @@ class Database {
       snapshot.data['easyRecord'],
       snapshot.data['mediumRecord'],
       snapshot.data['hardRecord'],
-      snapshot.data['randomRecord']
+      snapshot.data['randomRecord'],
+      snapshot.data['imgPath']
     );
 
     return user;
@@ -102,6 +103,7 @@ class Database {
       id, 
       snapshot.data['displayName'],  
       snapshot.data['level'], 
+      snapshot.data['imgPath']
     );
 
     return user;

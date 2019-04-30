@@ -483,7 +483,11 @@ Widget quiz() {
                             height: 150.0,
                             decoration: new BoxDecoration(
                               color: Colors.orange,
-                              shape: BoxShape.circle,
+                              image: new DecorationImage(
+                              fit: BoxFit.fill,
+                              image: new NetworkImage(user.imgPath)
+                            )
+                            
                             ),
                           ),
                           Text(user.displayName, style: TextStyle(fontSize: 18.0, color: Colors.redAccent),),
@@ -507,8 +511,11 @@ Widget quiz() {
                             width: 150.0,
                             height: 150.0,
                             decoration: new BoxDecoration(
-                              color: Colors.greenAccent,
                               shape: BoxShape.circle,
+                              image: new DecorationImage(
+                              fit: BoxFit.fill,
+                              image: new NetworkImage(opponent.imgPath)
+                            )
                             ),
                           ),
                           Text(opponent.displayName, style: TextStyle(fontSize: 18.0, color: Colors.redAccent),),

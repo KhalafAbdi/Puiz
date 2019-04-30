@@ -117,11 +117,18 @@ class _HomePageState extends State<HomePage> {
           Container(
               margin: EdgeInsets.only(
                   top: 5.0, bottom: 5.0, left: 10.0, right: 10.0),
-              child: new IconButton(
-                  iconSize: 125.0,
-                  icon: new Image.asset('assets/avataaars.png'),
-                  tooltip: 'Edit Avatar',
-                  onPressed: () => {})),
+              child: Container(
+              width: 125.0,
+              height: 125.0,
+              decoration: new BoxDecoration(
+                shape: BoxShape.circle,
+                image: new DecorationImage(
+                  fit: BoxFit.fill,
+                  image: new NetworkImage(
+                    user.imgPath)
+                )
+        ))),
+
           themeButton("Start new Quiz", 20.0)
         ],
       ),

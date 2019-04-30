@@ -63,6 +63,12 @@ class _SettingsPageState extends State<SettingsPage> {
                     onPressed: _signOut,
                   ),
                 ),
+                Container(
+                  child: RaisedButton(
+                    child: Text("Edit Avatar"),
+                    onPressed:() =>  Navigator.of(context).pushNamed('/editAvatar'),
+                  ),
+                ),
                 new FutureBuilder<FirebaseUser>(
                     future: FirebaseAuth.instance.currentUser(),
                     builder: (BuildContext context,

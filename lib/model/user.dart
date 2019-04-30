@@ -1,4 +1,4 @@
-
+import 'avatar.dart';
 
 class User{
   String _id = "#";
@@ -16,12 +16,14 @@ class User{
   int _hardRecord = 0;
   int _randomRecord = 0;
 
+  String imgPath = 'https://avataaars.io/?accessoriesType=Blank&avatarStyle=Transparent&clotheColor=Black&clotheType=GraphicShirt&eyeType=Close&eyebrowType=Default&facialHairColor=BlondeGolden&facialHairType=Blank&hairColor=PastelPink&mouthType=Sad&skinColor=Tanned&topType=Hat';
+
   User(this._displayName, this._email);
 
   User.fromDatabase(this._id,this._displayName,this._email,this._level, this._points,this._coins,this._gold,this._completedRewards,
-  this._easyRecord,this._mediumRecord,this._hardRecord,this._randomRecord);
+  this._easyRecord,this._mediumRecord,this._hardRecord,this._randomRecord, this.imgPath);
 
-  User.public(this._id,this._displayName,this._level);
+  User.public(this._id,this._displayName,this._level, this.imgPath);
 
   User.map(dynamic obj){
     this._id = obj['id'];
@@ -36,6 +38,7 @@ class User{
     this._mediumRecord = obj['mediumRecord'];
     this._hardRecord = obj['hardRecord'];
     this._randomRecord = obj['randomRecord'];
+    this.imgPath = obj['imgPath'];
   }
 
   String get displayName => _displayName;
@@ -102,6 +105,7 @@ class User{
     map['mediumRecord'] = _mediumRecord;
     map['hardRecord'] = _hardRecord;
     map['randomRecord'] = _randomRecord;
+    map['imgPath'] = Avatar().getRandom();
 
     return map;
   }

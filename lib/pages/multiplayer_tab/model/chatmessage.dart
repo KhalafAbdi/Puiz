@@ -5,11 +5,13 @@ class ChatMessage extends StatelessWidget {
   final String content;
   final String name;
   final String senderID;
+  final String avatar;
 
   ChatMessage({
     this.content,
     this.name,
-    this.senderID
+    this.senderID,
+    this.avatar
   });
 
   Map<String,dynamic> toMap(){
@@ -17,6 +19,7 @@ class ChatMessage extends StatelessWidget {
     map['content'] = content;
     map['sender'] = name;
     map['senderID'] = senderID;
+    map['avatar'] = avatar;
     map['sent'] = DateTime.now().millisecondsSinceEpoch;
 
 
@@ -33,7 +36,7 @@ class ChatMessage extends StatelessWidget {
           new Container(
             margin: const EdgeInsets.only(right: 16.0),
             child: new CircleAvatar(
-              child: new Image.network("http://res.cloudinary.com/kennyy/image/upload/v1531317427/avatar_z1rc6f.png"),
+              child: new Image.network(avatar),
               ),
           ),
           new Column(

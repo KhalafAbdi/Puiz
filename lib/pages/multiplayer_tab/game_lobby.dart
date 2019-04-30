@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:pro/pages/multiplayer_tab/model/question.dart';
 import 'game_quiz.dart';
+import 'package:pro/model/user.dart';
 
 class GameLobby extends StatefulWidget {
   final gameID;
@@ -109,34 +110,66 @@ class _GameLobbyState extends State<GameLobby> {
                   Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Container(
-                      width: 100.0,
-                      height: 100.0,
-                      decoration: new BoxDecoration(
-                        color: Colors.orange,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 5.0),
-                      child: FutureBuilder(
-                        future: Firestore.instance.collection('Games').document(widget.gameID).get(),
-                        builder: (context, snap) {
-                          if(!snap.hasData){
-                            return Text("");
-                          }
-                          return Text(snap.data['creatorName'],
-                          style: TextStyle(
-                          fontSize: 14.5,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500));
-                        },
+                 FutureBuilder(
+                  future: Firestore.instance.collection('Games').document(widget.gameID).get(),
+                  builder: (context, snap) {
+                    if(!snap.hasData){
+                      return CircularProgressIndicator();
+                    }
+
+                    
+                    
+
+                    return Column(
+                    children: <Widget>[
+                      FutureBuilder(
+                          future: Firestore.instance.collection('Users').document(snap.data['creatorID']).get(),
+                          builder: (context, snap) {
+                            if(!snap.hasData){
+                              
+                              return Container(
+                              width: 100.0,
+                              height: 100.0,
+                              decoration: new BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.red
+                              )
+                            );
+
+                            }
+
+
+
+                            return Container(
+                            width: 100.0,
+                            height: 100.0,
+                            decoration: new BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: new DecorationImage(
+                              fit: BoxFit.fill,
+                              image: new NetworkImage(snap.data['imgPath'])
+                            )
+                            ),
+                          );
+
+                          },
+
+                        ),
+                      Container(
+                        margin: EdgeInsets.only(top: 5.0),
+                        child: Text(snap.data['creatorName'],
+                            style: TextStyle(
+                            fontSize: 14.5,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500)) 
                       )
-                    )
-                  ],
-                ),
+                    ],
+                  );
+
+                  }),
+                /*
+                
+                */
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 15.0),
                   child: Text("V S",
@@ -145,39 +178,70 @@ class _GameLobbyState extends State<GameLobby> {
                     color: Colors.black,
                     fontWeight: FontWeight.w700)),
                 ),
-                Column(
-                  children: <Widget>[
-                    Container(
-                      width: 100.0,
-                      height: 100.0,
-                      decoration: new BoxDecoration(
-                        color: Colors.grey,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 5.0),
-                      child: StreamBuilder(
-                        stream: Firestore.instance.collection('Games').document(widget.gameID).snapshots(),
-                        builder: (context, snap) {
-                          if(!snap.hasData){
-                            return Text("");
-                          }
 
-                          String text = (snap.data['joinerName'] == "") ? "waiting" : snap.data['joinerName'];
+                StreamBuilder(
+                  stream: Firestore.instance.collection('Games').document(widget.gameID).snapshots(),
+                  builder: (context, snap) {
+                    if(!snap.hasData){
+                      return CircularProgressIndicator();
+                    }
+
+                    String text = (snap.data['joinerName'] == "") ? "waiting" : snap.data['joinerName'];
+
+                    return Column(
+                      children: <Widget>[
+                        FutureBuilder(
+                          future: Firestore.instance.collection('Users').document(snap.data['joinerID']).get(),
+                          builder: (context, snap) {
+                            if(!snap.hasData){
+                              return Container(
+                              width: 100.0,
+                              height: 100.0,
+                              decoration: new BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.black26
+                              ));
+                            }
+
+                            bool hasJoiner = (snap.data['joinerName'] != "" && snap.data['joinerName'] != null);
+
+
+                            print("Joined : $hasJoiner");
+
+
+                            return Container(
+                            width: 100.0,
+                            height: 100.0,
+                            decoration: new BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: new DecorationImage(
+                              fit: BoxFit.fill,
+                              image: new NetworkImage(snap.data['imgPath'])
+                            )
+                            ) 
+                            
+                            
+
+                          );
+
+                          },
+
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 5.0),
+                          child: Text(text,
+                              style: TextStyle(
+                              fontSize: 14.5,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500))
+                            ,
                           
-                          
-                          
-                          return Text(text,
-                          style: TextStyle(
-                          fontSize: 14.5,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500));
-                        },
-                      )
-                    )
-                  ],
+                        )
+                      ],
+                    );
+                  }
                 ),
+                
               ],
             ), Container(
               margin: EdgeInsets.only(top: 15.0),
@@ -194,7 +258,7 @@ class _GameLobbyState extends State<GameLobby> {
                                                   
                           child: Text(btnText),
 
-                            onPressed: btnText!="Start" && widget.owner == "true" ? null : () {
+                            onPressed: (btnText !="Start" && widget.owner == "true") ? null : () {
 
                               game.state = "started";
                               game.joinerID = snap.data['joinerID'];
@@ -220,6 +284,11 @@ class _GameLobbyState extends State<GameLobby> {
     );
   }
 
+  getImgPath(String userID) async {
+    DocumentSnapshot s = await Firestore.instance.collection('Users').document(userID).get();
+
+    return s.data['imgPath'];
+  }
 
   Widget chatScreen(){
     return new Column(
@@ -262,7 +331,8 @@ class _GameLobbyState extends State<GameLobby> {
       temporalList.add(ChatMessage(
           content: doc['content'],
           name: doc['sender'],
-          senderID: doc['senderID']
+          senderID: doc['senderID'],
+          avatar: doc['avatar'],
         )
       );
     }
@@ -306,12 +376,15 @@ class _GameLobbyState extends State<GameLobby> {
   }
 
 
-  void _handleSubmit(String text) {
+  void _handleSubmit(String text) async{
+    User user = await Database().currentUser();
+
     _chatController.clear();
       ChatMessage message = new ChatMessage(
         content: text,
         name: game.creatorName,
-        senderID: game.creatorID
+        senderID: game.creatorID,
+        avatar: user.imgPath,
     );
       
     Firestore.instance.collection('Messages').document(widget.gameID).collection("messages").add(message.toMap());

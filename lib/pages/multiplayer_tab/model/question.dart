@@ -37,11 +37,6 @@ class Question{
     map['ownerAnswertime'] = ownerAnswertime;
     map['joinerAnswer'] = joinerAnswer;
     map['joinerAnswertime'] = joinerAnswertime;
-
-    print("ownerAnswer: " + ownerAnswer);
-    print("ownerAnswertime: " + ownerAnswertime.toString());
-    print("joinerAnswer: " + joinerAnswer);
-    print("joinerAnswertime: " + joinerAnswertime.toString());
       
     return map;
   }
