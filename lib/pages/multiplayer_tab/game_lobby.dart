@@ -194,7 +194,7 @@ class _GameLobbyState extends State<GameLobby> {
                                                   
                           child: Text(btnText),
 
-                            onPressed: btnText!="Start" ? null : () {
+                            onPressed: btnText!="Start" && widget.owner == "true" ? null : () {
 
                               game.state = "started";
                               game.joinerID = snap.data['joinerID'];

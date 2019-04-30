@@ -30,9 +30,7 @@ class _GameQuizState extends State<GameQuiz> {
 
 
   bool showAnswer = false;
-  
   bool isCreator = false;
-
   int timeLeft;
 
   String statusMessage;
@@ -100,7 +98,7 @@ class _GameQuizState extends State<GameQuiz> {
       isLoading = false;
     });
 
-    Future.delayed(const Duration(milliseconds: 3000), () {
+    Future.delayed(const Duration(milliseconds: 2000), () {
       setState(() {
         gameHasStarted = true;
       });
@@ -169,7 +167,14 @@ Widget quiz() {
           return Text("");
         }
 
-          return placeholder(snap.data['currentquestion']);
+          if(snap.data['currentquestion'] <= 5){
+            return placeholder(snap.data['currentquestion']);
+          }else {
+            return Container(
+              child: Text("Game Has ended"),
+            );
+          }
+          
         
 
         },
@@ -264,14 +269,14 @@ Widget quiz() {
           return Text("");
         }
 
-        return answerCardsList(snap.data['ownerAnswer'], snap.data['joinerAnswer'], currenQuestionIndex);
+        return answerCardsList(snap.data['ownerAnswer'], snap.data['joinerAnswer'], currenQuestionIndex, snap.data['joinerAnswertime'], snap.data['ownerAnswertime']);
 
         },
     );
   }
 
 
-  Widget answerCardsList(String ownerAnswer, String joinerAnswer,int currenQuestionIndex){
+  Widget answerCardsList(String ownerAnswer, String joinerAnswer,int currenQuestionIndex, int joinerAnswerTime, int ownerAnswerTime){
     String ownAnswer;
     String opponentAnswer;
 
@@ -288,12 +293,12 @@ Widget quiz() {
       shrinkWrap: true,
       itemCount: allAnswers.length,
       itemBuilder: (BuildContext context, int index) {
-        return answerWidget(allAnswers[index], ownAnswer, opponentAnswer, showAnswer, currenQuestionIndex);
+        return answerWidget(allAnswers[index], ownAnswer, opponentAnswer, showAnswer, currenQuestionIndex, joinerAnswerTime, ownerAnswerTime);
       }
     );
   }
    
-  Widget answerWidget(String answer, String ownAnswer, String opponentAnswer, bool showAnswer, int currenQuestionIndex){
+  Widget answerWidget(String answer, String ownAnswer, String opponentAnswer, bool showAnswer, int currenQuestionIndex, int joinerAnswerTime, int ownerAnswerTime){
     return Stack(
       children: <Widget>[
         Card(
@@ -303,7 +308,7 @@ Widget quiz() {
             children: <Widget>[
               ListTile(
             enabled: true,
-            onTap: () => pressedAnswer(answer, ownAnswer, opponentAnswer, currenQuestionIndex),
+            onTap: () => pressedAnswer(answer, ownAnswer, opponentAnswer, currenQuestionIndex, joinerAnswerTime, ownerAnswerTime),
             title: Text(
               answer,
               textAlign: TextAlign.center,
@@ -328,7 +333,7 @@ Widget quiz() {
           ),
           Opacity(
             opacity: (opponentAnswer == answer)? 1.0 : 0.0,
-            child: const Text('Adapt'),
+            child: const Text('Opponent'),
           ),
         ],
       ),
@@ -337,28 +342,28 @@ Widget quiz() {
     );
   }
 
-  pressedAnswer(String answer, String ownAnswer, String opponentAnswer, int currenQuestionIndex) async {
-    print("Pressed $answer - fecthing database");
+  pressedAnswer(String answer, String ownAnswer, String opponentAnswer, int currenQuestionIndex, int joinerAnswerTime, int ownerAnswerTime) async {
+    print("--------------------------Pressed $answer - fecthing database-----------------------");
 
-    Question q = Question(
+    print("ownAnswer: " + answer);
+    print("opponentAnswer: " + opponentAnswer);
+
+
+    Question q = Question.answer(
       question: questions[currenQuestionIndex].question,
       correctAnswer: questions[currenQuestionIndex].correctAnswer,
-      incorrectAnswers: questions[currenQuestionIndex].incorrectAnswers
+      incorrectAnswers: questions[currenQuestionIndex].incorrectAnswers,
+
+      ownerAnswer: (isCreator) ? answer : opponentAnswer,
+      ownerAnswertime : (isCreator) ? DateTime.now().millisecondsSinceEpoch : ownerAnswerTime,
+
+      joinerAnswer: (isCreator) ? opponentAnswer : answer,
+      joinerAnswertime : (isCreator) ? joinerAnswerTime : DateTime.now().millisecondsSinceEpoch,
     );
 
-    String temp1; 
-    String temp2;
-
-    if(isCreator){
-      temp1 = answer;
-      temp2 = opponentAnswer;
-    }else {
-      temp1 = opponentAnswer;
-      temp2 = answer;
-    }
 
     print("Updating database");
-    Firestore.instance.collection('Messages').document(widget.gameID).collection('questions').document('question_${currenQuestionIndex+1}').setData(q.toNewMap(temp1, temp2));
+    Firestore.instance.collection('Messages').document(widget.gameID).collection('questions').document('question_${currenQuestionIndex+1}').setData(q.toMap());
 
   }
 

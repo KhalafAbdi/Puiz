@@ -7,6 +7,7 @@ whilst only having to maintain a single codebase.
 ----
 ## left of:
     handle wins and when there is no more questions. 
+    Handle if answered at the same time
 
 ## Todo:
 
