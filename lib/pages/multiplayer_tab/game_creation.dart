@@ -72,7 +72,7 @@ class _GameCreationState extends State<GameCreation> {
     }
 
   Future<void> grabUser() async{
-    user = await Database().currentUser();
+    user = await Database().getCurrentUserData();
   }
 
   void _submit() {

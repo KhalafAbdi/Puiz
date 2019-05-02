@@ -73,7 +73,7 @@ class _GameLobbyState extends State<GameLobby> {
               topPart(),
               Flexible(
                     child: FutureBuilder(
-                future: Database().currentUser(),
+                future: Database().getCurrentUserData(),
                 builder: (context, snapshot){
                   if(!snapshot.hasData){
                     return Text("Loading");
@@ -377,7 +377,7 @@ class _GameLobbyState extends State<GameLobby> {
 
 
   void _handleSubmit(String text) async{
-    User user = await Database().currentUser();
+    User user = await Database().getCurrentUserData();
 
     _chatController.clear();
       ChatMessage message = new ChatMessage(

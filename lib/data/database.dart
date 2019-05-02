@@ -1,13 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../model/user.dart';
-import '../model/game.dart';
+
+import 'package:pro/model/user.dart';
+import 'package:pro/model/game.dart';
+
+import 'package:pro/data/constants.dart' as constants;
 
 class Database {
-  CollectionReference userCollectionRef;
+  //bool isLoggedIn = false;
 
-  SharedPreferences prefs;
+  SharedPreferences preferences;
+  Firestore firestore;
   User user;
 
   Database(){
@@ -15,244 +19,238 @@ class Database {
   }
 
   init() async {
-    Firestore firestore = Firestore.instance;
+    firestore = Firestore.instance;
     firestore.settings();
-
-    userCollectionRef = firestore.collection('Users');
-    
   }
 
-  // ------------------ USER -----------------------
-  Future<bool> isLoggedIn()async{
-    prefs = await SharedPreferences.getInstance();
-    bool t = (prefs.getKeys().contains("isLoggedin")) ? prefs.getBool("isLoggedin") : null;
-    print("isLoggedIn returned $t");
-    return (t == null) ? false : true;
+  Future<SharedPreferences> getSharedPreferences() async {
+    if(preferences == null){
+      preferences = await SharedPreferences.getInstance();
+    }
+
+    return preferences;
   }
 
-  login() async{
-    prefs = await SharedPreferences.getInstance();
-    prefs.setBool("isLoggedin", true);
-    print("Login has been called, which should now be ${ prefs.getBool("isLoggedin")}");
+// ------------------------------------- User -------------------------------------
+
+  //Get User
+  Future<User> getUser([String userID]){
+    if(userID == null){
+      return getCurrentUserData();
+    }else {
+      return getOpponentData(userID);
+    }
   }
 
-  logout() async {
-    prefs = await SharedPreferences.getInstance();
-    prefs.setBool("isLoggedin", false);
+  //Create user
+  Future<void> creatUser(FirebaseUser user, User newUser) async {
+    await firestore.collection(constants.usersCollection).document(user.uid).setData(newUser.toMap());
   }
 
-  Future createUserAndLogin(FirebaseUser user, String displayName, String email) async {
+  //Update user
+  Future<void> updateUser(User user) async{
+    await firestore.collection(constants.usersCollection).document(user.id).updateData(user.toMap());
+  }
+
+  //Delete user
+  Future<void> deleteUser(User user) async{
+    await firestore.collection(constants.usersCollection).document(user.id).delete();
+  }
+
+  Future newUser(FirebaseUser user, String displayName, String email) async {
     User userData = User(displayName, email);
 
-    userCollectionRef.document(user.uid).setData(userData.toMap()).whenComplete((){
-      addLoggedInUserToPrefs(user, displayName, email);
-    }).catchError((e) => print(e));
-
-    login();
+    creatUser(user, userData);
+    addCurrentUserInfoToPreferences(user, displayName, email);
+    setLoggedIn(true);
   }
 
-  Future getUserDisplay(FirebaseUser user, String displayName, String email) async{
-    DocumentSnapshot snapshot = await userCollectionRef.document(user.uid).get();
-
-    if(snapshot.exists){
-      await userCollectionRef.document(user.uid).get().then((value) => addLoggedInUserToPrefs(user, value.data['displayName'], value.data['email']));
-      login();
-    }else{
-      createUserAndLogin(user, displayName, email);
+  Future<User> getCurrentUserData() async {
+    
+    if(user == null){
+      SharedPreferences prefs = await getSharedPreferences();
+      String userID = prefs.get(constants.sharedUserId);
+      
+      DocumentSnapshot snapshot = await firestore.collection(constants.usersCollection).document(userID).get();
+      user = User.fromDatabase(
+        userID, 
+        snapshot.data[constants.userDisplayName], 
+        snapshot.data[constants.userMail], 
+        snapshot.data[constants.userLevel], 
+        snapshot.data[constants.userPoints], 
+        snapshot.data[constants.userCoins], 
+        snapshot.data[constants.userGold], 
+        snapshot.data[constants.userCompletedRewards],
+        snapshot.data[constants.userEasyRecord],
+        snapshot.data[constants.userMediumRecord],
+        snapshot.data[constants.userHardRecord],
+        snapshot.data[constants.userRandomRecord],
+        snapshot.data[constants.userImgPath]
+      );
     }
+
+    return user;
+  }
+
+  Future<User> getOpponentData(String opponentID) async{
+    DocumentSnapshot snapshot = await firestore.collection(constants.usersCollection).document(opponentID).get();
+
+    return User.public(
+      opponentID, 
+      snapshot.data[constants.userDisplayName],  
+      snapshot.data[constants.userLevel], 
+      snapshot.data[constants.userImgPath]
+    );
+  }
+
+  Future addCurrentUserInfoToPreferences(FirebaseUser user, String displayName, String email) async{
+    SharedPreferences prefs = await getSharedPreferences();
+
+    prefs.setString(constants.sharedUserDisplayName, displayName);
+    prefs.setString(constants.sharedUserMail, email);
+    prefs.setString(constants.sharedUserId, user.uid);
+  }
+
+  Future getUserData(FirebaseUser user, String displayName, String email) async{
+    DocumentSnapshot snapshot = await firestore.collection(constants.usersCollection).document(user.uid).get();
+
+      if(snapshot.exists){
+        addCurrentUserInfoToPreferences(user, displayName, email);
+        setLoggedIn(true);
+      }else{
+        newUser(user, displayName, email);
+      }
+  }
+
+
+  setLoggedIn(bool isLoggedIn) async{
+    SharedPreferences prefs = await getSharedPreferences();
+
+    prefs.setBool(constants.sharedIsLoggedIn, isLoggedIn);
+  }
+
+  Future<bool> isUserLoggedIn()async{
+    SharedPreferences prefs = await getSharedPreferences();
+
+    return prefs.getKeys().contains(constants.sharedIsLoggedIn) ? prefs.getBool(constants.sharedIsLoggedIn) : false;
   }
 
   signOut(){
     FirebaseAuth _auth = FirebaseAuth.instance;
     _auth.signOut();
-    logout();
+    setLoggedIn(false);
   }
 
 
-  // ------------------ CATEGORIES -----------------------
-
-  Future<User> currentUser() async{
-    prefs = await SharedPreferences.getInstance();
-    String id = prefs.get("id");
-
-    DocumentSnapshot snapshot = await userCollectionRef.document(id).get();
-
-    User user = User.fromDatabase(
-      id, 
-      snapshot.data['displayName'], 
-      snapshot.data['email'], 
-      snapshot.data['level'], 
-      snapshot.data['points'], 
-      snapshot.data['coins'], 
-      snapshot.data['gold'], 
-      snapshot.data['completedRewards'],
-      snapshot.data['easyRecord'],
-      snapshot.data['mediumRecord'],
-      snapshot.data['hardRecord'],
-      snapshot.data['randomRecord'],
-      snapshot.data['imgPath']
-    );
-
-    return user;
-  }
-
-  Future<User> getUser(String id) async{
-    DocumentSnapshot snapshot = await userCollectionRef.document(id).get();
-
-    User user = User.public(
-      id, 
-      snapshot.data['displayName'],  
-      snapshot.data['level'], 
-      snapshot.data['imgPath']
-    );
-
-    return user;
-  }
-
-
-
-  Future<DocumentSnapshot> getNewestCategory() async{
-    Firestore firestore = Firestore.instance;
-    firestore.settings();
-
-    DocumentSnapshot snapshot = await firestore.collection('Categories').document('Newest Category').get();
-    String title = snapshot.data['title'];
-
-    return await firestore.collection('Categories').document(title).get();
-  }
-
-  Future isThisFirstLaunch(String id) async {
-    prefs = await SharedPreferences.getInstance();
-    String s = prefs.get(id);
-
-    print("Is this the first time logging in $s");
-    return null;
-  }
-
-  Future addLoggedInUserToPrefs(FirebaseUser user, String displayName, String email) async{
-    prefs = await SharedPreferences.getInstance();
-
-    prefs.setString("displayName", displayName);
-    prefs.setString("email", email);
-    prefs.setString("id", user.uid);
-  }
-
-  Future<List<DocumentSnapshot>> getQuizCategories() async {
-    QuerySnapshot querySnapshot = await Firestore.instance.collection("Categories").getDocuments();
-    return querySnapshot.documents;
-  }
-
-  Future<List<DocumentSnapshot>> getQuizCategory(String category) async {
-    QuerySnapshot querySnapshot = await Firestore.instance.collection(category).getDocuments();
-    return querySnapshot.documents;
-  }
-
-  Future<User> levelUp(User user) async{
-    prefs = await SharedPreferences.getInstance();
-    String id = prefs.get("id");
-
-    DocumentSnapshot snapshot = await userCollectionRef.document(id).get();
-    int level = snapshot.data["level"];
+  //User Actions
+  Future<void> levelUpUser(User user) async{
+    DocumentSnapshot snapshot = await firestore.collection(constants.usersCollection).document(user.id).get();
+    int level = snapshot.data[constants.userLevel];
 
     user.levelUp(level);
 
-    userCollectionRef.document(id).setData(user.toMap());
-    return user;
+    await firestore.collection(constants.usersCollection).document(user.id).setData(user.toMap());
   }
 
-  Future<User> addPoints(User user, int points) async{
-    prefs = await SharedPreferences.getInstance();
-    String id = prefs.get("id");
-
-    DocumentSnapshot snapshot = await userCollectionRef.document(id).get();
-    int level = snapshot.data["level"];
-    int currentPoints = snapshot.data["points"];
+  Future<void> addPoints(User user, int points) async{
+    DocumentSnapshot snapshot = await firestore.collection(constants.usersCollection).document(user.id).get();
+    int level = snapshot.data[constants.userLevel];
+    int currentPoints = snapshot.data[constants.userPoints];
 
     user.addPoints(level, currentPoints, points);
 
-    userCollectionRef.document(id).setData(user.toMap());
-    return user;
+    await firestore.collection(constants.usersCollection).document(user.id).setData(user.toMap());
   }
 
-  Future<User> updateCurrentRecord(User user, String difficulty, int newRecord) async{
-    prefs = await SharedPreferences.getInstance();
-    String id = prefs.get("id");
-
+  Future<User> updateUserRecordForDifficulty(User user, String difficulty, int newRecord) async{
     user.newRecord(difficulty, newRecord);
 
-    userCollectionRef.document(id).setData(user.toMap());
+    await firestore.collection(constants.usersCollection).document(user.id).setData(user.toMap());
     return user;
   }
 
-  Future<DocumentReference> createGame(Game game){
-    Firestore firestore = Firestore.instance;
-    firestore.settings();
+// ------------------------------------- Categories -------------------------------------
 
-
-    CollectionReference gameCollection = firestore.collection('Games');
-
-
-
-    return gameCollection.add(game.toMap());
-
-    
-
+  Future<DocumentSnapshot> getMostRecentlyAddedQuizCategory() async{
+    DocumentSnapshot snapshot = await firestore.collection(constants.categoriesCollection).document(constants.newestCategoryCollection).get();
+    return await firestore.collection(constants.categoriesCollection).document(snapshot.data['title']).get();
   }
 
-  Future<List<Game>> getOpenGames()async{
-    print("GetOpenGames called");
-    var respectsQuery = Firestore.instance.collection('Games').where('state', isEqualTo: 'open');
-    var querySnapshot = await respectsQuery.getDocuments();
+  // Get Category
+  Future<List<DocumentSnapshot>> getQuizCategory(String category) async {
+    QuerySnapshot querySnapshot = await firestore.collection(category).getDocuments();
+    return querySnapshot.documents;
+  }
+
+  // Get Categories    
+  Future<List<DocumentSnapshot>> getQuizCategories() async {
+    QuerySnapshot querySnapshot = await firestore.collection(constants.categoriesCollection).getDocuments();
+    return querySnapshot.documents;
+  }
+
+
+
+// ------------------------------------- Multiplayer Games -------------------------------------
+
+  // Create Game
+  Future<DocumentReference> createGame(Game game){
+    return firestore.collection(constants.gamesCollection).add(game.toMap());
+  }
+
+  // Delete Game
+  deleteGame(gameID) {
+    firestore.collection(constants.gamesCollection).document(gameID).delete();
+  }
+
+  // Update Game
+   // TODO: update game
+
+
+  Future<List<Game>> getLiveGames() async {
+    var querySnapshot = await firestore.collection(constants.gamesCollection).where(constants.gameState, isEqualTo: constants.gameStateOpen).getDocuments();
     List<DocumentSnapshot> d = querySnapshot.documents;
 
     List<Game> games = [];
 
     for(DocumentSnapshot snapshot in d){
-      
-
+  
       games.add(
         Game(
           snapshot.documentID,
-          snapshot.data['category'],
-          snapshot.data['difficulty'],
-          snapshot.data['creatorID'],
-          snapshot.data['creatorName'],
-          snapshot.data['state'],
-          snapshot.data['password'],
+          snapshot.data[constants.gameCategory],
+          snapshot.data[constants.gameDifficulty],
+          snapshot.data[constants.gameCreatorID],
+          snapshot.data[constants.gameCreatorName],
+          snapshot.data[constants.gameState],
+          snapshot.data[constants.gamePassword],
           )
-      );     
+      );   
+
     }
     return games;
   }
 
-  deleteGame(gameID) {
-    Firestore firestore = Firestore.instance;
-    firestore.settings();
-
-    firestore.collection('Games').document(gameID).delete().then((v) => print("Delete success "));
-  }
-
   joinGame(Game game) async{
-    DocumentReference documentReference = Firestore.instance.collection('Games').document(game.gameID);
+    String gameState = await getGameState(game.gameID);
+    if(gameState == constants.gameStateOpen){
 
-    game.state = "closed";
-    User cUser = await currentUser();
+      
+      User user = await getUser();
 
-    game.joinerID = cUser.id;
-    game.joinerName = cUser.displayName;
+      game.state = constants.gameStateClosed;
+      game.joinerID = user.id;
+      game.joinerName = user.displayName;
 
-    documentReference.updateData(game.toMap());
+      firestore.collection(constants.gamesCollection).document(game.gameID).updateData(game.toMap());
+    }else {
+      //TODO: Game is no longer open.
+    }  
   }
 
-  Future<String> getGameState(Game game) async{
-    print("getGameState called");
-    DocumentReference documentReference = Firestore.instance.collection('Games').document(game.gameID);
-    DocumentSnapshot documentSnapshot = await documentReference.get();
+  Future<String> getGameState(String gameID) async{
+    DocumentSnapshot documentSnapshot = await firestore.collection(constants.gamesCollection).document(gameID).get();
 
-    print("res: ${documentSnapshot.data['state'].toString()}");
-    return documentSnapshot.data['state'].toString();
+    print("res: ${documentSnapshot.data[constants.gameState].toString()}");
+    return documentSnapshot.data[constants.gameState].toString();
   }
-
-
-
 }

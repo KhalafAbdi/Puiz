@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
   void onLoginSuccess(FirebaseUser user) {
     var db = new Database();
 
-    db.getUserDisplay(user, user.displayName, user.email);
+    db.getUserData(user, user.displayName, user.email);
     Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
   }
 

@@ -13,7 +13,7 @@ Widget button(title, uri, [ color = const Color.fromRGBO(68, 68, 76, .8) ]) {
             width: 25.0,
           ),
           Center(
-                      child: Padding(
+            child: Padding(
               child: Text(
               "Sign in",
               style:  TextStyle(

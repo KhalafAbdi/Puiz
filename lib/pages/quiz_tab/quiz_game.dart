@@ -91,7 +91,7 @@ class _QuizGameState extends State<QuizGame> {
     
     fromJson(decRes);
 
-    user = await Database().currentUser();
+    user = await Database().getCurrentUserData();
     setState(() {
       doneLoadingData = true;
     });

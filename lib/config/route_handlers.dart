@@ -21,6 +21,8 @@ import 'package:pro/pages/multiplayer_tab/game_lobby.dart';
 
 import 'package:pro/pages/edit_avatar_page.dart';
 
+import 'package:pro/data/constants.dart' as constants;
+
 var rootHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
   return LandingPage();
@@ -38,7 +40,7 @@ var registerHandler = new Handler(
 
 var homeHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-    String subject = params["subject"]?.first;
+    String subject = params[constants.subject]?.first;
   return NavigationController(subject);
 });
 
@@ -49,21 +51,21 @@ var onBoardingHandler = new Handler(
 
 var quizHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-    String subject = params["subject"]?.first;
+    String subject = params[constants.subject]?.first;
   return QuizGame(subject : subject);
 });
 
 var dmquizHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-    String difficulty = params["difficulty"]?.first;
+    String difficulty = params[constants.difficulty]?.first;
   return DeathMatchQuizPage(difficulty : difficulty);
 });
 
 var scoreHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-    String subject = params["subject"]?.first;
-    String score = params["score"]?.first;
-    String totalScore = params["totalScore"]?.first;
+    String subject = params[constants.subject]?.first;
+    String score = params[constants.score]?.first;
+    String totalScore = params[constants.totalScore]?.first;
   return ScorePage(subject: subject, score: score, totalScore: totalScore);
 });
 
@@ -74,8 +76,8 @@ var createNewGameHandler = new Handler(
 
 var multiplayerGameHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-    String gameID = params["gameID"]?.first;
-    String owner = params["owner"]?.first;
+    String gameID = params[constants.gameID]?.first;
+    String owner = params[constants.owner]?.first;
   return GameLobby(gameID : gameID, owner: owner);
 });
 

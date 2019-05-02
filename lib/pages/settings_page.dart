@@ -17,14 +17,10 @@ class _SettingsPageState extends State<SettingsPage> {
   User user;
   int points;
 
-
   void _signOut() {
-    print("Test");
-    var db = new Database();
-    db.signOut();
+    Database().signOut();
 
-    Navigator.of(context)
-        .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+    Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
   }
 
   updatepage(User user){
@@ -33,12 +29,14 @@ class _SettingsPageState extends State<SettingsPage> {
     });
   }
 
-  void _levelUp() {
-    Database().levelUp(user).then((value) => updatepage(value));
+  void _levelUp() async {
+    await Database().levelUpUser(user);
+    await updatepage(user);
   }
 
-  _add100Points() {
-    Database().addPoints(user, 100).then((value) => updatepage(value));
+  _add100Points() async {
+    await Database().addPoints(user, 100);
+    await updatepage(user);
   }
 
   _addCoins() {}
@@ -80,7 +78,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       }
                     }),
                 new FutureBuilder<User>(
-                    future: Database().currentUser(),
+                    future: Database().getCurrentUserData(),
                     builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         if (snapshot != null) {
@@ -163,7 +161,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Widget scoreCards(BuildContext context) {
     return FutureBuilder<User>(
-      future: Database().currentUser(),
+      future: Database().getCurrentUserData(),
       builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot != null) {

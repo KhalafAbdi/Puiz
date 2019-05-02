@@ -1,8 +1,10 @@
-
-import 'package:pro/config/application.dart';
 import 'package:flutter/material.dart';
 import 'package:fluro/fluro.dart';
-import 'package:pro/config/routes.dart';
+
+import 'routes.dart';
+import 'application.dart';
+
+import 'package:pro/data/constants.dart' as constants;
 
 class AppComponent extends StatefulWidget {
   @override
@@ -21,7 +23,7 @@ class AppComponentState extends State<AppComponent> {
   @override
   Widget build(BuildContext context) {
     final app = new MaterialApp(
-      title: 'Puiz',
+      title: constants.appTitle,
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),

@@ -265,7 +265,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
 
   fetchOpenGames() async{
     
-    games = await Database().getOpenGames();
+    games = await Database().getLiveGames();
     liveGames = games.length;
     
 

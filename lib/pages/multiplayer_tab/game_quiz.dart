@@ -49,7 +49,7 @@ class _GameQuizState extends State<GameQuiz> {
     QuerySnapshot v = await Firestore.instance.collection('Messages').document(widget.gameID).collection("questions").getDocuments();
     DocumentSnapshot documentSnapshot = await Firestore.instance.collection('Games').document(widget.gameID).get();
 
-    user = await Database().currentUser(); 
+    user = await Database().getCurrentUserData(); 
     print("joiner: " + documentSnapshot.data['joinerID']);
     print("joiner: " + documentSnapshot.data['creatorID']);
     

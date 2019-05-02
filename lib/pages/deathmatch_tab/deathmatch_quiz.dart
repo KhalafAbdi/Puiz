@@ -67,7 +67,7 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
 
     fromJson(decRes);
 
-    user = await Database().currentUser();
+    user = await Database().getCurrentUserData();
     test();
 
     print("Current Record is: $currentRecord");
@@ -305,7 +305,7 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
     if(!wasAnswerCorrect){
       
       if(questionNumber > currentRecord){
-        Database().updateCurrentRecord(user,widget.difficulty, questionNumber);
+        Database().updateUserRecordForDifficulty(user,widget.difficulty, questionNumber);
       }
 
       Application.router.navigateTo(context, "/score?subject=DeathMatch:${widget.difficulty}:$currentRecord:$questionNumber&score=$score&totalScore=$maxScore", clearStack: true);

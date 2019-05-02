@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: const Color(0xFF2c304d),
       ),
       body: new FutureBuilder<User>(
-          future: Database().currentUser(),
+          future: Database().getCurrentUserData(),
           builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot != null) {
@@ -303,7 +303,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget newCategoryContainer() {
     return new FutureBuilder<DocumentSnapshot>(
-        future: Database().getNewestCategory(),
+        future: Database().getMostRecentlyAddedQuizCategory(),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {

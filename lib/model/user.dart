@@ -1,7 +1,10 @@
+import 'package:pro/data/constants.dart' as constants;
 import 'avatar.dart';
 
+
 class User{
-  String _id = "#";
+  String _id = '';
+  String imgPath = '';
   String _displayName;
   String _email;
   
@@ -16,8 +19,6 @@ class User{
   int _hardRecord = 0;
   int _randomRecord = 0;
 
-  String imgPath = 'https://avataaars.io/?accessoriesType=Blank&avatarStyle=Transparent&clotheColor=Black&clotheType=GraphicShirt&eyeType=Close&eyebrowType=Default&facialHairColor=BlondeGolden&facialHairType=Blank&hairColor=PastelPink&mouthType=Sad&skinColor=Tanned&topType=Hat';
-
   User(this._displayName, this._email);
 
   User.fromDatabase(this._id,this._displayName,this._email,this._level, this._points,this._coins,this._gold,this._completedRewards,
@@ -26,19 +27,19 @@ class User{
   User.public(this._id,this._displayName,this._level, this.imgPath);
 
   User.map(dynamic obj){
-    this._id = obj['id'];
-    this._displayName = obj['displayName'];
-    this._email = obj['email'];
-    this._level = obj['level'];
-    this._points = obj['points'];
-    this._coins = obj['coins'];
-    this._gold = obj['gold'];
-    this._completedRewards = obj['completedRewards'];
-    this._easyRecord = obj['easyRecord'];
-    this._mediumRecord = obj['mediumRecord'];
-    this._hardRecord = obj['hardRecord'];
-    this._randomRecord = obj['randomRecord'];
-    this.imgPath = obj['imgPath'];
+    this._id = obj[constants.userID];
+    this._displayName = obj[constants.userDisplayName];
+    this._email = obj[constants.userMail];
+    this._level = obj[constants.userLevel];
+    this._points = obj[constants.userPoints];
+    this._coins = obj[constants.userCoins];
+    this._gold = obj[constants.userGold];
+    this._completedRewards = obj[constants.userCompletedRewards];
+    this._easyRecord = obj[constants.userEasyRecord];
+    this._mediumRecord = obj[constants.userMediumRecord];
+    this._hardRecord = obj[constants.userHardRecord];
+    this._randomRecord = obj[constants.userRandomRecord];
+    this.imgPath = obj[constants.userImgPath];
   }
 
   String get displayName => _displayName;
@@ -65,16 +66,16 @@ class User{
   void newRecord(String difficulty, int record){
 
     switch(difficulty){
-      case "easy" : 
+      case constants.difficultyEasy : 
         _easyRecord = record;
         break;
-      case "medium" :
+      case constants.difficultyMedium :
         _mediumRecord = record;
         break;
-      case "hard" :
+      case constants.difficultyHard :
         _hardRecord = record;
         break;
-      case "random" :
+      case constants.difficultyRandom :
         _randomRecord = record;
         break;
     }
@@ -86,6 +87,8 @@ class User{
     int expForNextLevel = ((_level * 50) * (_level - 1)) + (_level * 100);
 
     if(newPoints >= expForNextLevel){
+      int remainer = newPoints - expForNextLevel;
+      _points = remainer;
       levelUp(level);
     }else {
       _points = newPoints;
@@ -94,18 +97,18 @@ class User{
 
   Map<String,dynamic> toMap(){
     var map = new Map<String, dynamic>();
-    map['displayName'] = _displayName;
-    map['email'] = _email;
-    map['level'] = _level;
-    map['points'] = _points;
-    map['coins'] = _coins;
-    map['gold'] = _gold;
-    map['completedRewards'] = _completedRewards;
-    map['easyRecord'] = _easyRecord;
-    map['mediumRecord'] = _mediumRecord;
-    map['hardRecord'] = _hardRecord;
-    map['randomRecord'] = _randomRecord;
-    map['imgPath'] = Avatar().getRandom();
+    map[constants.userDisplayName] = _displayName;
+    map[constants.userMail] = _email;
+    map[constants.userLevel] = _level;
+    map[constants.userPoints] = _points;
+    map[constants.userCoins] = _coins;
+    map[constants.userGold] = _gold;
+    map[constants.userCompletedRewards] = _completedRewards;
+    map[constants.userEasyRecord] = _easyRecord;
+    map[constants.userMediumRecord] = _mediumRecord;
+    map[constants.userHardRecord] = _hardRecord;
+    map[constants.userRandomRecord] = _randomRecord;
+    map[constants.userImgPath] = Avatar().getRandom();
 
     return map;
   }

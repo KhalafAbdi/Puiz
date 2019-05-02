@@ -35,9 +35,8 @@ class _RegisterPageState extends State<RegisterPage>
   @override
   void onRegisterSuccess(FirebaseUser user) {
     print("user was created ${user.email}");
-    var db = new Database();
 
-    db.createUserAndLogin(user, _displayName, _email);
+    Database().newUser(user, _displayName, _email);
     Navigator.of(context)
         .pushNamedAndRemoveUntil('/onBoarding', (Route<dynamic> route) => false);
   }
