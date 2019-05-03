@@ -402,6 +402,10 @@ class Database {
     return firestore.collection(constants.gamesCollection).document(gameID).snapshots();
   }
 
+  Stream<DocumentSnapshot> getCurrentGameStats(String gameID) {
+    return firestore.collection(constants.messagesCollection).document(gameID).snapshots();
+  }
+
   Stream<QuerySnapshot> getCurrentGameChatMessages(String gameID) {
     return firestore.collection(constants.messagesCollection).document(gameID).collection(constants.chatCollections).snapshots();
   }

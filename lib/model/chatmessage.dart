@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:pro/data/constants.dart' as constants;
 
 class ChatMessage extends StatelessWidget {
   final String content;
@@ -16,10 +16,10 @@ class ChatMessage extends StatelessWidget {
 
   Map<String,dynamic> toMap(){
     var map = new Map<String, dynamic>();
-    map['content'] = content;
-    map['sender'] = name;
-    map['senderID'] = senderID;
-    map['avatar'] = avatar;
+    map[constants.messageContent] = content;
+    map[constants.messageSender] = name;
+    map[constants.messagSenderID] = senderID;
+    map[constants.messageAvatar] = avatar;
     map['sent'] = DateTime.now().millisecondsSinceEpoch;
 
     return map;

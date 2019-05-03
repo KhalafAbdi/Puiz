@@ -1,3 +1,5 @@
+import 'package:pro/data/constants.dart' as constants;
+
 class Question{
   String question;
   String correctAnswer;
@@ -26,14 +28,14 @@ class Question{
 
   Map<String,dynamic> toMap(){
     var map = new Map<String, dynamic>();
-    map['question'] = question;
-    map['correctAnswer'] = correctAnswer;
-    map['incorrectAnswers'] = incorrectAnswers;
+    map[constants.responseQuestion] = question;
+    map[constants.responseQuestionCorrectAnswer] = correctAnswer;
+    map[constants.responseQuestionIncorrectAnswers] = incorrectAnswers;
 
-    map['ownerAnswer'] = ownerAnswer;
-    map['ownerAnswertime'] = ownerAnswertime;
-    map['joinerAnswer'] = joinerAnswer;
-    map['joinerAnswertime'] = joinerAnswertime;
+    map[constants.gameOwnerAnswer] = ownerAnswer;
+    map[constants.gameOwnerAnswerTime] = ownerAnswertime;
+    map[constants.gameJoinerAnswer] = joinerAnswer;
+    map[constants.gameJoinerAnswerTime] = joinerAnswertime;
       
     return map;
   }

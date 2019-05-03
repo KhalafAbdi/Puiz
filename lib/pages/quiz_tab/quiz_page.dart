@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../data/database.dart';
 import 'package:pro/config/application.dart';
@@ -80,9 +79,9 @@ class _QuizPageState extends State<QuizPage> {
     title = "Q U I Z";
     canGoBack = false;
 
-    return FutureBuilder<List<DocumentSnapshot>>(
+    return FutureBuilder(
         future: Database().getQuizCategories(),
-        builder: (BuildContext context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
+        builder: (BuildContext context,  snapshot) {
           return snapShotRes(snapshot, categoryList);
         });
   }
@@ -93,15 +92,15 @@ class _QuizPageState extends State<QuizPage> {
 
     return WillPopScope(
       onWillPop: _onWillPop,
-      child: FutureBuilder<List<DocumentSnapshot>>(
+      child: FutureBuilder(
           future: Database().getQuizCategory(title),
-          builder: (BuildContext context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
+          builder: (context, snapshot) {
             return snapShotRes(snapshot, cardTiles, title);
           }),
     );
   }
 
-  Widget snapShotRes(AsyncSnapshot<List<DocumentSnapshot>> snapshot, Function func, [String name]){
+  Widget snapShotRes(snapshot, Function func, [String name]){
     if (snapshot.hasError) print(snapshot.error);
 
     return snapshot.hasData
@@ -116,7 +115,7 @@ class _QuizPageState extends State<QuizPage> {
       );
   }
 
-  Widget categoryList(List<DocumentSnapshot> data) {
+  Widget categoryList(data) {
     Map<String, Widget> map = new Map.fromIterable(data,
         key: (item) => item.documentID,
         value: (item) => categoryCards(item.documentID, listSubCategories, updatePage));
@@ -127,7 +126,7 @@ class _QuizPageState extends State<QuizPage> {
     return gridWidget(list);
   }
 
-    Widget cardTiles(List<DocumentSnapshot> data, String name) {
+    Widget cardTiles(data, String name) {
     openQuiz(data.length, name);
 
     List<Widget> list = List.generate(data.length, (index) {

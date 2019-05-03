@@ -116,7 +116,7 @@ Widget quiz() {
   Widget questionStream(){
 
     return StreamBuilder(
-      stream: Database().getCurrentGameFields(widget.gameID),
+      stream: Database().getCurrentGameStats(widget.gameID),
       builder: (context, snap) {
         if(!snap.hasData){
           return Text("");
@@ -319,7 +319,7 @@ Widget quiz() {
 
   Widget scoreBoardStream(){
     return StreamBuilder(
-      stream: Database().getCurrentGameFields(widget.gameID),
+      stream: Database().getCurrentGameStats(widget.gameID),
       builder: (context, snap) {
         if(!snap.hasData){
           return Text("");
@@ -432,7 +432,7 @@ Widget quiz() {
                             width: 150.0,
                             height: 150.0,
                             decoration: new BoxDecoration(
-                              color: Colors.orange,
+                              shape: BoxShape.circle,
                               image: new DecorationImage(
                               fit: BoxFit.fill,
                               image: new NetworkImage(player.imgPath)
