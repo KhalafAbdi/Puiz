@@ -63,17 +63,18 @@ class Database {
     await firestore.collection(constants.usersCollection).document(user.id).delete();
   }
 
-  Future newUser(FirebaseUser user, String displayName, String email) async {
+  Future newUser(FirebaseUser newUser, String displayName, String email) async {
     User userData = User(displayName, email);
 
-    creatUser(user, userData);
-    addCurrentUserInfoToPreferences(user, displayName, email);
+    creatUser(newUser, userData);
+    addCurrentUserInfoToPreferences(newUser, displayName, email); print("newUser called and added to shared prefs");
     setLoggedIn(true);
   }
 
   Future<User> getCurrentUserData() async {
     
     if(user == null){
+      print("User does not exist, making new");
       SharedPreferences prefs = await getSharedPreferences();
       String userID = prefs.get(constants.sharedUserId);
       
@@ -109,12 +110,12 @@ class Database {
     );
   }
 
-  Future addCurrentUserInfoToPreferences(FirebaseUser user, String displayName, String email) async{
+  Future addCurrentUserInfoToPreferences(FirebaseUser newUser, String displayName, String email) async{
     SharedPreferences prefs = await getSharedPreferences();
 
     prefs.setString(constants.sharedUserDisplayName, displayName);
     prefs.setString(constants.sharedUserMail, email);
-    prefs.setString(constants.sharedUserId, user.uid);
+    prefs.setString(constants.sharedUserId, newUser.uid);
   }
 
   Future getUserData(FirebaseUser user, String displayName, String email) async{
@@ -145,6 +146,7 @@ class Database {
     FirebaseAuth _auth = FirebaseAuth.instance;
     _auth.signOut();
     setLoggedIn(false);
+    print("Logging out");
   }
 
 
@@ -168,11 +170,11 @@ class Database {
     await firestore.collection(constants.usersCollection).document(user.id).setData(user.toMap());
   }
 
-  Future<User> updateUserRecordForDifficulty(User user, String difficulty, int newRecord) async{
-    user.newRecord(difficulty, newRecord);
+  Future<User> updateUserRecordForDifficulty(User newUser, String difficulty, int newRecord) async{
+    newUser.newRecord(difficulty, newRecord);
 
-    await firestore.collection(constants.usersCollection).document(user.id).setData(user.toMap());
-    return user;
+    await firestore.collection(constants.usersCollection).document(newUser.id).setData(newUser.toMap());
+    return newUser;
   }
 
 // ------------------------------------- Categories -------------------------------------

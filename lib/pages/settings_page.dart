@@ -23,9 +23,9 @@ class _SettingsPageState extends State<SettingsPage> {
     Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
   }
 
-  updatepage(User user){
+  updatepage(User updatedUser){
     setState(() {
-        user = user; 
+        user = updatedUser; 
     });
   }
 

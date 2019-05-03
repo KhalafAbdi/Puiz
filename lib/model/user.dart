@@ -19,7 +19,9 @@ class User{
   int _hardRecord = 0;
   int _randomRecord = 0;
 
-  User(this._displayName, this._email);
+  User(this._displayName, this._email){
+    imgPath = Avatar().getRandom();
+  }
 
   User.fromDatabase(this._id,this._displayName,this._email,this._level, this._points,this._coins,this._gold,this._completedRewards,
   this._easyRecord,this._mediumRecord,this._hardRecord,this._randomRecord, this.imgPath);
@@ -108,7 +110,7 @@ class User{
     map[constants.userMediumRecord] = _mediumRecord;
     map[constants.userHardRecord] = _hardRecord;
     map[constants.userRandomRecord] = _randomRecord;
-    map[constants.userImgPath] = Avatar().getRandom();
+    map[constants.userImgPath] = imgPath;
 
     return map;
   }

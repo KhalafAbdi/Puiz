@@ -281,6 +281,7 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
     if(!wasAnswerCorrect){
       
       if(questionNumber > currentRecord){
+        print("User has following path " + user.imgPath);
         Database().updateUserRecordForDifficulty(user,widget.difficulty, questionNumber);
       }
 

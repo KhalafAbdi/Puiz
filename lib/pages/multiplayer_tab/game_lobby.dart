@@ -9,7 +9,7 @@ import 'package:pro/model/question.dart';
 import 'game_quiz.dart';
 import 'package:pro/model/user.dart';
 
-import 'package:pro/model/tempResults.dart';
+import 'package:pro/model/ApiRequestResult.dart';
 
 class GameLobby extends StatefulWidget {
   final gameID;
@@ -421,7 +421,7 @@ class _GameLobbyState extends State<GameLobby> {
     if (json[constants.responseResult] != null) {
 
       for (var i = 0; i < json[constants.responseResult].length; i++) {
-        Results res = Results.fromJson(json[constants.responseResult][i]);
+        Results res = Results.fromJson(json[constants.responseResult][i], useAllAnswers: false);
 
         Question question = Question(
             question: res.question,
