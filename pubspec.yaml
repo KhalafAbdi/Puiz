@@ -66,6 +66,9 @@ flutter:
     - assets/Computers.png
     - assets/Gadgets.png
     - assets/Mathematics.png
+    - assets/quiz.png
+    - assets/multiplayer.png
+    - assets/deathmatch.png
 
 
   # The following line ensures that the Material Icons font is

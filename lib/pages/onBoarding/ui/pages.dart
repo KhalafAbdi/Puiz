@@ -3,26 +3,26 @@ import 'package:flutter/material.dart';
 final pages = [
   PageViewModel(
       const Color(0xFFca4451),
-      'assets/avataaars.png',
-      'Lorem ipsum dolor',
-      'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium',
-      'assets/avataaars.png',
+      'assets/quiz.png',
+      'Quiz',
+      'Pick a category and go on a quiz adventure. Get points for each right answer',
+      'assets/quiz.png',
       false),
 
   PageViewModel(
       const Color(0xFF2c304d),
-      'assets/avataaars.png',
-      'Lorem ipsum dolor',
-      'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium!',
-      'assets/avataaars.png',
+      'assets/deathmatch.png',
+      'DeathMatch',
+      'See how many questions in a row you can get correct! win big prices!',
+      'assets/deathmatch.png',
       false),
 
   PageViewModel(
     const Color(0xFF548CFF),
-    'assets/avataaars.png',
-    'Lorem ipsum dolor',
-    'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium!',
-    'assets/avataaars.png',
+    'assets/multiplayer.png',
+    'MultiPlayer!',
+    'Play against your friends and see who can score the most points!',
+    'assets/multiplayer.png',
     true,
   ),
 ];
@@ -46,7 +46,7 @@ class Page extends StatelessWidget {
           children: <Widget>[
             Container(
               alignment: Alignment.centerLeft, 
-              margin: EdgeInsets.only(top:45.0),
+              margin: EdgeInsets.only(top:40.0),
               child: FlatButton(
                 onPressed: () => Navigator.of(context).pushNamed("/"),
                 child:Text("Skip",
