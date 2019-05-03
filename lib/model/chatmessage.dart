@@ -22,7 +22,6 @@ class ChatMessage extends StatelessWidget {
     map['avatar'] = avatar;
     map['sent'] = DateTime.now().millisecondsSinceEpoch;
 
-
     return map;
   }
 

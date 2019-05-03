@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Question{
   String question;
   String correctAnswer;
@@ -32,7 +30,6 @@ class Question{
     map['correctAnswer'] = correctAnswer;
     map['incorrectAnswers'] = incorrectAnswers;
 
-   
     map['ownerAnswer'] = ownerAnswer;
     map['ownerAnswertime'] = ownerAnswertime;
     map['joinerAnswer'] = joinerAnswer;

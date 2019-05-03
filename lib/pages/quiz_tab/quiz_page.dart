@@ -4,6 +4,9 @@ import '../../data/database.dart';
 import 'package:pro/config/application.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'package:pro/widgets/custom_widgets.dart' as customWidget;
+import 'package:pro/data/constants.dart' as constants;
+
 class QuizPage extends StatefulWidget {
   final int index;
   final String title;
@@ -63,17 +66,7 @@ class _QuizPageState extends State<QuizPage> {
   buildBody(BuildContext context) {
     return Stack(
       children: <Widget>[
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.white, const Color(0xFFca4451)],
-              begin: FractionalOffset(0.0, 1.0),
-              end: FractionalOffset(0.3, 0.15),
-              stops: [1.0, 1.0],
-              tileMode: TileMode.clamp,
-            ),
-          ),
-        ),
+        customWidget.backgroundWidget(Colors.white, const Color(0xFFca4451)),
         Container(
           child: SingleChildScrollView(
             child: _currentPage
@@ -129,7 +122,7 @@ class _QuizPageState extends State<QuizPage> {
         value: (item) => categoryCards(item.documentID, listSubCategories, updatePage));
 
     List<Widget> list = [];
-    map.forEach((s, w) => (s == "Newest Category") ? null : list.add(w));
+    map.forEach((s, w) => (s == constants.newestCategoryCollection) ? null : list.add(w));
 
     return gridWidget(list);
   }

@@ -40,7 +40,7 @@ var registerHandler = new Handler(
 
 var homeHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-    String subject = params[constants.subject]?.first;
+    String subject = params['subject']?.first;
   return NavigationController(subject);
 });
 
@@ -51,21 +51,21 @@ var onBoardingHandler = new Handler(
 
 var quizHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-    String subject = params[constants.subject]?.first;
+    String subject = params['subject']?.first;
   return QuizGame(subject : subject);
 });
 
 var dmquizHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-    String difficulty = params[constants.difficulty]?.first;
+    String difficulty = params['difficulty']?.first;
   return DeathMatchQuizPage(difficulty : difficulty);
 });
 
 var scoreHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-    String subject = params[constants.subject]?.first;
-    String score = params[constants.score]?.first;
-    String totalScore = params[constants.totalScore]?.first;
+    String subject = params['subject']?.first;
+    String score = params['score']?.first;
+    String totalScore = params['totalScore']?.first;
   return ScorePage(subject: subject, score: score, totalScore: totalScore);
 });
 

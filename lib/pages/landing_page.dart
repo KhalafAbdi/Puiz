@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'package:pro/data/constants.dart' as constants;
+
 class LandingPage extends StatefulWidget {
   final String title = "APP";
 
@@ -76,7 +78,7 @@ class _LandingPageState extends State<LandingPage> {
                 child: Text(
                   "Login",
                   style: TextStyle(
-                      color: Colors.white, fontFamily: 'Roboto', fontSize: 25.0, fontWeight: FontWeight.w300),
+                      color: Colors.white, fontFamily: constants.font, fontSize: 25.0, fontWeight: FontWeight.w300),
                 ),
                 onPressed: () {
                   Navigator.pushNamed(context, '/login');
@@ -91,7 +93,7 @@ class _LandingPageState extends State<LandingPage> {
                 child: Text(
                   "Register",
                   style: TextStyle(
-                      color: Colors.white, fontFamily: 'Roboto', fontSize: 25.0, fontWeight: FontWeight.w300),
+                      color: Colors.white, fontFamily: constants.font, fontSize: 25.0, fontWeight: FontWeight.w300),
                 ),
                 onPressed: () {
                   Navigator.pushNamed(context, '/register');

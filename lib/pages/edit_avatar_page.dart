@@ -6,7 +6,7 @@ class EditAvatarPage extends StatefulWidget {
 }
 
 class _EditAvatarPageState extends State<EditAvatarPage> {
-
+  //TODO
 
   @override
   Widget build(BuildContext context) {

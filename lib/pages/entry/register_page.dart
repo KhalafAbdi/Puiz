@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pro/pages/entry/register_presenter.dart';
-import '../../data/database.dart';
+import 'package:pro/data/database.dart';
+
+import 'package:pro/data/constants.dart' as constants;
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -18,7 +20,7 @@ class _RegisterPageState extends State<RegisterPage>
   String _email;
   String _password;
 
-  String _flutterErrorMsg = "";
+  String _flutterErrorMsg = '';
 
   _RegisterPageState() {
     _registerPagePresenter = RegisterPagePresenter(this);
@@ -37,8 +39,7 @@ class _RegisterPageState extends State<RegisterPage>
     print("user was created ${user.email}");
 
     Database().newUser(user, _displayName, _email);
-    Navigator.of(context)
-        .pushNamedAndRemoveUntil('/onBoarding', (Route<dynamic> route) => false);
+    Navigator.of(context).pushNamedAndRemoveUntil('/onBoarding', (Route<dynamic> route) => false);
   }
 
   @override
@@ -235,7 +236,7 @@ class _RegisterPageState extends State<RegisterPage>
           child: Text(
             title,
             style: TextStyle(
-                color: Colors.white, fontFamily: 'Roboto', fontSize: size, fontWeight: FontWeight.w300),
+                color: Colors.white, fontFamily: constants.font, fontSize: size, fontWeight: FontWeight.w300),
           ),
           onPressed: () {
             _submit();

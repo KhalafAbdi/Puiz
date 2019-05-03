@@ -1,8 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pro/model/user.dart';
 import 'package:pro/data/database.dart';
 
+import 'package:pro/widgets/custom_widgets.dart' as customWidget;
+import 'package:pro/data/constants.dart' as constants;
 
 class HomePage extends StatefulWidget {
   int index;
@@ -24,11 +25,7 @@ class _HomePageState extends State<HomePage> {
         child: Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("H O M E",
-            style: TextStyle(
-                fontSize: 18.0,
-                color: Colors.white,
-                fontWeight: FontWeight.w300)),
+        title: customWidget.titleWidget('H O M E'),
         backgroundColor: const Color(0xFF2c304d),
       ),
       body: new FutureBuilder<User>(
@@ -49,17 +46,7 @@ class _HomePageState extends State<HomePage> {
   buildBody(BuildContext context) {
     return Stack(
       children: <Widget>[
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.white, const Color(0xFFca4451)],
-              begin: FractionalOffset(0.0, 1.0),
-              end: FractionalOffset(0.3, 0.15),
-              stops: [1.0, 1.0],
-              tileMode: TileMode.clamp,
-            ),
-          ),
-        ),
+        customWidget.backgroundWidget(Colors.white, const Color(0xFFca4451)),
         SingleChildScrollView(
           child: Container(
             child: Column(
@@ -91,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                     "Welcome Back, ",
                     style: TextStyle(
                         color: Colors.black,
-                        fontFamily: 'Roboto',
+                        fontFamily: constants.font,
                         fontSize: 20.0,
                         fontWeight: FontWeight.w300),
                   ),
@@ -99,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                     user.displayName,
                     style: TextStyle(
                         color: Colors.black,
-                        fontFamily: 'Roboto',
+                        fontFamily: constants.font,
                         fontSize: 20.0),
                   )
                 ],
@@ -107,10 +94,10 @@ class _HomePageState extends State<HomePage> {
           Container(
               margin: EdgeInsets.symmetric(horizontal: 10.0),
               child: Text(
-                  "Here is how many questions you answered correctly this week! Answer 15 more questions for next reward!",
+                  "Play games and win points. Beat your friends in a multiplayer quiz! or Deathmatch or a normal quiz on your own!",
                   style: TextStyle(
                       color: Colors.black,
-                      fontFamily: 'Roboto',
+                      fontFamily: constants.font,
                       fontSize: 15.0,
                       fontWeight: FontWeight.w300),
                   textAlign: TextAlign.center)),
@@ -143,7 +130,7 @@ class _HomePageState extends State<HomePage> {
           child: Text(
             title,
             style: TextStyle(
-                color: Colors.white, fontFamily: 'Roboto', fontSize: size),
+                color: Colors.white, fontFamily: constants.font, fontSize: size),
           ),
           onPressed: () => widget.quizPageCallBack(3, null),
         ));
@@ -302,10 +289,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget newCategoryContainer() {
-    return new FutureBuilder<DocumentSnapshot>(
+    return new FutureBuilder(
         future: Database().getMostRecentlyAddedQuizCategory(),
         builder:
-            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+            (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot != null) {
               return newCategory(
@@ -334,7 +321,7 @@ class _HomePageState extends State<HomePage> {
                     "New Quiz Category Available!",
                     style: TextStyle(
                         color: Colors.black,
-                        fontFamily: 'Roboto',
+                        fontFamily: constants.font,
                         fontSize: 17.0),
                   ),
                 ),
@@ -427,21 +414,21 @@ class _HomePageState extends State<HomePage> {
                           "Win A ",
                           style: TextStyle(
                               color: Colors.black,
-                              fontFamily: 'Roboto',
+                              fontFamily: constants.font,
                               fontSize: 17.0),
                         ),
                         Text(
                           "DeathMatch",
                           style: TextStyle(
                               color: const Color(0xFFca4451),
-                              fontFamily: 'Roboto',
+                              fontFamily: constants.font,
                               fontSize: 17.0),
                         ),
                         Text(
                           " For Next Reward",
                           style: TextStyle(
                               color: Colors.black,
-                              fontFamily: 'Roboto',
+                              fontFamily: constants.font,
                               fontSize: 17.0),
                         ),
                       ],

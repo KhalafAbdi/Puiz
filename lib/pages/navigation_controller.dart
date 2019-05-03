@@ -5,7 +5,8 @@ import 'package:pro/pages/home_page.dart';
 import 'package:pro/pages/quiz_tab/quiz_page.dart';
 import 'package:pro/pages/deathmatch_tab/deathmatch_page.dart';
 import 'package:pro/pages/multiplayer_tab/multiplayer_page.dart';
-import 'package:pro/pages/multiplayer_tab/game_quiz.dart';
+
+import 'package:pro/data/constants.dart' as constants;
 
 
 class NavigationController extends StatefulWidget {
@@ -44,18 +45,18 @@ class _NavigationControllerState extends State<NavigationController> {
     quizzesPage = QuizPage(3);
     settingsPage = SettingsPage(4);
     
-    pageTitles = ["Home", "Multiplayer", "DeathMatch", "Quiz", "Settings"];
+    pageTitles = [constants.homePageTitle, constants.multiPlayerPageTitle, constants.deathmatchPageTitle, constants.quizPageTitle, constants.settingsPageTitle];
     pages = [homePage,multiplayerPage, deathMatchPage, quizzesPage, settingsPage];
 
     if(widget.subject == null){
       currentPage = homePage;
-      currentTitle = "Home";
+      currentTitle = constants.homePageTitle;
     }else if(widget.subject.toString().contains("quiz")){
       quizzesPage = QuizPage(3, widget.subject);
         currentTab = 3;
         currentPage = quizzesPage;
         
-    }else if(widget.subject.toString().contains("deathmatch")){
+    }else if(widget.subject.toString().contains(constants.deathmatchPageTitle)){
       currentTab = 2;
       currentPage = deathMatchPage;
     }
@@ -100,11 +101,11 @@ class _NavigationControllerState extends State<NavigationController> {
         currentIndex: currentTab,
         onTap: (int index) => updateCurrentTab(index, null),
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text("Home")),
-          BottomNavigationBarItem(icon: Icon(Icons.people), title: Text("Multiplayer")),
-          BottomNavigationBarItem(icon: Icon(Icons.face), title: Text("DeathMatch")),
-          BottomNavigationBarItem(icon: Icon(Icons.question_answer), title: Text("Quiz")),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), title: Text("Settings"))
+          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text(constants.homePageTitle)),
+          BottomNavigationBarItem(icon: Icon(Icons.people), title: Text(constants.multiPlayerPageTitle)),
+          BottomNavigationBarItem(icon: Icon(Icons.face), title: Text(constants.deathmatchPageTitle)),
+          BottomNavigationBarItem(icon: Icon(Icons.question_answer), title: Text(constants.quizPageTitle)),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), title: Text(constants.settingsPageTitle))
         ],
       ),
     );

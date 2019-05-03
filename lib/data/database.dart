@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:pro/model/user.dart';
 import 'package:pro/model/game.dart';
+import 'package:pro/model/question.dart';
+import 'package:pro/model/chatmessage.dart';
 
 import 'package:pro/data/constants.dart' as constants;
 
@@ -40,6 +42,10 @@ class Database {
     }else {
       return getOpponentData(userID);
     }
+  }
+
+  Future<DocumentSnapshot> getUserDocument(String userID)async{
+    return await firestore.collection(constants.usersCollection).document(userID).get();
   }
 
   //Create user
@@ -192,6 +198,11 @@ class Database {
 
 // ------------------------------------- Multiplayer Games -------------------------------------
 
+  // Get Game
+  Future<DocumentSnapshot> getGame(gameID) async {
+    return await firestore.collection(constants.gamesCollection).document(gameID).get();
+  }
+
   // Create Game
   Future<DocumentReference> createGame(Game game){
     return firestore.collection(constants.gamesCollection).add(game.toMap());
@@ -204,13 +215,19 @@ class Database {
 
   // Update Game
    // TODO: update game
+  Future<void> updateGame(String gameID, Game updatedGame) async {
+    DocumentReference documentReference = Firestore.instance.collection(constants.gamesCollection).document(gameID);
+    currentGame = updatedGame;
+    documentReference.updateData(updatedGame.toMap());
+  }
 
 
   Future<List<Game>> getLiveGames() async {
-    var querySnapshot = await firestore.collection(constants.gamesCollection).where(constants.gameState, isEqualTo: constants.gameStateOpen).getDocuments();
+    var querySnapshot = await Firestore.instance.collection(constants.gamesCollection).where(constants.gameState, isEqualTo: constants.gameStateOpen).getDocuments();
     List<DocumentSnapshot> d = querySnapshot.documents;
 
     List<Game> games = [];
+    print(d.length.toString() + "------");
 
     for(DocumentSnapshot snapshot in d){
   
@@ -230,7 +247,7 @@ class Database {
     return games;
   }
 
-  joinGame(Game game) async{
+  Future<bool> joinGame(Game game) async{
     String gameState = await getGameState(game.gameID);
     if(gameState == constants.gameStateOpen){
 
@@ -242,8 +259,11 @@ class Database {
       game.joinerName = user.displayName;
 
       firestore.collection(constants.gamesCollection).document(game.gameID).updateData(game.toMap());
+
+      return true;
     }else {
       //TODO: Game is no longer open.
+      return false;
     }  
   }
 
@@ -252,5 +272,154 @@ class Database {
 
     print("res: ${documentSnapshot.data[constants.gameState].toString()}");
     return documentSnapshot.data[constants.gameState].toString();
+  }
+
+  // ------------------------------------- Messages Collection -------------------------------------
+  bool isCreator = false;
+  User player;
+  User opponent;
+  Game currentGame;
+  List<Question> questions = [];
+
+  Future<void> setUpGame(String gameID) async {
+    
+    questions = [];
+    await buildGame(gameID);
+    await getQuestions(gameID);  
+    player = await getPlayer();
+    opponent = await getOpponent(gameID);
+  }
+
+  Future<Game> buildGame(String gameID, {String state = constants.gameState}) async {
+    
+    DocumentSnapshot documentSnapshot = await getGame(gameID);
+
+    Game game = Game.start(
+      documentSnapshot.documentID,
+      documentSnapshot.data[constants.gameCategory],
+      documentSnapshot.data[constants.gameDifficulty],
+      documentSnapshot.data[constants.gameCreatorID],
+      documentSnapshot.data[constants.gameCreatorName],
+      documentSnapshot.data[state],
+      documentSnapshot.data[constants.gameJoinerID],
+      documentSnapshot.data[constants.gameJoinerName],
+    );
+
+    return game;
+  }
+
+  Future<Game> buildandReturnGame(String gameID) async {
+    DocumentSnapshot documentSnapshot = await Database().getGame(gameID);
+
+    Game newGame = Game(
+          documentSnapshot.documentID,
+          documentSnapshot.data[constants.gameCategory],
+          documentSnapshot.data[constants.gameDifficulty],
+          documentSnapshot.data[constants.gameCreatorID],
+          documentSnapshot.data[constants.gameCreatorName],
+          documentSnapshot.data[constants.gameState],
+          documentSnapshot.data[constants.gamePassword],
+      );  
+
+    return newGame;
+  }
+
+
+  getIsCreator() {
+    return isCreator;
+  }
+
+  Future<User> getPlayer() async {
+    if(player == null){
+      player = await Database().getCurrentUserData();
+    }
+    
+    return player;
+  }
+
+  Future<User> getOpponent(String gameID) async {
+    String opponentID;
+
+    if(opponent == null){
+
+      DocumentSnapshot gameSnapshot = await getGame(gameID);
+      player = await getPlayer();
+
+      if(player.displayName == gameSnapshot.data[constants.gameCreatorName].toString()){
+        isCreator = true;
+        opponentID = gameSnapshot.data[constants.gameJoinerID].toString();
+      }else {
+        opponentID = gameSnapshot.data[constants.gameCreatorID].toString();
+      }
+
+      opponent = await Database().getUser(opponentID);
+    }
+    
+    return opponent;
+  }
+
+  Future<Game> getCurrentGame(String gameID) async {
+    
+    if(currentGame == null){
+      currentGame = await buildGame(gameID);
+      return currentGame;
+    }
+
+    return currentGame;
+  }
+
+  Future<void> createQuestions(String gameID, Question newQuestion, int index) async {
+    firestore.collection(constants.messagesCollection).document(gameID).collection(constants.questionsCollection).document("question_${index+1}").setData(newQuestion.toMap());
+  }
+
+  Future<void> setGameFields(String gameID, var map){
+    Firestore.instance.collection(constants.messagesCollection).document(gameID).setData(map);
+  }
+
+  Future<List<Question>> getQuestions(String gameID) async {
+    if(questions.isEmpty){
+      QuerySnapshot questionsQuery = await firestore.collection(constants.messagesCollection).document(gameID).collection(constants.questionsCollection).getDocuments();
+
+      for (DocumentSnapshot item in questionsQuery.documents) {
+        
+        List<String> list = [];
+        list.addAll(item.data[constants.responseQuestionIncorrectAnswers].cast<String>());
+
+        Question question = new Question(
+          question: item.data[constants.responseQuestion],
+          correctAnswer: item.data[constants.responseQuestionCorrectAnswer],
+          incorrectAnswers: list
+        );
+
+        questions.add(question);
+      }
+    }
+
+    return questions;
+  }
+
+  Stream<DocumentSnapshot> getCurrentGameFields(String gameID) {
+    return firestore.collection(constants.gamesCollection).document(gameID).snapshots();
+  }
+
+  Stream<QuerySnapshot> getCurrentGameChatMessages(String gameID) {
+    return firestore.collection(constants.messagesCollection).document(gameID).collection(constants.chatCollections).snapshots();
+  }
+
+  Stream<DocumentSnapshot> getQuestionInCurrentGame(String gameID, int index) {
+    String questionPath = 'question_${index+1}';
+
+    return firestore.collection(constants.messagesCollection).document(gameID).collection(constants.questionsCollection).document(questionPath).snapshots();
+  }
+
+  Future<void> updateGameData(String gameID, int index, Question q){
+     String questionPath = 'question_${index+1}';
+
+    firestore.collection(constants.messagesCollection).document(gameID).collection(constants.questionsCollection).document(questionPath).setData(q.toMap());
+  }
+
+
+  Future<void> addMessage(String gameID, ChatMessage message) async {
+    await firestore.collection(constants.messagesCollection).document(gameID).collection(constants.chatCollections).add(message.toMap());
   }
 }

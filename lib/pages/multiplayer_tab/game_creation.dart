@@ -4,16 +4,11 @@ import 'package:pro/data/database.dart';
 import 'package:pro/model/user.dart';
 import 'package:pro/model/game.dart';
 
+import 'package:pro/data/constants.dart' as constants;
+
 class GameCreation extends StatefulWidget {
   @override
   _GameCreationState createState() => _GameCreationState();
-}
-
-enum Difficulty {
-  easy,
-  medium,
-  hard, 
-  any
 }
 
 class _GameCreationState extends State<GameCreation> {
@@ -78,7 +73,7 @@ class _GameCreationState extends State<GameCreation> {
   void _submit() {
     if(selected != null && _radioValue1 > -1){
 
-      Game game = Game.creat(selected,difficulty,user.id, user.displayName, "open", password);
+      Game game = Game.creat(selected,difficulty,user.id, user.displayName, constants.gameStateOpen, password);
 
       Database().createGame(game).then((onValue) => Navigator.popAndPushNamed(context, '/multiplayerGame?gameID=${onValue.documentID}&owner=true'));
       
@@ -204,7 +199,7 @@ class _GameCreationState extends State<GameCreation> {
                           ):
                         Row(
                         children: <Widget>[
-                          Text("Your password is: 4444", style: TextStyle(color: Colors.white)),
+                          Text("Your password is: Non", style: TextStyle(color: Colors.white)),
                         ],
                       )
                       ],
@@ -219,7 +214,7 @@ class _GameCreationState extends State<GameCreation> {
           Container(
             margin: EdgeInsets.only(top:15.0, bottom: 15.0),
             child: Text(
-              'Dificulty:',
+              'Difficulty:',
               style: new TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18.0,
@@ -240,7 +235,7 @@ class _GameCreationState extends State<GameCreation> {
                             onChanged: _handleRadioValueChange1,
                           ),
                           new Text(
-                            'Easy',
+                            constants.difficultyEasy,
                             style: new TextStyle(fontSize: 12.0),
                           ),
                             ],
@@ -253,7 +248,7 @@ class _GameCreationState extends State<GameCreation> {
                             onChanged: _handleRadioValueChange1,
                           ),
                           new Text(
-                            'Medium',
+                            constants.difficultyMedium,
                             style: new TextStyle(
                               fontSize: 12.0,
                             ),
@@ -273,7 +268,7 @@ class _GameCreationState extends State<GameCreation> {
                               onChanged: _handleRadioValueChange1,
                               ),
                               new Text(
-                                'Hard',
+                                constants.difficultyHard,
                                 style: new TextStyle(fontSize: 12.0),
                               )
                             ],
@@ -286,7 +281,7 @@ class _GameCreationState extends State<GameCreation> {
                                 onChanged: _handleRadioValueChange1,
                               ),
                               new Text(
-                                'Random',
+                                constants.difficultyRandom,
                                 style: new TextStyle(fontSize: 12.0),
                               ),
                             ],
@@ -311,16 +306,16 @@ class _GameCreationState extends State<GameCreation> {
 
       switch (_radioValue1) {
         case 0:
-          difficulty = "easy";
+          difficulty = constants.difficultyEasy;
           break;
         case 1:
-          difficulty = "medium";
+          difficulty = constants.difficultyMedium;
           break;
         case 2:
-          difficulty = "hard";
+          difficulty = constants.difficultyHard;
           break;
         case 2:
-          difficulty = "random";
+          difficulty = constants.difficultyRandom;
           break;
       }
     });
@@ -371,7 +366,7 @@ class _GameCreationState extends State<GameCreation> {
           child: Text(
             title,
             style: TextStyle(
-                color: Colors.white, fontFamily: 'Roboto', fontSize: size, fontWeight: FontWeight.w300),
+                color: Colors.white, fontFamily: constants.font, fontSize: size, fontWeight: FontWeight.w300),
           ),
           onPressed: () {
             _submit();

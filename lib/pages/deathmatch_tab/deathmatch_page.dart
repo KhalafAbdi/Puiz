@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pro/config/application.dart';
 
-import 'package:pro/widgets/title_widget.dart';
+import 'package:pro/widgets/custom_widgets.dart' as customWidget;
 
 import 'package:pro/data/constants.dart' as constants;
 
@@ -20,12 +20,9 @@ class _DeathMatchPageState extends State<DeathMatchPage> {
   Widget build(BuildContext context) {
     return Material(
       child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: titleWidget(constants.deathMatchTitle),
-          backgroundColor: constants.themeBlue
-        ),
-      body: buildBody(context),
+        resizeToAvoidBottomPadding: false,
+        appBar: customWidget.appBarWidget(constants.deathMatchTitle),
+        body: buildBody(context),
       )
     );
   }
@@ -33,17 +30,7 @@ class _DeathMatchPageState extends State<DeathMatchPage> {
   buildBody(BuildContext context) {
     return Stack(
       children: <Widget>[
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.white, constants.themeBlue],
-              begin: FractionalOffset(0.0, 1.0),
-              end: FractionalOffset(0.3, 0.15),
-              stops: [1.0, 1.0],
-              tileMode: TileMode.clamp,
-            ),
-          ),
-        ),
+        customWidget.backgroundWidget(Colors.white, constants.themeRed),
         SingleChildScrollView(
           child: Container(
             margin: EdgeInsets.only(top: 15.0, left: 15.0, right: 15.0),
@@ -54,27 +41,26 @@ class _DeathMatchPageState extends State<DeathMatchPage> {
                   child: Column(
                     children: <Widget>[
                       RaisedButton(
-                        child: Text("Easy"),
-                        onPressed: () => Application.router.navigateTo(context, "/dmquiz?difficulty=easy", clearStack: true),
+                        child: Text(constants.difficultyEasy),
+                        onPressed: () => Application.router.navigateTo(context, "/dmquiz?difficulty=${constants.difficultyEasy.toLowerCase()}", clearStack: true),
                       ),
                       RaisedButton(
-                        child: Text("Medium"),
-                        onPressed: () => Application.router.navigateTo(context, "/dmquiz?difficulty=medium", clearStack: true),
+                        child: Text(constants.difficultyMedium),
+                        onPressed: () => Application.router.navigateTo(context, "/dmquiz?difficulty=${constants.difficultyMedium.toLowerCase()}", clearStack: true),
                       ),
                       RaisedButton(
-                        child: Text("Hard"),
-                        onPressed: () => Application.router.navigateTo(context, "/dmquiz?difficulty=hard", clearStack: true),
+                        child: Text(constants.difficultyHard),
+                        onPressed: () => Application.router.navigateTo(context, "/dmquiz?difficulty=${constants.difficultyHard.toLowerCase()}", clearStack: true),
                       ),
                       Container(
                         margin: EdgeInsets.only(top: 10.0),
                         color: const Color(0xFF2c304d),
                         child: MaterialButton(
                           child: Text(
-                            "Random",
-                            style: TextStyle(
-                                color: Colors.white, fontFamily: 'Roboto', fontSize: 15.0),
+                            constants.difficultyRandom,
+                            style: TextStyle(color: Colors.white, fontFamily: constants.font, fontSize: 15.0),
                           ),
-                          onPressed: () => Application.router.navigateTo(context, "/dmquiz?difficulty=random", clearStack: true),
+                          onPressed: () => Application.router.navigateTo(context, "/dmquiz?difficulty=${constants.difficultyRandom.toLowerCase()}", clearStack: true),
                         ))
                     ],
                   )

@@ -8,6 +8,9 @@ import 'package:pro/model/user.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:pro/widgets/correct_wrong_overlay.dart';
 
+import 'package:pro/data/constants.dart' as constants;
+import 'package:pro/model/ApiRequestResult.dart';
+
 class QuizGame extends StatefulWidget {
   final subject;
 
@@ -15,41 +18,11 @@ class QuizGame extends StatefulWidget {
     print("I have been summoned with this $subject");
   }
 
-  
-
   @override
   _QuizGameState createState() => _QuizGameState();
 }
 
 class _QuizGameState extends State<QuizGame> {
-  var subjects = {
-    'Any Category': null, //https://opentdb.com/api.php?amount=1
-    'General Knowledge': 9, //https://opentdb.com/api.php?amount=1&category=9
-    'Books': 10,
-    'Film': 11,
-    'Music': 12,
-    'Musicals and Theatres': 13,
-    'Television': 14,
-    'Video Games': 15,
-    'Board Games': 16,
-    'Science and Nature': 17,
-    'Computers': 18,
-    'Mathematics': 19,
-    'Mythology': 20,
-    'Sports': 21,
-    'Geography': 22,
-    'History': 23,
-    'Politics': 24,
-    'Art': 25,
-    'Celebrities': 26,
-    'Animals': 27,
-    'Vehicles': 28,
-    'Comics': 29,
-    'Gadgets': 30,
-    'Japanese Anime and Manga': 31,
-    'Cartoon and Animations': 32,
-  };
-
   int responseCode;
   List<Results> results;
   List<AnswerWidget> ansCards;
@@ -76,7 +49,7 @@ class _QuizGameState extends State<QuizGame> {
   void initState() {
     super.initState();
 
-    link = "https://opentdb.com/api.php?amount=$nQuestions&category=${subjects[widget.subject]}&type=multiple";
+    link = "https://opentdb.com/api.php?amount=$nQuestions&category=${constants.subjects[widget.subject]}&type=multiple";
     print(link);
 
     fetchQuestions();
@@ -87,8 +60,7 @@ class _QuizGameState extends State<QuizGame> {
     var decRes = jsonDecode(res.body);
     print(decRes);
 
-    
-    
+  
     fromJson(decRes);
 
     user = await Database().getCurrentUserData();
@@ -98,10 +70,10 @@ class _QuizGameState extends State<QuizGame> {
   }
 
   fromJson(Map<String, dynamic> json) {
-    responseCode = json['response_code'];
-    if (json['results'] != null) {
+    responseCode = json[constants.responseCode];
+    if (json[constants.responseResult] != null) {
       results = List<Results>();
-      json['results'].forEach((v) {
+      json[constants.responseResult].forEach((v) {
         results.add(Results.fromJson(v));
       });
     }
@@ -109,9 +81,9 @@ class _QuizGameState extends State<QuizGame> {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['response_code'] = this.responseCode;
+    data[constants.responseCode] = this.responseCode;
     if (this.results != null) {
-      data['results'] = this.results.map((v) => v.toJson()).toList();
+      data[constants.responseResult] = this.results.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -128,10 +100,10 @@ class _QuizGameState extends State<QuizGame> {
   }
 
   setUpQuestion(){
-    if(results[questionNumber].difficulty == "hard"){
+    if(results[questionNumber].difficulty == constants.difficultyHard){
       difficultyColor = Colors.redAccent;
       pointsForCorrectAnswer = 200;
-    }else if(results[questionNumber].difficulty == "medium"){
+    }else if(results[questionNumber].difficulty == constants.difficultyMedium){
       difficultyColor = Colors.orangeAccent;
       pointsForCorrectAnswer = 100;
     }
@@ -376,43 +348,5 @@ class _AnswerWidgetState extends State<AnswerWidget> {
   }
 }
 
-class Results {
-  String category;
-  String type;
-  String difficulty;
-  String question;
-  String correctAnswer;
-  List<String> allAnswers;
-
-  Results({
-    this.category,
-    this.type,
-    this.difficulty,
-    this.question,
-    this.correctAnswer,
-  });
-
-  Results.fromJson(Map<String, dynamic> json) {
-    category = json['category'];
-    type = json['type'];
-    difficulty = json['difficulty'];
-    question = json['question'];
-    correctAnswer = json['correct_answer'];
-    allAnswers = json['incorrect_answers'].cast<String>();
-    allAnswers.add(correctAnswer);
-    allAnswers.shuffle();
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['category'] = this.category;
-    data['type'] = this.type;
-    data['difficulty'] = this.difficulty;
-    data['question'] = this.question;
-    data['correct_answer'] = this.correctAnswer;
-    data['incorrect_answers'] = this.allAnswers;
-    return data;
-  }
-}
 
 

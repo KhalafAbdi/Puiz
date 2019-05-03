@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:pro/data/database.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pro/model/game.dart';
-import 'package:pro/pages/multiplayer_tab/model/chatmessage.dart';
+import 'package:pro/model/chatmessage.dart';
 import 'package:pro/data/constants.dart' as constants;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:pro/pages/multiplayer_tab/model/question.dart';
+import 'package:pro/model/question.dart';
 import 'game_quiz.dart';
 import 'package:pro/model/user.dart';
+
+import 'package:pro/model/tempResults.dart';
 
 class GameLobby extends StatefulWidget {
   final gameID;
@@ -45,20 +46,22 @@ class _GameLobbyState extends State<GameLobby> {
         child: Scaffold(
           resizeToAvoidBottomPadding: true,
           body: StreamBuilder(
-            stream: Firestore.instance.collection('Games').document(widget.gameID).snapshots(),
+            stream: Database().getCurrentGameFields(widget.gameID),
              builder: (context, snap) {
               if(!snap.hasData){
                 return Text("");
               }
 
-              if(snap.data['state'] == "open" || snap.data['state'] == "closed"){
+
+
+              if(snap.data[constants.gameState].toString() == constants.gameStateOpen || snap.data[constants.gameState].toString() == constants.gameStateClosed){
                 return chat();
-              }else if(snap.data['state'] == "started") {
+              }else if(snap.data[constants.gameState] == constants.gameStateStarted) {
                 gameStarted = true;
                 return GameQuiz(widget.gameID);
               }
 
-              return Text("Something is horriably wrong");
+              return Center(child: Text("Something is horriably wrong state:" + snap.data[constants.gameState].toString()));
 
             },
           )
@@ -111,7 +114,7 @@ class _GameLobbyState extends State<GameLobby> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                  FutureBuilder(
-                  future: Firestore.instance.collection('Games').document(widget.gameID).get(),
+                  future: Database().getGame(widget.gameID),
                   builder: (context, snap) {
                     if(!snap.hasData){
                       return CircularProgressIndicator();
@@ -123,7 +126,7 @@ class _GameLobbyState extends State<GameLobby> {
                     return Column(
                     children: <Widget>[
                       FutureBuilder(
-                          future: Firestore.instance.collection('Users').document(snap.data['creatorID']).get(),
+                          future: Database().getUserDocument(snap.data[constants.gameCreatorID].toString()),
                           builder: (context, snap) {
                             if(!snap.hasData){
                               
@@ -147,7 +150,7 @@ class _GameLobbyState extends State<GameLobby> {
                               shape: BoxShape.circle,
                               image: new DecorationImage(
                               fit: BoxFit.fill,
-                              image: new NetworkImage(snap.data['imgPath'])
+                              image: new NetworkImage(snap.data[constants.userImgPath])
                             )
                             ),
                           );
@@ -157,7 +160,7 @@ class _GameLobbyState extends State<GameLobby> {
                         ),
                       Container(
                         margin: EdgeInsets.only(top: 5.0),
-                        child: Text(snap.data['creatorName'],
+                        child: Text(snap.data[constants.gameCreatorName],
                             style: TextStyle(
                             fontSize: 14.5,
                             color: Colors.black,
@@ -180,18 +183,18 @@ class _GameLobbyState extends State<GameLobby> {
                 ),
 
                 StreamBuilder(
-                  stream: Firestore.instance.collection('Games').document(widget.gameID).snapshots(),
+                  stream: Database().getCurrentGameFields(widget.gameID),
                   builder: (context, snap) {
                     if(!snap.hasData){
                       return CircularProgressIndicator();
                     }
 
-                    String text = (snap.data['joinerName'] == "") ? "waiting" : snap.data['joinerName'];
+                    String text = (snap.data[constants.gameJoinerName] == "") ? "waiting" : snap.data[constants.gameJoinerName];
 
                     return Column(
                       children: <Widget>[
                         FutureBuilder(
-                          future: Firestore.instance.collection('Users').document(snap.data['joinerID']).get(),
+                          future: Database().getUserDocument(snap.data[constants.gameJoinerID]),
                           builder: (context, snap) {
                             if(!snap.hasData){
                               return Container(
@@ -203,7 +206,7 @@ class _GameLobbyState extends State<GameLobby> {
                               ));
                             }
 
-                            bool hasJoiner = (snap.data['joinerName'] != "" && snap.data['joinerName'] != null);
+                            bool hasJoiner = (snap.data[constants.gameJoinerName] != "" && snap.data[constants.gameJoinerName] != null);
 
 
                             print("Joined : $hasJoiner");
@@ -216,7 +219,7 @@ class _GameLobbyState extends State<GameLobby> {
                                 shape: BoxShape.circle,
                                 image: new DecorationImage(
                               fit: BoxFit.fill,
-                              image: new NetworkImage(snap.data['imgPath'])
+                              image: new NetworkImage(snap.data[constants.userImgPath])
                             )
                             ) 
                             
@@ -246,13 +249,13 @@ class _GameLobbyState extends State<GameLobby> {
             ), Container(
               margin: EdgeInsets.only(top: 15.0),
               child:  StreamBuilder(
-                        stream: Firestore.instance.collection('Games').document(widget.gameID).snapshots(),
+                        stream: Database().getCurrentGameFields(widget.gameID),
                         builder: (context, snap) {
                           if(!snap.hasData){
                             return Text("");
                           }
 
-                          String btnText = (snap.data['joinerName'] == "") ? "Waiting for opponent..." : "Start";
+                          String btnText = (snap.data[constants.gameJoinerName] == "") ? "Waiting for opponent..." : "Start";
                           
                           return new RaisedButton(
                                                   
@@ -260,13 +263,11 @@ class _GameLobbyState extends State<GameLobby> {
 
                             onPressed: (btnText !="Start" && widget.owner == "true") ? null : () {
 
-                              game.state = "started";
-                              game.joinerID = snap.data['joinerID'];
-                              game.joinerName = snap.data['joinerName'];
+                              game.state = constants.gameStateStarted;
+                              game.joinerID = snap.data[constants.gameJoinerID];
+                              game.joinerName = snap.data[constants.gameJoinerName];
 
-                              DocumentReference documentReference = Firestore.instance.collection('Games').document(widget.gameID);
-
-                              documentReference.updateData(game.toMap());
+                              Database().updateGame(widget.gameID, game);
                               print("Start Game");
                             }
                           );
@@ -285,9 +286,9 @@ class _GameLobbyState extends State<GameLobby> {
   }
 
   getImgPath(String userID) async {
-    DocumentSnapshot s = await Firestore.instance.collection('Users').document(userID).get();
+    User u = await Database().getUser(userID);
 
-    return s.data['imgPath'];
+    return u.imgPath;
   }
 
   Widget chatScreen(){
@@ -296,7 +297,7 @@ class _GameLobbyState extends State<GameLobby> {
           children: <Widget>[
             new Flexible(
               child: StreamBuilder(
-                stream: Firestore.instance.collection('Messages').document(widget.gameID).collection("messages").snapshots(),
+                stream: Database().getCurrentGameChatMessages(widget.gameID),
                 builder: (context, snapshot){
                   if(!snapshot.hasData){
                     return Text("");
@@ -327,12 +328,12 @@ class _GameLobbyState extends State<GameLobby> {
   updateList(AsyncSnapshot snap){
     _messages = <ChatMessage>[];
     var temporalList = List<ChatMessage>();
-    for (DocumentSnapshot doc in snap.data.documents) {
+    for (var doc in snap.data.documents) {
       temporalList.add(ChatMessage(
-          content: doc['content'],
-          name: doc['sender'],
-          senderID: doc['senderID'],
-          avatar: doc['avatar'],
+          content: doc[constants.messageContent],
+          name: doc[constants.messageSender],
+          senderID: doc[constants.messagSenderID],
+          avatar: doc[constants.messageAvatar],
         )
       );
     }
@@ -387,8 +388,7 @@ class _GameLobbyState extends State<GameLobby> {
         avatar: user.imgPath,
     );
       
-    Firestore.instance.collection('Messages').document(widget.gameID).collection("messages").add(message.toMap());
-    print("Attempt to update database");
+    Database().addMessage(widget.gameID, message);
 }
 
 
@@ -397,19 +397,9 @@ class _GameLobbyState extends State<GameLobby> {
 
 
   setupGame() async{
-    DocumentReference documentReference = Firestore.instance.collection('Games').document(widget.gameID);
-    DocumentSnapshot documentSnapshot = await documentReference.get();
 
-      game = Game(
-          documentSnapshot.documentID,
-          documentSnapshot.data['category'],
-          documentSnapshot.data['difficulty'],
-          documentSnapshot.data['creatorID'],
-          documentSnapshot.data['creatorName'],
-          documentSnapshot.data['state'],
-          documentSnapshot.data['password'],
-      );  
-
+    game = await Database().buildandReturnGame(widget.gameID);
+    
     String link = "https://opentdb.com/api.php?amount=5&category=${constants.subjects[game.category]}&difficulty=${game.difficulty}&type=multiple";
     if(widget.owner == "true"){
       fetchQuestions(link);
@@ -427,11 +417,11 @@ class _GameLobbyState extends State<GameLobby> {
   int responseCode;
 
   fromJson(Map<String, dynamic> json) {
-    responseCode = json['response_code'];
-    if (json['results'] != null) {
+    responseCode = json[constants.responseCode];
+    if (json[constants.responseResult] != null) {
 
-      for (var i = 0; i < json['results'].length; i++) {
-        Results res = Results.fromJson(json['results'][i]);
+      for (var i = 0; i < json[constants.responseResult].length; i++) {
+        Results res = Results.fromJson(json[constants.responseResult][i]);
 
         Question question = Question(
             question: res.question,
@@ -439,22 +429,18 @@ class _GameLobbyState extends State<GameLobby> {
             incorrectAnswers: res.incorrectAnswers
         );
 
-        Firestore.instance.collection('Messages').document(widget.gameID).collection("questions").document("question_${i+1}").setData(question.toMap());
+        Database().createQuestions(widget.gameID, question, i);
       }
     }
 
     var map = new Map<String, dynamic>();
-    map['joinerscore'] = 0;
-    map['creatorscore'] = 0;
-    map['currentquestion'] = 1;
+    map[constants.gameJoinerScore] = 0;
+    map[constants.gameCreatorScore] = 0;
+    map[constants.gameCurrentRound] = 1;
     
-    Firestore.instance.collection('Messages').document(widget.gameID).setData(map);
-
+    Database().setGameFields(widget.gameID, map);
 
   }
-
-
-
 
 
 
@@ -463,22 +449,19 @@ class _GameLobbyState extends State<GameLobby> {
       if(widget.owner == "true"){
         Database().deleteGame(widget.gameID);
       }else {
-        print("wtf");
-        game.state = "open";
+        game.state = constants.gameStateOpen;
         game.joinerID = "";
         game.joinerName = "";
 
+        Database().updateGame(widget.gameID, game);
 
-        DocumentReference documentReference = Firestore.instance.collection('Games').document(widget.gameID);
-
-        documentReference.updateData(game.toMap());
         print("updating date ${game.toMap()}");
       }
       
       Navigator.pop(context);
     }else {
-      print("you are quiting the game");
 
+      //TODO: warn user that they are about to leave the game
       Navigator.pop(context);
     }
 
@@ -488,39 +471,3 @@ class _GameLobbyState extends State<GameLobby> {
 }
 
 
-class Results {
-  String category;
-  String type;
-  String difficulty;
-  String question;
-  String correctAnswer;
-  List<String> incorrectAnswers;
-
-  Results({
-    this.category,
-    this.type,
-    this.difficulty,
-    this.question,
-    this.correctAnswer,
-  });
-
-  Results.fromJson(Map<String, dynamic> json) {
-    category = json['category'];
-    type = json['type'];
-    difficulty = json['difficulty'];
-    question = json['question'];
-    correctAnswer = json['correct_answer'];
-    incorrectAnswers = json['incorrect_answers'].cast<String>();
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['category'] = this.category;
-    data['type'] = this.type;
-    data['difficulty'] = this.difficulty;
-    data['question'] = this.question;
-    data['correct_answer'] = this.correctAnswer;
-    data['incorrect_answers'] = this.incorrectAnswers;
-    return data;
-  }
-}

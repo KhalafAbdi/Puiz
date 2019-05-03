@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 
+// ------------------------------------------- Variables used in more than one file ------------------------------------------- 
+
 final String appTitle = 'Puiz';
+final String font = 'Roboto';
 final Color themeBlue = const Color(0xFF2c304d);
 final Color themeRed = const Color(0xFFca4451);
-
-final String subject = 'subject';
-final String difficulty = 'difficulty';
-final String score = 'score';
-final String totalScore = 'totalScore';
 
 final String gameID = 'gameID';
 final String owner = 'owner';
@@ -15,14 +13,18 @@ final String owner = 'owner';
 //Database
 final String usersCollection = 'Users';
 final String categoriesCollection = 'Categories';
-final String gamesCollection = 'Categories';
+final String gamesCollection = 'Games';
+final String messagesCollection = 'Messages';
+final String questionsCollection = 'questions';
+final String chatCollections = 'messages';
+
 
 final String newestCategoryCollection = 'Newest Category';
 
 //SharedPreferences
-final String sharedUserId = 'id';
-final String sharedUserMail = 'email';
-final String sharedUserDisplayName = 'displayName';
+final String sharedUserId = userID;
+final String sharedUserMail = userMail;
+final String sharedUserDisplayName = userDisplayName;
 final String sharedIsLoggedIn = 'isLoggedin';
 
 //User
@@ -45,12 +47,24 @@ final String gameCategory = 'category';
 final String gameDifficulty = 'difficulty';
 final String gameCreatorID = 'creatorID';
 final String gameCreatorName = 'creatorName';
-final String gameState = 'state';
+const String gameState = 'state';
 final String gamePassword = 'password';
+final String gameJoinerID = 'joinerID';
+final String gameJoinerName = 'joinerName';
+
+final String gameCurrentRound = 'currentquestion';
+final String gameCreatorScore = 'creatorscore';
+final String gameJoinerScore = 'joinerscore';
+
+final String gameOwnerAnswer = 'ownerAnswer';
+final String gameJoinerAnswer = 'joinerAnswer';
+final String gameOwnerAnswerTime = 'ownerAnswertime';
+final String gameJoinerAnswerTime = 'joinerAnswertime';
 
 //Game States
 final String gameStateOpen = 'open';
 final String gameStateClosed = 'closed';
+final String gameStateStarted = 'started';
 
 //Difficulties
 const String difficultyEasy = 'easy';
@@ -58,9 +72,30 @@ const String difficultyMedium = 'medium';
 const String difficultyHard = 'hard';
 const String difficultyRandom = 'random';
 
-//Death-Match
 final String deathMatchTitle = 'D E A T H M A T C H';
-final String deathMatch = '';
+
+// Chat message
+final String messageContent = 'content';
+final String messageSender = 'sender';
+final String messagSenderID = 'senderID';
+final String messageAvatar = 'avatar';
+
+// API Response
+final String responseCode = 'response_code';
+final String responseResult = 'results';
+final String responseQuestion = 'question';
+final String responseQuestionIncorrectAnswers = 'incorrectAnswers';
+final String responseQuestionCorrectAnswer = 'correctAnswer';
+final String responseQuestionCategory= 'category';
+final String responseQuestionDifficulty = 'difficulty';
+final String responseQuestionType= 'type';
+
+//Pages
+final String homePageTitle = 'Home';
+final String multiPlayerPageTitle = 'Multiplayer';
+final String deathmatchPageTitle = 'DeathMatch';
+final String quizPageTitle = 'Quiz';
+final String settingsPageTitle = 'Settings';
 
 const subjects = {
   'Any Category': null, //https://opentdb.com/api.php?amount=1

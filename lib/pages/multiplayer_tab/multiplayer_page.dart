@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:pro/data/database.dart';
 import 'package:pro/model/user.dart';
 import 'package:pro/model/game.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:pro/widgets/custom_widgets.dart' as customWidget;
 
 class MultiplayerPage extends StatefulWidget {
-  int index;
+  final int index;
 
   MultiplayerPage(this.index);
 
@@ -18,14 +19,13 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
   TextEditingController controller = new TextEditingController();
   String filter;
 
-  bool doneLoading = false;
   User user;
 
+  List<Game> games = [];
   int liveGames = 0;
 
-  List<Game> games = [];
-
-
+  bool doneLoading = false;
+  
   @override
     void initState() {
       super.initState();
@@ -35,6 +35,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
           filter = controller.text;
         });
       });
+      print("starting multiplayer page");
       fetchOpenGames();
     }
 
@@ -43,15 +44,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
     return Material(
         child: Scaffold(
           resizeToAvoidBottomPadding: false,
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text("M U L T I P L A Y E R",
-            style: TextStyle(
-                fontSize: 18.0,
-                color: Colors.white,
-                fontWeight: FontWeight.w300)),
-        backgroundColor: const Color(0xFF2c304d),
-      ),
+      appBar: customWidget.appBarWidget('M U L T I P L A Y E R'),
       body: buildBody(context),
     ));
   }
@@ -59,30 +52,15 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
   buildBody(BuildContext context) {
     return Stack(
       children: <Widget>[
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.white, const Color(0xFFca4451)],
-              begin: FractionalOffset(0.0, 1.0),
-              end: FractionalOffset(0.3, 0.15),
-              stops: [1.0, 1.0],
-              tileMode: TileMode.clamp,
-            ),
-          ),
-        ),
+        customWidget.backgroundWidget(Colors.white, const Color(0xFFca4451)),
+        
         Container(
             margin: EdgeInsets.only(top: 15.0, left: 15.0, right: 15.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                /*Center(
-                  child: Text("Find Game",
-                        style: TextStyle(
-                            fontSize: 25.0,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w300)),
-                  ),*/
-                  CustomSearchBox(),
+
+                  customSearchBox(),
 
                   Expanded(
                     child: Container(
@@ -109,7 +87,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
     );
   }
 
-  Widget CustomSearchBox(){
+  Widget customSearchBox(){
     return Container(
         margin: EdgeInsets.only(top:15.0, bottom: 30.0),
         height: 57.0,
@@ -137,7 +115,6 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
   }
 
   Widget listOpenGames(){
-
     return Container(
       child: RefreshIndicator(
         child: games.isEmpty ? Text("There is currently no live games") :
@@ -179,21 +156,14 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
 
   Future joinGame(int index) async{
     if(games[index].password != null){
+      //TODO: popup with that lets type in passwords
       print("Game ${games[index].creatorName} has password");
     }else {
-      DocumentReference documentReference = Firestore.instance.collection('Games').document(games[index].gameID);
-      DocumentSnapshot documentSnapshot = await documentReference.get();
-
-      if(documentSnapshot.data['state'].toString() == "open"){
-        print("what");
-        Database().joinGame(games[index]);
-        print("updating date ${games[index].toMap()}");
-        Navigator.pushNamed(context, '/multiplayerGame?gameID=${games[index].gameID}&owner=false');
-      }
-
+      
+      Database().joinGame(games[index])
+        .then((onValue) => onValue ? 
+          Navigator.pushNamed(context, '/multiplayerGame?gameID=${games[index].gameID}&owner=false') : print("game is closed"));
     }
-
-    
   }
 
   Widget joinCard(bool isPasswordLocked){
@@ -267,16 +237,9 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
     
     games = await Database().getLiveGames();
     liveGames = games.length;
-    
-
+  
     setState(() {
-      doneLoading = true;
-      
+      doneLoading = true;  
     });
   }
-
-
-
-
-
 }

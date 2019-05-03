@@ -7,6 +7,10 @@ import 'package:pro/data/database.dart';
 import 'package:pro/model/user.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:pro/widgets/correct_wrong_overlay.dart';
+import 'package:pro/model/ApiRequestResult.dart';
+
+import 'package:pro/data/constants.dart' as constants;
+import 'package:pro/widgets/custom_widgets.dart' as customWidget;
 
 class DeathMatchQuizPage extends StatefulWidget {
   final difficulty;
@@ -21,103 +25,99 @@ class DeathMatchQuizPage extends StatefulWidget {
 
 class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
 
+  User user;
+
+  //Request 
+  String path;
   int responseCode;
   List<Results> results;
   List<AnswerWidget> ansCards;
-  String link;
-  int nQuestions = 3;
-  int score = 0;
-
-  int questionNumber = 0;
-  Color difficultyColor = Colors.greenAccent;
-  int pointsForCorrectAnswer = 50;
-
+  
+  int initialQuestionCount = 3;
   bool doneLoadingData = false;
   bool overlayShouldBeVisable = false;
   bool wasAnswerCorrect = false;
-  User user;
+
+  int questionNumber = 0;
+  int pointsForCorrectAnswer = 50;
 
   int currentRecord;
-
   int correctAnswers = 0;
-
-  var unescape = new HtmlUnescape();
-
   int maxScore = 0;
+  int score = 0;
+
+  var unescape = HtmlUnescape();
+  Color difficultyColor = Colors.greenAccent;
 
   @override
   void initState() {
     super.initState();
 
-    if(widget.difficulty.toString()=="random"){
-      link = "https://opentdb.com/api.php?amount=$nQuestions&type=multiple";
+    if(widget.difficulty.toString()==constants.difficultyRandom){
+      path = "https://opentdb.com/api.php?amount=$initialQuestionCount&type=multiple";
     }else {
-      link = "https://opentdb.com/api.php?amount=$nQuestions&difficulty=${widget.difficulty}&type=multiple";
+      path = "https://opentdb.com/api.php?amount=$initialQuestionCount&difficulty=${widget.difficulty}&type=multiple";
     }
     
-    print(link);
+    print(path);
 
     fetchQuestions();
   }
 
   Future<void> fetchQuestions() async {
-    var res = await http.get(link);
+    var res = await http.get(path);
     var decRes = jsonDecode(res.body);
     print(decRes);
 
     fromJson(decRes);
 
     user = await Database().getCurrentUserData();
-    test();
-
-    print("Current Record is: $currentRecord");
-
+    getUsersCurrentRecord();
 
     setState(() {
       doneLoadingData = true;
     });
   }
 
-    Future<void> getNewQuestions() async {
-    var res = await http.get(link);
+  Future<void> getuestions() async {
+    var res = await http.get(path);
     var decRes = jsonDecode(res.body);
     print(decRes);
 
     fromJson(decRes);
-
-
-    print("@@@@@@");
   }
 
-  test(){
+  getUsersCurrentRecord(){
     String dif = widget.difficulty.toString();
 
     switch(dif){
-      case "easy" : 
+      case constants.difficultyEasy : 
         currentRecord = user.easyRecord;
         break;
-      case "medium" :
+      case constants.difficultyMedium :
         currentRecord = user.mediumRecord;
         break;
-      case "hard" :
+      case constants.difficultyHard :
         currentRecord = user.hardRecord;
         break;
-      case "random" :
+      case constants.difficultyRandom :
         currentRecord = user.randomRecord;
         break;
     }
+
+    print("Current Record is: $currentRecord");
   }
 
 
   fromJson(Map<String, dynamic> json) {
-    responseCode = json['response_code'];
-    if (json['results'] != null) {
+    responseCode = json[constants.responseCode];
+    if (json[constants.responseResult] != null) {
 
       if(results == null){
         results = List<Results>();
       }
 
-      json['results'].forEach((v) {
+      json[constants.responseResult].forEach((v) {
         results.add(Results.fromJson(v));
       });
       
@@ -125,19 +125,16 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['response_code'] = this.responseCode;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data[constants.responseCode] = this.responseCode;
     if (this.results != null) {
-      data['results'] = this.results.map((v) => v.toJson()).toList();
+      data[constants.responseResult] = this.results.map((v) => v.toJson()).toList();
     }
     return data;
   }
 
   @override
   Widget build(BuildContext context) {
-
-
-    
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Material(
@@ -148,10 +145,10 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
   }
 
   setUpQuestion(){
-    if(results[questionNumber].difficulty == "hard"){
+    if(results[questionNumber].difficulty == constants.difficultyHard){
       difficultyColor = Colors.redAccent;
       pointsForCorrectAnswer = 200;
-    }else if(results[questionNumber].difficulty == "medium"){
+    }else if(results[questionNumber].difficulty == constants.difficultyMedium){
       difficultyColor = Colors.orangeAccent;
       pointsForCorrectAnswer = 100;
     }
@@ -176,29 +173,16 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Center(
-                        child: Text("D E A T H M A T C H",
-                style: TextStyle(
-                    fontSize: 30.0,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w300)),
+              child: customWidget.titleWidget(constants.deathMatchTitle, size: 30.0),
             ),
-
-            new Container(
+            Container(
               margin: EdgeInsets.only(bottom: 5.0, top: 25.0),
               alignment: Alignment.centerRight,
-              child: new Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  new Text("Question: $questionNumber",
-                      style: TextStyle(
-                          fontSize: 18.0,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w300)),
-                  new Text("Record: $currentRecord",
-                      style: TextStyle(
-                          fontSize: 18.0,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w300))
+                  customWidget.titleWidget("Question: $questionNumber"),
+                  customWidget.titleWidget("Record: $currentRecord"),
                 ],
               ),
             ),
@@ -293,14 +277,6 @@ class _DeathMatchQuizPageState extends State<DeathMatchQuizPage> {
     }); 
   }
 
-  getRecord(){
-    String dif = widget.difficulty.toString();
-
-    if(dif=="random"){
-      currentRecord = 10;
-    }
-  }
-
   nextQuestion(){
     if(!wasAnswerCorrect){
       
@@ -377,7 +353,7 @@ class AnswerWidget extends StatefulWidget {
 class _AnswerWidgetState extends State<AnswerWidget> {
   Color answerColor = Colors.white;
   bool correctAnswer = false;
-  var unescape = new HtmlUnescape();
+  var unescape = HtmlUnescape();
 
   answer(){
     setState(() {
@@ -416,43 +392,6 @@ class _AnswerWidgetState extends State<AnswerWidget> {
   }
 }
 
-class Results {
-  String category;
-  String type;
-  String difficulty;
-  String question;
-  String correctAnswer;
-  List<String> allAnswers;
 
-  Results({
-    this.category,
-    this.type,
-    this.difficulty,
-    this.question,
-    this.correctAnswer,
-  });
-
-  Results.fromJson(Map<String, dynamic> json) {
-    category = json['category'];
-    type = json['type'];
-    difficulty = json['difficulty'];
-    question = json['question'];
-    correctAnswer = json['correct_answer'];
-    allAnswers = json['incorrect_answers'].cast<String>();
-    allAnswers.add(correctAnswer);
-    allAnswers.shuffle();
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['category'] = this.category;
-    data['type'] = this.type;
-    data['difficulty'] = this.difficulty;
-    data['question'] = this.question;
-    data['correct_answer'] = this.correctAnswer;
-    data['incorrect_answers'] = this.allAnswers;
-    return data;
-  }
-}
 
 

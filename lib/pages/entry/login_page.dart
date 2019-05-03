@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pro/pages/entry/login_presenter.dart';
-import 'package:pro/widgets/button.dart';
-import '../../data/database.dart';
+import 'package:pro/data/database.dart';
+
+import 'package:pro/data/constants.dart' as constants;
+import 'package:pro/widgets/custom_widgets.dart' as customWidget;
 
 class LoginPage extends StatefulWidget {
   @override
@@ -55,17 +57,18 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
         children: <Widget>[
           Container(
               decoration: new BoxDecoration(
-                  gradient: new LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment(0.1, 0.0),
-                colors: [const Color(0xFFca4451), const Color(0xFF2c304d)],
-                stops: [1.0, 1.0],
-                tileMode: TileMode.clamp,
-              )),
+                gradient: new LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment(0.1, 0.0),
+                  colors: [const Color(0xFFca4451), const Color(0xFF2c304d)],
+                  stops: [1.0, 1.0],
+                  tileMode: TileMode.clamp,
+                )
+              ),
               child: Card(
                 margin: EdgeInsets.only(
-                    top: 80.0, right: 15.0, left: 15.0, bottom: 15.0),
-                child: Padding(
+                  top: 80.0, right: 15.0, left: 15.0, bottom: 15.0),
+                  child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: new Container(
                       child: new Form(
@@ -86,11 +89,7 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
               backgroundColor: const Color(0x00000000),
               elevation: 0.0,
               centerTitle: true,
-              title: Text("L O G I N",
-                  style: TextStyle(
-                      fontSize: 18.0,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w300)),
+              title: customWidget.titleWidget('L O G I N'),
             ),
           )
         ],
@@ -163,7 +162,7 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
           children: <Widget>[
             Expanded(
               child: MaterialButton(
-                child: button('Google', 'assets/google.png'),
+                child: customWidget.button('Google', 'assets/google.png'), //button()
                 onPressed: _googleSignIn,
                 color: Colors.white,
               ),
@@ -173,7 +172,7 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
             ),
             Expanded(
               child: MaterialButton(
-                child: button('Facebook', 'assets/facebook.png', Colors.white),
+                child: customWidget.button('Facebook', 'assets/facebook.png', Colors.white),
                 onPressed: () {},
                 color: Color.fromRGBO(58, 89, 152, 1.0),
               ),
@@ -188,7 +187,7 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
           children: <Widget>[
             Text("Don't have an account? "),
             GestureDetector(
-                child: Text("Sign up",
+                child: Text('Sign up',
                     style: TextStyle(
                         color: Color(0xFFca4451),
                         decoration: TextDecoration.underline)),
@@ -209,7 +208,7 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
           child: Text(
             title,
             style: TextStyle(
-                color: Colors.white, fontFamily: 'Roboto', fontSize: size, fontWeight: FontWeight.w300),
+                color: Colors.white, fontFamily: constants.font, fontSize: size, fontWeight: FontWeight.w300),
           ),
           onPressed: () {
             _submit();

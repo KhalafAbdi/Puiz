@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:pro/pages/multiplayer_tab/model/question.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pro/model/question.dart';
 import 'package:pro/model/game.dart';
 import 'package:pro/model/user.dart';
 import 'package:pro/data/database.dart';
 
+import 'package:html_unescape/html_unescape.dart';
 import 'dart:ui';
 import 'dart:async';
+
+import 'package:pro/data/constants.dart' as constants;
 
 class GameQuiz extends StatefulWidget {
   final gameID;
@@ -21,13 +23,12 @@ class _GameQuizState extends State<GameQuiz> {
   bool isLoading = true;
 
   List<Question> questions = [];
-
-
   Game game;
 
-  User user;
+  User player;
   User opponent;
 
+  var unescape = new HtmlUnescape();
 
   bool showAnswer = false;
   bool isCreator = false;
@@ -40,60 +41,19 @@ class _GameQuizState extends State<GameQuiz> {
     super.initState();
 
     setUp();
-    timeLeft = 10;
+    timeLeft = 10; //TODO: use time
   }
 
   Future<void> setUp() async {
 
+    await Database().setUpGame(widget.gameID);
+    player = await Database().getPlayer();
+    opponent = await Database().getOpponent(widget.gameID);
+    isCreator = await Database().getIsCreator();
+
+    questions = await Database().getQuestions(widget.gameID);
+    game = await Database().getCurrentGame(widget.gameID);
     
-    QuerySnapshot v = await Firestore.instance.collection('Messages').document(widget.gameID).collection("questions").getDocuments();
-    DocumentSnapshot documentSnapshot = await Firestore.instance.collection('Games').document(widget.gameID).get();
-
-    user = await Database().getCurrentUserData(); 
-    print("joiner: " + documentSnapshot.data['joinerID']);
-    print("joiner: " + documentSnapshot.data['creatorID']);
-    
-    
-    if(user.displayName == documentSnapshot.data['creatorName']){
-      opponent = await Database().getUser(documentSnapshot.data['joinerID']); 
-      isCreator = true;
-    }else {
-      opponent = await Database().getUser(documentSnapshot.data['creatorID']); 
-    }
-
-    print("${user.displayName} has joined game started by ${documentSnapshot.data['creatorName']}");
-    
-    
-    print("username: " + user.to());
-    print("opponent: " + opponent.to());
-
-    for (DocumentSnapshot item in v.documents) {
-      
-      List<String> list = [];
-      list.addAll(item.data['incorrectAnswers'].cast<String>());
-
-      Question question = new Question(
-        question: item.data['question'],
-        correctAnswer: item.data['correctAnswer'],
-        incorrectAnswers: list
-      );
-
-      questions.add(question);
-    }
-
-    game = Game.start(
-      documentSnapshot.documentID,
-      documentSnapshot.data['category'],
-      documentSnapshot.data['difficulty'],
-      documentSnapshot.data['creatorID'],
-      documentSnapshot.data['creatorName'],
-      documentSnapshot.data['state'],
-      documentSnapshot.data['joinerID'],
-      documentSnapshot.data['joinerName'],
-    );
-
-
-
     setState(() {
       isLoading = false;
     });
@@ -102,7 +62,6 @@ class _GameQuizState extends State<GameQuiz> {
       setState(() {
         gameHasStarted = true;
       });
-
     });
   }
 
@@ -146,10 +105,6 @@ class _GameQuizState extends State<GameQuiz> {
 List<String> allAnswers = [];
 
 Widget quiz() {
-  
-
-  
-
     return Stack(
       fit: StackFit.expand,
       children: <Widget>[ 
@@ -161,17 +116,16 @@ Widget quiz() {
   Widget questionStream(){
 
     return StreamBuilder(
-      stream: Firestore.instance.collection('Messages').document(widget.gameID).snapshots(),
+      stream: Database().getCurrentGameFields(widget.gameID),
       builder: (context, snap) {
         if(!snap.hasData){
           return Text("");
         }
-
-          if(snap.data['currentquestion'] <= 5){
-            return placeholder(snap.data['currentquestion']);
+          if(snap.data[constants.gameCurrentRound] <= 5){
+            return placeholder(snap.data[constants.gameCurrentRound]);
           }else {
             return Container(
-              child: Text("Game Has ended"),
+              child: Text("Game Has ended"), //TODO: Score for each player
             );
           }
           
@@ -224,7 +178,7 @@ Widget quiz() {
                         alignment: Alignment.center,
                         margin: EdgeInsets.only(
                             top: 15.0, bottom: 15.0, left: 15.0, right: 15.0),
-                        child: Text(questions[index-1].question,
+                        child: Text(unescape.convert(questions[index-1].question),
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 20.0,
@@ -260,16 +214,14 @@ Widget quiz() {
 
 
   Widget answerStream(int currenQuestionIndex){
-    String questionPath = 'question_${currenQuestionIndex+1}';
-
     return StreamBuilder(
-      stream: Firestore.instance.collection('Messages').document(widget.gameID).collection('questions').document(questionPath).snapshots(),
+      stream: Database().getQuestionInCurrentGame(widget.gameID, currenQuestionIndex),
       builder: (context, snap) {
         if(!snap.hasData){
           return Text("");
         }
 
-        return answerCardsList(snap.data['ownerAnswer'], snap.data['joinerAnswer'], currenQuestionIndex, snap.data['joinerAnswertime'], snap.data['ownerAnswertime']);
+        return answerCardsList(snap.data[constants.gameOwnerAnswer], snap.data[constants.gameJoinerAnswer], currenQuestionIndex, snap.data[constants.gameJoinerAnswerTime], snap.data[constants.gameOwnerAnswerTime]);
 
         },
     );
@@ -361,20 +313,18 @@ Widget quiz() {
       joinerAnswertime : (isCreator) ? joinerAnswerTime : DateTime.now().millisecondsSinceEpoch,
     );
 
-
-    print("Updating database");
-    Firestore.instance.collection('Messages').document(widget.gameID).collection('questions').document('question_${currenQuestionIndex+1}').setData(q.toMap());
+    Database().updateGameData(widget.gameID, currenQuestionIndex, q);
 
   }
 
   Widget scoreBoardStream(){
     return StreamBuilder(
-      stream: Firestore.instance.collection('Messages').document(widget.gameID).snapshots(),
+      stream: Database().getCurrentGameFields(widget.gameID),
       builder: (context, snap) {
         if(!snap.hasData){
           return Text("");
         }
-          return scoreBoard(snap.data['creatorscore'], snap.data['joinerscore'],);                     
+          return scoreBoard(snap.data[constants.gameCreatorScore], snap.data[constants.gameJoinerScore],);                     
         },
     );
   }
@@ -485,13 +435,13 @@ Widget quiz() {
                               color: Colors.orange,
                               image: new DecorationImage(
                               fit: BoxFit.fill,
-                              image: new NetworkImage(user.imgPath)
+                              image: new NetworkImage(player.imgPath)
                             )
                             
                             ),
                           ),
-                          Text(user.displayName, style: TextStyle(fontSize: 18.0, color: Colors.redAccent),),
-                          Text("Level " + user.level.toString(), style: TextStyle(fontSize: 11.0, color: Colors.greenAccent),)
+                          Text(player.displayName, style: TextStyle(fontSize: 18.0, color: Colors.redAccent),),
+                          Text("Level " + player.level.toString(), style: TextStyle(fontSize: 11.0, color: Colors.greenAccent),)
                         ],
                       ),
                     ),
