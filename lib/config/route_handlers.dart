@@ -19,8 +19,6 @@ import 'package:pro/pages/deathmatch_tab/deathmatch_quiz.dart';
 import 'package:pro/pages/multiplayer_tab/game_creation.dart';
 import 'package:pro/pages/multiplayer_tab/game_lobby.dart';
 
-import 'package:pro/pages/edit_avatar_page.dart';
-
 import 'package:pro/data/constants.dart' as constants;
 
 var rootHandler = new Handler(
@@ -79,10 +77,5 @@ var multiplayerGameHandler = new Handler(
     String gameID = params[constants.gameID]?.first;
     String owner = params[constants.owner]?.first;
   return GameLobby(gameID : gameID, owner: owner);
-});
-
-var editAvatarHandler = new Handler(
-    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-  return EditAvatarPage();
 });
 

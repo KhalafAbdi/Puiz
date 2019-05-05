@@ -31,6 +31,5 @@ class Routes {
     router.define(score, handler: scoreHandler);
     router.define(createNewGame, handler: createNewGameHandler);
     router.define(multiplayerGame, handler: multiplayerGameHandler);
-    router.define(editAvatar, handler: editAvatarHandler);
   }
 }

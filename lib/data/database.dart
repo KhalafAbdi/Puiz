@@ -216,7 +216,6 @@ class Database {
   }
 
   // Update Game
-   // TODO: update game
   Future<void> updateGame(String gameID, Game updatedGame) async {
     DocumentReference documentReference = Firestore.instance.collection(constants.gamesCollection).document(gameID);
     currentGame = updatedGame;
@@ -229,7 +228,6 @@ class Database {
     List<DocumentSnapshot> d = querySnapshot.documents;
 
     List<Game> games = [];
-    print(d.length.toString() + "------");
 
     for(DocumentSnapshot snapshot in d){
   
@@ -264,7 +262,6 @@ class Database {
 
       return true;
     }else {
-      //TODO: Game is no longer open.
       return false;
     }  
   }

@@ -34,7 +34,8 @@ class _GameQuizState extends State<GameQuiz> {
   bool isCreator = false;
   int timeLeft;
 
-  String statusMessage;
+  bool gameHasStarted = false;
+  bool gameHasEnded = false;
 
   @override
   void initState() {
@@ -75,16 +76,15 @@ class _GameQuizState extends State<GameQuiz> {
     );
   }
 
-  bool gameHasStarted = false;
-
   Widget questionList(){
     return Container(
       child: Stack(
         children: <Widget>[
-          quiz(),
+          (!gameHasEnded) ? quiz() : Container(),
           
-          (!gameHasStarted) ? blur() : Container(),
-          (!gameHasStarted) ? startScreen() : Container()
+          (!gameHasStarted || gameHasEnded) ? blur() : Container(),
+          (!gameHasStarted) ? startScreen() : Container(),
+          (gameHasEnded) ? endScreen() : Container()
         ],
       ),
     );
@@ -124,13 +124,8 @@ Widget quiz() {
           if(snap.data[constants.gameCurrentRound] <= 5){
             return placeholder(snap.data[constants.gameCurrentRound]);
           }else {
-            return Container(
-              child: Text("Game Has ended"), //TODO: Score for each player
-            );
+            gameHasEnded = true;
           }
-          
-        
-
         },
     ); 
   }
@@ -380,7 +375,9 @@ Widget quiz() {
 
 
 
-
+  Widget endScreen(){
+    return Container();
+  }
 
 
 

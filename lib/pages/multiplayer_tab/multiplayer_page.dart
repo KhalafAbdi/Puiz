@@ -4,6 +4,7 @@ import 'package:pro/model/user.dart';
 import 'package:pro/model/game.dart';
 
 import 'package:pro/widgets/custom_widgets.dart' as customWidget;
+import 'package:fluttertoast/fluttertoast.dart';
 
 class MultiplayerPage extends StatefulWidget {
   final int index;
@@ -16,7 +17,9 @@ class MultiplayerPage extends StatefulWidget {
 
 class _MultiplayerPageState extends State<MultiplayerPage> {
 
-  TextEditingController controller = new TextEditingController();
+  TextEditingController searchInputController = TextEditingController();
+  TextEditingController passwordFieldControler = TextEditingController();
+
   String filter;
 
   User user;
@@ -30,9 +33,9 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
     void initState() {
       super.initState();
 
-      controller.addListener(() {
+      searchInputController.addListener(() {
         setState(() {
-          filter = controller.text;
+          filter = searchInputController.text;
         });
       });
       print("starting multiplayer page");
@@ -95,7 +98,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
         child: Padding(
           padding: EdgeInsets.only(left:30.0,top:5.0),
           child: TextField(
-          controller: controller,
+          controller: searchInputController,
           cursorColor: Color(0xFF2c304d),
           style: TextStyle(fontSize: 16.0, color: Color(0xFF2c304d), fontWeight: FontWeight.w300),
           decoration: InputDecoration(
@@ -154,17 +157,70 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
     );
   }
 
-  Future joinGame(int index) async{
+   joinGame(int index){
     if(games[index].password != null){
-      //TODO: popup with that lets type in passwords
       print("Game ${games[index].creatorName} has password");
+      passwordAlertDialog(index);
     }else {
       
       Database().joinGame(games[index])
         .then((onValue) => onValue ? 
-          Navigator.pushNamed(context, '/multiplayerGame?gameID=${games[index].gameID}&owner=false') : print("game is closed"));
+          Navigator.pushNamed(context, '/multiplayerGame?gameID=${games[index].gameID}&owner=false') : toast("The game is no longer avaliable"));
     }
+
   }
+
+  passwordAlertDialog(int index){
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+      title: Text('Password:'),
+      content: TextField(
+        keyboardType: TextInputType.number,
+        controller: passwordFieldControler,
+        
+        decoration: InputDecoration(hintText: "Enter password here"),
+      ),
+      actions: <Widget>[
+        new FlatButton(
+          child: new Text('Join game'),
+          onPressed: () {
+
+            if(passwordFieldControler.text == games[index].password){
+              passwordFieldControler.text = '';
+              Navigator.of(context).pop();
+              doSomething(index);
+            }else {
+              toast("Incorrect Password");
+            }
+
+          },
+        )
+      ],
+    );
+    });
+  }
+
+  doSomething(int index){
+    Database().joinGame(games[index])
+                .then((onValue) => onValue ? 
+                  Navigator.pushNamed(context, '/multiplayerGame?gameID=${games[index].gameID}&owner=false') : toast("The game is no longer avaliable"));
+  }
+
+  toast(String string){
+    Fluttertoast.showToast(
+        msg: string,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIos: 1,
+        backgroundColor: Colors.white70,
+        textColor: Colors.black,
+        fontSize: 16.0
+    );
+  }
+
+
 
   Widget joinCard(bool isPasswordLocked){
     return Column(

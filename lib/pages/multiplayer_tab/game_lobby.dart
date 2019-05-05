@@ -442,8 +442,6 @@ class _GameLobbyState extends State<GameLobby> {
 
   }
 
-
-
   Future<bool> _onWillPop() {
     if(!gameStarted){
       if(widget.owner == "true"){
@@ -460,13 +458,41 @@ class _GameLobbyState extends State<GameLobby> {
       
       Navigator.pop(context);
     }else {
-
-      //TODO: warn user that they are about to leave the game
-      Navigator.pop(context);
-    }
-
-    
+      _showPromt();
+    }  
   }
+
+  _showPromt(){
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+      title: Text("You're about to leave the game, are you sure?"),
+      content: Text("t"),
+      actions: <Widget>[
+        new FlatButton(
+          child: new Text('CANCEL'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ), 
+        new FlatButton(
+          child: new Text('ACCEPT'),
+          onPressed: () {
+            //TODO: updateDatabase -> Let winner know he won.
+            Navigator.of(context).pop();
+            _goBack();
+          },
+        )
+      ],
+    );
+        });
+  }
+
+  _goBack(){
+    Navigator.pop(context);
+  }
+
 
 }
 
