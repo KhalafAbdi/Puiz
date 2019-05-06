@@ -274,7 +274,6 @@ class Database {
   }
 
   // ------------------------------------- Messages Collection -------------------------------------
-  bool isCreator = false;
   User player;
   User opponent;
   Game currentGame;
@@ -287,7 +286,9 @@ class Database {
     await getQuestions(gameID);  
     player = await getPlayer();
     opponent = await getOpponent(gameID);
+
   }
+
 
   Future<Game> buildGame(String gameID, {String state = constants.gameState}) async {
     
@@ -324,9 +325,6 @@ class Database {
   }
 
 
-  getIsCreator() {
-    return isCreator;
-  }
 
   Future<User> getPlayer() async {
     if(player == null){
@@ -345,7 +343,6 @@ class Database {
       player = await getPlayer();
 
       if(player.displayName == gameSnapshot.data[constants.gameCreatorName].toString()){
-        isCreator = true;
         opponentID = gameSnapshot.data[constants.gameJoinerID].toString();
       }else {
         opponentID = gameSnapshot.data[constants.gameCreatorID].toString();
@@ -424,5 +421,11 @@ class Database {
 
   Future<void> addMessage(String gameID, ChatMessage message) async {
     await firestore.collection(constants.messagesCollection).document(gameID).collection(constants.chatCollections).add(message.toMap());
+  }
+
+  Future<String> getGameWinner(String gameID) async {
+    DocumentSnapshot doc = await firestore.collection(constants.messagesCollection).document(gameID).get();
+
+    return doc.data['winnerID'];
   }
 }

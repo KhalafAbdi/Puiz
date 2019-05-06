@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'package:pro/pages/settings_page.dart';
 import 'package:pro/pages/home_page.dart';
 import 'package:pro/pages/quiz_tab/quiz_page.dart';
 import 'package:pro/pages/deathmatch_tab/deathmatch_page.dart';
 import 'package:pro/pages/multiplayer_tab/multiplayer_page.dart';
 
 import 'package:pro/data/constants.dart' as constants;
+
+import 'package:pro/data/database.dart';
 
 
 class NavigationController extends StatefulWidget {
@@ -29,7 +30,6 @@ class _NavigationControllerState extends State<NavigationController> {
   MultiplayerPage multiplayerPage;
   DeathMatchPage deathMatchPage;
   QuizPage quizzesPage;
-  SettingsPage settingsPage;
 
   List<Widget> pages;
   List<String> pageTitles;
@@ -43,10 +43,9 @@ class _NavigationControllerState extends State<NavigationController> {
     multiplayerPage = MultiplayerPage(1);
     deathMatchPage = DeathMatchPage(2);
     quizzesPage = QuizPage(3);
-    settingsPage = SettingsPage(4);
     
-    pageTitles = [constants.homePageTitle, constants.multiPlayerPageTitle, constants.deathmatchPageTitle, constants.quizPageTitle, constants.settingsPageTitle];
-    pages = [homePage,multiplayerPage, deathMatchPage, quizzesPage, settingsPage];
+    pageTitles = [constants.homePageTitle, constants.multiPlayerPageTitle, constants.deathmatchPageTitle, constants.quizPageTitle, 'LogOut'];
+    pages = [homePage,multiplayerPage, deathMatchPage, quizzesPage];
 
     if(widget.subject == null){
       currentPage = homePage;
@@ -71,6 +70,11 @@ class _NavigationControllerState extends State<NavigationController> {
 
   updateCurrentTab(int index, String title){
 
+    if(index == 4){
+      print("Logout");
+      _signOut();
+    }else{
+
     if(title == null){
       setState(() {
         currentTab = index;
@@ -85,7 +89,7 @@ class _NavigationControllerState extends State<NavigationController> {
         currentTitle = title;     
       });
     }
-
+    }
 
     
   }
@@ -105,9 +109,15 @@ class _NavigationControllerState extends State<NavigationController> {
           BottomNavigationBarItem(icon: Icon(Icons.people), title: Text(constants.multiPlayerPageTitle)),
           BottomNavigationBarItem(icon: Icon(Icons.face), title: Text(constants.deathmatchPageTitle)),
           BottomNavigationBarItem(icon: Icon(Icons.question_answer), title: Text(constants.quizPageTitle)),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), title: Text(constants.settingsPageTitle))
+          BottomNavigationBarItem(icon: Icon(Icons.exit_to_app), title: Text('LogOut'))
         ],
       ),
     );
+  }
+
+  void _signOut() {
+    Database().signOut();
+
+    Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
   }
 }

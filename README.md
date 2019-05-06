@@ -12,15 +12,9 @@ whilst only having to maintain a single codebase.
 
     Sonner than later:
 
-        Multiplayer backened
-            - lots of cleanup. 
 
         Responsiveness (smaller screens might get a pixel overflow)
-            - design should also work in protait mode
-            - set resizeToAvoidBottomPadding: false on most Scaffold widgets
 
-        DeathMatch
-            - make a design in AdobeXD
 
      later:
         - REMOVE debug printouts

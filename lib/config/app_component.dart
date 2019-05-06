@@ -24,6 +24,7 @@ class AppComponentState extends State<AppComponent> {
   Widget build(BuildContext context) {
     final app = new MaterialApp(
       title: constants.appTitle,
+      debugShowCheckedModeBanner: false,
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),

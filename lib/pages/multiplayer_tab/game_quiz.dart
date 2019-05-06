@@ -9,6 +9,7 @@ import 'dart:ui';
 import 'dart:async';
 
 import 'package:pro/data/constants.dart' as constants;
+import 'package:pro/widgets/custom_widgets.dart' as customWidgets;
 
 class GameQuiz extends StatefulWidget {
   final gameID;
@@ -28,6 +29,9 @@ class _GameQuizState extends State<GameQuiz> {
   User player;
   User opponent;
 
+  int ownScore;
+  int opponentScore;
+
   var unescape = new HtmlUnescape();
 
   bool showAnswer = false;
@@ -35,7 +39,6 @@ class _GameQuizState extends State<GameQuiz> {
   int timeLeft;
 
   bool gameHasStarted = false;
-  bool gameHasEnded = false;
 
   @override
   void initState() {
@@ -50,11 +53,11 @@ class _GameQuizState extends State<GameQuiz> {
     await Database().setUpGame(widget.gameID);
     player = await Database().getPlayer();
     opponent = await Database().getOpponent(widget.gameID);
-    isCreator = await Database().getIsCreator();
 
     questions = await Database().getQuestions(widget.gameID);
     game = await Database().getCurrentGame(widget.gameID);
     
+    isCreator = game.creatorID == player.id;
     setState(() {
       isLoading = false;
     });
@@ -80,11 +83,10 @@ class _GameQuizState extends State<GameQuiz> {
     return Container(
       child: Stack(
         children: <Widget>[
-          (!gameHasEnded) ? quiz() : Container(),
+          quiz(),
           
-          (!gameHasStarted || gameHasEnded) ? blur() : Container(),
+          (!gameHasStarted) ? blur() : Container(),
           (!gameHasStarted) ? startScreen() : Container(),
-          (gameHasEnded) ? endScreen() : Container()
         ],
       ),
     );
@@ -124,7 +126,8 @@ Widget quiz() {
           if(snap.data[constants.gameCurrentRound] <= 5){
             return placeholder(snap.data[constants.gameCurrentRound]);
           }else {
-            gameHasEnded = true;
+            setScores(snap.data[constants.gameCreatorScore], snap.data[constants.gameJoinerScore]);
+            return endScreen();
           }
         },
     ); 
@@ -227,6 +230,8 @@ Widget quiz() {
     String ownAnswer;
     String opponentAnswer;
 
+
+
     if(isCreator){
       ownAnswer = ownerAnswer;
       opponentAnswer = joinerAnswer;
@@ -295,7 +300,6 @@ Widget quiz() {
     print("ownAnswer: " + answer);
     print("opponentAnswer: " + opponentAnswer);
 
-
     Question q = Question.answer(
       question: questions[currenQuestionIndex].question,
       correctAnswer: questions[currenQuestionIndex].correctAnswer,
@@ -324,10 +328,14 @@ Widget quiz() {
     );
   }
 
+  setScores(int creatorScore, int joinerScore){
+    ownScore = isCreator ? creatorScore : joinerScore;
+    opponentScore = isCreator ? joinerScore : creatorScore;
+  }
+
   Widget scoreBoard(int creatorScore, int joinerScore){
     
-    int ownScore = isCreator ? creatorScore : joinerScore;
-    int opponentScore = isCreator ? joinerScore : creatorScore;
+    setScores(creatorScore, joinerScore);
 
     return Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -376,7 +384,94 @@ Widget quiz() {
 
 
   Widget endScreen(){
-    return Container();
+
+    String winnderID = (ownScore >= opponentScore) ? player.id : opponent.id;
+
+    User winner;
+    User loser;
+    String mainComment;
+    String subComment;
+
+    if(player.id == winnderID){
+      winner = player;
+      loser = opponent;
+      mainComment = "C o n g r a t u l a t i o n!";
+      subComment =  "${opponent.displayName} was no match to you!";
+    }else {
+      winner = opponent;
+      loser = player;
+      mainComment = "You lost :(";
+      subComment =  "${opponent.displayName} was too good this time";
+    }
+
+    return Container(
+      padding: EdgeInsets.only(top:45.0),
+      child: Column(
+        children: <Widget>[
+          customWidgets.titleWidget(mainComment.toUpperCase(), size: 25.0, color: constants.themeBlue, fontWeight: FontWeight.w800),
+          customWidgets.titleWidget(subComment, size: 15.0, color: Colors.black),
+
+
+          Center(
+            child: Container(
+              margin: EdgeInsets.only(top:25.0, bottom: 35.0),
+              child: Column(
+              children: <Widget>[
+                customWidgets.titleWidget('WINNER', size: 25.0, color: constants.themeBlue, fontWeight: FontWeight.w600),
+                Column(
+                  children: <Widget>[
+                    Container(
+                      //margin: EdgeInsets.only(bottom:25.0),
+                      width: 200.0,
+                      height: 200.0,
+                      decoration: new BoxDecoration(
+                      shape: BoxShape.circle,
+                        image: new DecorationImage(
+                          fit: BoxFit.fill,
+                          image: new NetworkImage(winner.imgPath)
+                        )
+                      ),
+                    ),
+
+                    ownScore >= opponentScore ? customWidgets.titleWidget('Score: $ownScore', size: 25.0, color: constants.themeBlue) : customWidgets.titleWidget('Score: $opponentScore', size: 25.0, color: constants.themeBlue) //TODO: handle ties
+                  ],
+                )
+              ],
+            ),
+            ),
+          ),
+           Container(
+            child: Column(
+            children: <Widget>[
+              Column(
+                children: <Widget>[
+                  Container(
+                    width: 100.0,
+                    height: 100.0,
+                    decoration: new BoxDecoration(
+                    shape: BoxShape.circle,
+                      image: new DecorationImage(
+                        fit: BoxFit.fill,
+                        image: new NetworkImage(loser.imgPath)
+                      )
+                    ),
+                  ),
+                  ownScore < opponentScore ? customWidgets.titleWidget('Score: $ownScore', size: 15.0, color: constants.themeBlue) : customWidgets.titleWidget('Score: $opponentScore', size: 15.0, color: constants.themeBlue)
+                ],
+              )
+            ],
+          ),
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 25.0),
+            child: RaisedButton(
+            child: Text("Go back"),
+            onPressed: () => Navigator.pop(context),
+          )
+          )
+        ],
+      ),
+    );
   }
 
 
