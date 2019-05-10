@@ -1,5 +1,5 @@
 # Puiz 
-A quiz game for Android and IOS made in flutter
+A quiz game for Android and IOS made in flutter. Code can be found under >lib
 
 The app and pictures can be seen here: https://play.google.com/store/apps/details?id=dk.khalaf.puiz
 
