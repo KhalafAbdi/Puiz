@@ -22,8 +22,6 @@ whilst only having to maintain a single codebase.
         - debug
         - AND more debugging.
 
-        - Realease by 30. april.
-
 
 
 
