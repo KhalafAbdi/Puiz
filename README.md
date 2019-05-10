@@ -13,7 +13,7 @@ whilst only having to maintain a single codebase.
 ## Todo:
 
     Sonner than later:
-        Responsiveness (smaller screens might get a pixel overflow)
+        Responsiveness Use MediaQuery.of()
 
      later:
         - let users make a custom avatar
