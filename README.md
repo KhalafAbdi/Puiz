@@ -19,7 +19,6 @@ whilst only having to maintain a single codebase.
         - let users make a custom avatar
 
         - debug
-        - debug
         - AND more debugging.
 
 
